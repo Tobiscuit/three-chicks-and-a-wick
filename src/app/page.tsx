@@ -104,7 +104,7 @@ export default function Home() {
           </div>
         </section>
         <section className="overflow-hidden py-20 sm:py-24">
-          <div className="container mx-auto px-.0">
+          <div className="container mx-auto px-6">
             <div className="text-center">
               <h2 className="text-4xl font-black tracking-tight md:text-5xl">
                 Featured Products
