@@ -7,8 +7,6 @@
   --neutral-light: #fef9e7;
   --neutral-dark: #343a40;
   --white: #ffffff;
-  --background: #ffffff;
-  --foreground: #171717;
 }
 
 @layer components {
@@ -17,20 +15,6 @@
   }
   .btn-secondary {
     @apply bg-[var(--secondary)] text-[var(--neutral-dark)] rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
-  }
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
   }
 }
 
