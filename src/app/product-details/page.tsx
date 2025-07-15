@@ -4,6 +4,7 @@ import { Star } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
+import ProductGallery from '@/components/ProductGallery';
 
 const product = {
   name: 'Lavender Bliss Candle',
@@ -115,40 +116,6 @@ const Breadcrumbs = () => (
       </li>
     </ol>
   </nav>
-);
-
-const ProductGallery = () => (
-  <div className="grid grid-cols-2 gap-4">
-    <div className="col-span-2">
-      <div className="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md">
-        <Image
-          src={product.images[0].src}
-          alt={product.images[0].alt}
-          width={800}
-          height={800}
-          className="h-full w-full object-cover"
-        />
-      </div>
-    </div>
-    <div className="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md">
-      <Image
-        src={product.images[1].src}
-        alt={product.images[1].alt}
-        width={400}
-        height={400}
-        className="h-full w-full object-cover"
-      />
-    </div>
-    <div className="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md">
-      <Image
-        src={product.images[2].src}
-        alt={product.images[2].alt}
-        width={400}
-        height={400}
-        className="h-full w-full object-cover"
-      />
-    </div>
-  </div>
 );
 
 const ProductInfo = () => (
@@ -267,7 +234,7 @@ export default function ProductDetailsPage() {
         <div className="flex max-w-7xl flex-1 flex-col gap-8">
             <Breadcrumbs />
             <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-                <ProductGallery />
+                <ProductGallery images={product.images} />
                 <ProductInfo />
             </div>
             <ReviewsSection />
