@@ -1,0 +1,687 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <title>Stitch Design</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-50: #fef7f9;
+        --primary-100: #fdeff3;
+        --primary-200: #fbe0e7;
+        --primary-300: #f8c6d5;
+        --primary-400: #f4a2bb;
+        --primary-500: #edb5c4;
+        --primary-600: #de83a2;
+        --primary-700: #c65c80;
+        --primary-800: #a74768;
+        --primary-900: #8e5766;
+        --primary-950: #4f2934;
+        --secondary-50: #f7fefc;
+        --secondary-100: #eafcf8;
+        --secondary-200: #d4f8f0;
+        --secondary-300: #b2f2e5;
+        --secondary-400: #85e8d5;
+        --secondary-500: #62dcc6;
+        --secondary-600: #47c1b0;
+        --secondary-700: #3a9e91;
+        --secondary-800: #337d74;
+        --secondary-900: #2f6560;
+        --secondary-950: #1a3a37;
+        --neutral-50: #fbf9f9;
+        --neutral-100: #f1e9eb;
+        --neutral-200: #e4d3d7;
+        --neutral-300: #d0b3bb;
+        --neutral-400: #b98ea0;
+        --neutral-500: #a06e84;
+        --neutral-600: #88576e;
+        --neutral-700: #71475c;
+        --neutral-800: #5f3d4d;
+        --neutral-900: #503742;
+        --neutral-950: #301923;
+        --neutral-1000: #191012;
+      }
+    </style>
+  </head>
+  <body
+    class="bg-[var(--neutral-50)]"
+    style="font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif"
+  >
+    <div
+      class="relative flex size-full min-h-screen flex-col overflow-x-hidden group/design-root"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[var(--neutral-100)] px-10 py-4"
+        >
+          <div class="flex items-center gap-3 text-[var(--neutral-1000)]">
+            <svg
+              class="h-8 w-8 text-[var(--primary-500)]"
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+            <h1 class="text-xl font-bold tracking-tight">
+              Three Girls and a Wick
+            </h1>
+          </div>
+          <nav
+            class="flex items-center gap-10 text-base font-medium text-[var(--neutral-900)]"
+          >
+            <a
+              class="transition-colors hover:text-[var(--primary-500)]"
+              href="#"
+              >Shop</a
+            >
+            <a
+              class="transition-colors hover:text-[var(--primary-500)]"
+              href="#"
+              >Candles</a
+            >
+            <a
+              class="transition-colors hover:text-[var(--primary-500)]"
+              href="#"
+              >Crafts</a
+            >
+            <a
+              class="transition-colors hover:text-[var(--primary-500)]"
+              href="#"
+              >About Us</a
+            >
+            <a
+              class="transition-colors hover:text-[var(--primary-500)]"
+              href="#"
+              >Contact</a
+            >
+          </nav>
+          <div class="flex items-center gap-3">
+            <button
+              class="flex items-center justify-center rounded-full p-2.5 text-[var(--neutral-900)] transition-colors hover:bg-[var(--neutral-100)] hover:text-[var(--primary-500)]"
+            >
+              <svg
+                fill="currentColor"
+                height="24px"
+                viewBox="0 0 256 256"
+                width="24px"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                ></path>
+              </svg>
+            </button>
+            <button
+              class="flex items-center justify-center rounded-full p-2.5 text-[var(--neutral-900)] transition-colors hover:bg-[var(--neutral-100)] hover:text-[var(--primary-500)]"
+            >
+              <svg
+                fill="currentColor"
+                height="24px"
+                viewBox="0 0 256 256"
+                width="24px"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"
+                ></path>
+              </svg>
+            </button>
+            <button
+              class="flex items-center justify-center rounded-full p-2.5 text-[var(--neutral-900)] transition-colors hover:bg-[var(--neutral-100)] hover:text-[var(--primary-500)]"
+            >
+              <svg
+                fill="currentColor"
+                height="24px"
+                viewBox="0 0 256 256"
+                width="24px"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                ></path>
+              </svg>
+            </button>
+          </div>
+        </header>
+        <main class="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">
+          <div class="flex max-w-7xl flex-1 flex-col gap-8">
+            <nav aria-label="Breadcrumb">
+              <ol class="flex items-center gap-2 text-sm">
+                <li>
+                  <a
+                    class="font-medium text-[var(--primary-900)] transition-colors hover:text-[var(--primary-600)]"
+                    href="#"
+                    >Home</a
+                  >
+                </li>
+                <li>
+                  <span class="font-medium text-[var(--primary-900)]">/</span>
+                </li>
+                <li>
+                  <a
+                    class="font-medium text-[var(--primary-900)] transition-colors hover:text-[var(--primary-600)]"
+                    href="#"
+                    >Candles</a
+                  >
+                </li>
+                <li>
+                  <span class="font-medium text-[var(--primary-900)]">/</span>
+                </li>
+                <li>
+                  <span class="font-medium text-[var(--neutral-1000)]"
+                    >Lavender Bliss</span
+                  >
+                </li>
+              </ol>
+            </nav>
+            <div class="grid grid-cols-1 gap-8 md:grid-cols-2">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="col-span-2">
+                  <div
+                    class="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBV5RzfBvuHPkFcwcy31MtLauPTQUiVOJtY9Bo4hB3oKaJ6a7au2svQUq3E35u-T6FBCmbF-PZRc4oYMC70Fs_5IyF1Qq7m_TL6Swza0rvd9qE5qX4ytjPxRKPlBfY8Dzn4ARDwTUhVmErBhraoL3Z1xWMeRb4vAeOUJvMlXWGqPNx9mly3urS-2OWxtp2xNW2XPBto4IDJaz1PCnMBFLYBEmpBcpug59xU1YKCJ9Ese5nlTaEsn3TdTQ8tG_P_BoFO7AU1CsDaQQ');
+                    "
+                  ></div>
+                </div>
+                <div
+                  class="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAQZxB6uZc2affyYdDKRERqtM003wTqJx_pxbAKPqAotBT0nrflEi2TPgJmBGMmk3S1la9bC3as3nMHVF2rJQKNUBA3NOCCnhzGV9pjjLfzGiZ4jKqFydB-WWKGrduovYfJ9sQA5Ij-WqABzljOecAm6obvUWR-qJ-msM_Vk84w8BFDUiZPz3gdU-nxlMbIEz87we7r-P5xAEZmZrobRvWAJ_ypEYW1OJweur0Y4v9849ws9MRUPXIpEiOgQpV3CroCRDC5i1KM8w');
+                  "
+                ></div>
+                <div
+                  class="aspect-square w-full overflow-hidden rounded-xl bg-cover bg-center bg-no-repeat shadow-md"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDlw1QY2G9b3MsnDBYA8urHykOQZGUPb2bbYjFyqslhAKsrlO4Wnh8vMhxl-ni8V4PqoyZNsSVOR_GYwDs5v7gAUf5rEDIgQJlvW5wfKw0tJjKhbhUQaXxMA6uxjF00KMdJ1HUhtz7qzXJUB6GyOxCkGXtoIQ-n5pO6pqTdeeGMjuTwKKNIDS3q1cDdxEAH8e6ARXZdHTjc_poSDVk-5xoX_lZBZfOoNJz4D-uxCN2KcGabj71_hqEIsH4pEF7Z3YOQjOYZKlPceg');
+                  "
+                ></div>
+              </div>
+              <div class="flex flex-col gap-6">
+                <h2
+                  class="text-4xl font-bold tracking-tight text-[var(--neutral-1000)]"
+                >
+                  Lavender Bliss Candle
+                </h2>
+                <p class="text-lg leading-relaxed text-[var(--neutral-900)]">
+                  Indulge in the calming aroma of our Lavender Bliss candle.
+                  Hand-poured with natural soy wax and infused with pure
+                  lavender essential oil, this candle creates a serene
+                  atmosphere perfect for relaxation. Each candle is adorned with
+                  dried lavender buds and comes in a reusable glass jar. Burn
+                  time: approximately 50 hours.
+                </p>
+                <p class="text-3xl font-bold text-[var(--primary-900)]">
+                  $24.99
+                </p>
+                <button
+                  class="flex w-full max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[var(--primary-500)] px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105"
+                >
+                  <span class="truncate">Add to My Box of Joy</span>
+                </button>
+              </div>
+            </div>
+            <div class="border-t border-[var(--neutral-200)] pt-8">
+              <h3
+                class="text-3xl font-bold tracking-tight text-[var(--neutral-1000)]"
+              >
+                Customer Reviews
+              </h3>
+              <div class="mt-6 flex flex-wrap items-center gap-x-12 gap-y-6">
+                <div class="flex flex-col gap-2">
+                  <p class="text-5xl font-extrabold text-[var(--neutral-1000)]">
+                    4.8
+                  </p>
+                  <div class="flex items-center gap-1">
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--neutral-300)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M239.2,97.29a16,16,0,0,0-13.81-11L166,81.17,142.72,25.81h0a15.95,15.95,0,0,0-29.44,0L90.07,81.17,30.61,86.32a16,16,0,0,0-9.11,28.06L66.61,153.8,53.09,212.34a16,16,0,0,0,23.84,17.34l51-31,51.11,31a16,16,0,0,0,23.84-17.34l-13.51-58.6,45.1-39.36A16,16,0,0,0,239.2,97.29Zm-15.22,5-45.1,39.36a16,16,0,0,0-5.08,15.71L187.35,216v0l-51.07-31a15.9,15.9,0,0,0-16.54,0l-51,31h0L82.2,157.4a16,16,0,0,0-5.08-15.71L32,102.35a.37.37,0,0,1,0-.09l59.44-5.14a16,16,0,0,0,13.35-9.75L128,32.08l23.2,55.29a16,16,0,0,0,13.35,9.75L224,102.26S224,102.32,224,102.33Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <p class="text-base text-[var(--neutral-900)]">
+                    Based on 152 reviews
+                  </p>
+                </div>
+                <div
+                  class="grid w-full max-w-md flex-1 grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-2"
+                >
+                  <p class="text-sm font-medium text-[var(--neutral-1000)]">
+                    5
+                  </p>
+                  <div
+                    class="h-2.5 w-full overflow-hidden rounded-full bg-[var(--neutral-200)]"
+                  >
+                    <div
+                      class="h-full rounded-full bg-[var(--primary-400)]"
+                      style="width: 70%"
+                    ></div>
+                  </div>
+                  <p class="text-sm font-medium text-[var(--primary-900)]">
+                    70%
+                  </p>
+                  <p class="text-sm font-medium text-[var(--neutral-1000)]">
+                    4
+                  </p>
+                  <div
+                    class="h-2.5 w-full overflow-hidden rounded-full bg-[var(--neutral-200)]"
+                  >
+                    <div
+                      class="h-full rounded-full bg-[var(--primary-400)]"
+                      style="width: 20%"
+                    ></div>
+                  </div>
+                  <p class="text-sm font-medium text-[var(--primary-900)]">
+                    20%
+                  </p>
+                  <p class="text-sm font-medium text-[var(--neutral-1000)]">
+                    3
+                  </p>
+                  <div
+                    class="h-2.5 w-full overflow-hidden rounded-full bg-[var(--neutral-200)]"
+                  >
+                    <div
+                      class="h-full rounded-full bg-[var(--primary-400)]"
+                      style="width: 5%"
+                    ></div>
+                  </div>
+                  <p class="text-sm font-medium text-[var(--primary-900)]">
+                    5%
+                  </p>
+                  <p class="text-sm font-medium text-[var(--neutral-1000)]">
+                    2
+                  </p>
+                  <div
+                    class="h-2.5 w-full overflow-hidden rounded-full bg-[var(--neutral-200)]"
+                  >
+                    <div
+                      class="h-full rounded-full bg-[var(--primary-400)]"
+                      style="width: 3%"
+                    ></div>
+                  </div>
+                  <p class="text-sm font-medium text-[var(--primary-900)]">
+                    3%
+                  </p>
+                  <p class="text-sm font-medium text-[var(--neutral-1000)]">
+                    1
+                  </p>
+                  <div
+                    class="h-2.5 w-full overflow-hidden rounded-full bg-[var(--neutral-200)]"
+                  >
+                    <div
+                      class="h-full rounded-full bg-[var(--primary-400)]"
+                      style="width: 2%"
+                    ></div>
+                  </div>
+                  <p class="text-sm font-medium text-[var(--primary-900)]">
+                    2%
+                  </p>
+                </div>
+              </div>
+              <div class="mt-8 space-y-8">
+                <div
+                  class="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-sm"
+                >
+                  <div class="flex items-center gap-4">
+                    <img
+                      alt="Sophia Bennett"
+                      class="h-12 w-12 rounded-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSzSuokzwIP-u0sBhnsHKNHwUvO0_bIwfQuQ6W-H-MPFRzOOfb1um_Oc5tQqC96j-l8nBO7tF3YsiY5FXKsba-pbGto3rgP0zGbR-PsGEE3z9tq14D2e1z9ohB8Mx7auAnaDLxIMiL24Cof0oWxmGk0KcOpQK4Ku9miaSAXXLR-Nqqsqbpdi1ZzuBwx9Eh2U1VIc1aG78lYgYOIIaUabIajIBuc_cjgraTPH0-FDLzr1iQMWawOG0jPU1ShpACdqtN6JevQae4Rw"
+                    />
+                    <div>
+                      <p
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        Sophia Bennett
+                      </p>
+                      <p class="text-sm text-[var(--primary-900)]">
+                        2 weeks ago
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex gap-0.5">
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <p
+                    class="text-base leading-relaxed text-[var(--neutral-900)]"
+                  >
+                    This candle is absolutely divine! The lavender scent is so
+                    soothing and fills my entire home. The quality is top-notch,
+                    and the presentation is beautiful. I will definitely be
+                    purchasing more!
+                  </p>
+                </div>
+                <div
+                  class="flex flex-col gap-4 rounded-lg bg-white p-6 shadow-sm"
+                >
+                  <div class="flex items-center gap-4">
+                    <img
+                      alt="Ava Carter"
+                      class="h-12 w-12 rounded-full object-cover"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuAu6YlauOEspWhmzdDQeHvR3skKiONYhFxZYlWadTfYJ6aQqsi53fWCRxyfrUUMHgpxCHd8lq6d4lidWCQX1M497xTXZcUSm1IFX8BJA5ewht5RPpqmvxkVjXaL6vR7qYqwrHjAgnrkrRqqB4CHsLkwZQPsubqp0XNyFdPwtyS70AtnHUlPdLeR4TpMC9l-et5A89EUSfn_YaRdm97P4q_-ghQj2VgUFgQNdFduI4iB6EAnyEdiS4NG6nnu63sWS1AgoXp48qhu7Q"
+                    />
+                    <div>
+                      <p
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        Ava Carter
+                      </p>
+                      <p class="text-sm text-[var(--primary-900)]">
+                        1 month ago
+                      </p>
+                    </div>
+                  </div>
+                  <div class="flex gap-0.5">
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--primary-400)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M234.5,114.38l-45.1,39.36,13.51,58.6a16,16,0,0,1-23.84,17.34l-51.11-31-51,31a16,16,0,0,1-23.84-17.34L66.61,153.8,21.5,114.38a16,16,0,0,1,9.11-28.06l59.46-5.15,23.21-55.36a15.95,15.95,0,0,1,29.44,0h0L166,81.17l59.44,5.15a16,16,0,0,1,9.11,28.06Z"
+                      ></path>
+                    </svg>
+                    <svg
+                      class="text-[var(--neutral-300)]"
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M239.2,97.29a16,16,0,0,0-13.81-11L166,81.17,142.72,25.81h0a15.95,15.95,0,0,0-29.44,0L90.07,81.17,30.61,86.32a16,16,0,0,0-9.11,28.06L66.61,153.8,53.09,212.34a16,16,0,0,0,23.84,17.34l51-31,51.11,31a16,16,0,0,0,23.84-17.34l-13.51-58.6,45.1-39.36A16,16,0,0,0,239.2,97.29Zm-15.22,5-45.1,39.36a16,16,0,0,0-5.08,15.71L187.35,216v0l-51.07-31a15.9,15.9,0,0,0-16.54,0l-51,31h0L82.2,157.4a16,16,0,0,0-5.08-15.71L32,102.35a.37.37,0,0,1,0-.09l59.44-5.14a16,16,0,0,0,13.35-9.75L128,32.08l23.2,55.29a16,16,0,0,0,13.35,9.75L224,102.26S224,102.32,224,102.33Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <p
+                    class="text-base leading-relaxed text-[var(--neutral-900)]"
+                  >
+                    I love the scent of this candle, but I wish it was a bit
+                    stronger. It's perfect for a relaxing bath, but I don't
+                    notice it as much in larger rooms. Overall, a great product.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div class="border-t border-[var(--neutral-200)] pt-8">
+              <h3
+                class="text-3xl font-bold tracking-tight text-[var(--neutral-1000)]"
+              >
+                You Might Also Like
+              </h3>
+              <div
+                class="mt-6 grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8"
+              >
+                <div class="group relative">
+                  <div
+                    class="aspect-square w-full overflow-hidden rounded-md bg-[var(--neutral-100)] transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg"
+                  >
+                    <img
+                      alt="Rose Petal Candle"
+                      class="h-full w-full object-cover object-center"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeCKT1t-iZDaLcmM4Drz55JZGNzPoUVSOK4XZyx7upazUQ_dZNaosjxx5kQkj_ywkQWR0dDEmXpqNXQY5RFi65M6SEcBprI1BqtAVYxS5ihMY5XlvvDS4KffACRAkFIOgJNRybIySQPq1PglvkwtcNigMajaVVioJSKTrrAmR4lYP7WuT1TvmLg7qiU6yVgJ_OReGJX1_SNYr7C474h97SUcTEx-YudhLOpUpgg8pTg36bDuaGRJJOoXyUhob0nI2eq2hAEpvU2g"
+                    />
+                  </div>
+                  <div class="mt-4 flex justify-between">
+                    <div>
+                      <h4
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        <a href="#">Rose Petal Candle</a>
+                      </h4>
+                    </div>
+                    <p
+                      class="text-base font-semibold text-[var(--primary-900)]"
+                    >
+                      $22.99
+                    </p>
+                  </div>
+                </div>
+                <div class="group relative">
+                  <div
+                    class="aspect-square w-full overflow-hidden rounded-md bg-[var(--neutral-100)] transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg"
+                  >
+                    <img
+                      alt="Citrus Burst Candle"
+                      class="h-full w-full object-cover object-center"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCK4aDOwTkHs7ky_AIIpCG9aYUJZn9IelFZ46DyIMVknFf7Xhy7_weWK89Lfip_8sYHHoaAazeG6zAZY8i4KQEUurlxR-bzgiUM2MSCOSsKPmCAwV6hYDpjRhMBbYVBJEcjU9QHZuedZ20zZnAOb07kAcL5AfhdZV5hxqCfce0X6Au3gRpxhLBng0uUMUdZmFHbvpeq0359uUwTq3hL5MGD04azxUKgSF9scUhswkqrrNq1Dn1csdQbuPKjHegCejLa8T0wKk2S2g"
+                    />
+                  </div>
+                  <div class="mt-4 flex justify-between">
+                    <div>
+                      <h4
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        <a href="#">Citrus Burst Candle</a>
+                      </h4>
+                    </div>
+                    <p
+                      class="text-base font-semibold text-[var(--primary-900)]"
+                    >
+                      $21.99
+                    </p>
+                  </div>
+                </div>
+                <div class="group relative">
+                  <div
+                    class="aspect-square w-full overflow-hidden rounded-md bg-[var(--neutral-100)] transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg"
+                  >
+                    <img
+                      alt="Vanilla Bean Candle"
+                      class="h-full w-full object-cover object-center"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuBFQ_eoJ1C7X6k3huV9w7AMXhAvI0lGMtziCqPdOyJcDagSPZHYs416c0lWLDIOgm-fiGgEFI9XZhX2uMllAj2rWslSTUo93ijNKDuuRxWcKzFuxb5iI48rs0dQW7tQUPTcnncp0PAO9kHfKJO3SSWCoDcaaDk5udTTrO82ukHcUPECxsP5i_OA9xyuZGW45nP75Cad1PShDNE4oVpyQn9s-D-iXtnM_D2O4byxDfRU5FV6xybXe_w5xXKwuoj7hOtszItJUZdmrw"
+                    />
+                  </div>
+                  <div class="mt-4 flex justify-between">
+                    <div>
+                      <h4
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        <a href="#">Vanilla Bean Candle</a>
+                      </h4>
+                    </div>
+                    <p
+                      class="text-base font-semibold text-[var(--primary-900)]"
+                    >
+                      $23.99
+                    </p>
+                  </div>
+                </div>
+                <div class="group relative">
+                  <div
+                    class="aspect-square w-full overflow-hidden rounded-md bg-[var(--neutral-100)] transition-transform duration-300 group-hover:scale-105 group-hover:shadow-lg"
+                  >
+                    <img
+                      alt="Ocean Breeze Candle"
+                      class="h-full w-full object-cover object-center"
+                      src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSuLUBE9_G5jWxyZL0Y4NYZX-gOR-xTO72DH26k1wcbCzIFypqokS1fbNwOerU5UiXxctpU8OiZ6emcZ6Z2ZJJBX-fNO5ukDtAlHa4HmsvL5Sz2eMm66QH-O5BLQa1dO6KMfBhXGfMNd4Wu5-uwPIWAFTZI8T3OUMGgRvX4wCD4jiuYQPlt8BtR-KP9vOILampq6ntlNF8ChFsWftEq69DiyeMOWxJBKbg-aopJp1fhnPSoO4YkjIidS7KB6f-l-Tm5ze4fUpPMA"
+                    />
+                  </div>
+                  <div class="mt-4 flex justify-between">
+                    <div>
+                      <h4
+                        class="text-base font-semibold text-[var(--neutral-1000)]"
+                      >
+                        <a href="#">Ocean Breeze Candle</a>
+                      </h4>
+                    </div>
+                    <p
+                      class="text-base font-semibold text-[var(--primary-900)]"
+                    >
+                      $24.99
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

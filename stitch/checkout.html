@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Three Girls and a Wick - Checkout</title>
+    <link href="https://fonts.googleapis.com" rel="preconnect" />
+    <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-color: #edb5c4;
+        --secondary-color: #f1e9eb;
+        --text-primary: #191012;
+        --text-secondary: #8e5766;
+        --background-color: #fbf9f9;
+        --border-color: #e4d3d7;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .form-input {
+        @apply w-full rounded-lg border-[var(--border-color)] bg-[var(--background-color)] p-3 text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:border-[var(--primary-color)] focus:ring-1 focus:ring-[var(--primary-color)];
+      }
+      .radio-input {
+        @apply h-5 w-5 border-2 border-[var(--border-color)] bg-transparent text-transparent checked:border-[var(--primary-color)] checked:bg-no-repeat checked:bg-center focus:outline-none focus:ring-0 focus:ring-offset-0;
+      }
+      .radio-dot-svg {
+        background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='rgb(237,181,196)' xmlns='http://www.w3.org/2000/svg'%3e%3ccircle cx='8' cy='8' r='4'/%3e%3c/svg%3e");
+      }
+    </style>
+  </head>
+  <body class="bg-[var(--background-color)] text-[var(--text-primary)]">
+    <div class="relative flex min-h-screen flex-col">
+      <header
+        class="sticky top-0 z-10 w-full border-b border-[var(--border-color)] bg-[var(--background-color)]/80 backdrop-blur-sm"
+      >
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div class="flex h-16 items-center justify-between">
+            <div class="flex items-center gap-4">
+              <svg
+                class="h-8 w-8 text-[var(--primary-color)]"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <h1 class="text-xl font-bold tracking-tighter">
+                Three Girls and a Wick
+              </h1>
+            </div>
+            <nav class="hidden md:flex md:gap-8">
+              <a
+                class="text-sm font-medium hover:text-[var(--primary-color)]"
+                href="#"
+                >Shop</a
+              >
+              <a
+                class="text-sm font-medium hover:text-[var(--primary-color)]"
+                href="#"
+                >Candles</a
+              >
+              <a
+                class="text-sm font-medium hover:text-[var(--primary-color)]"
+                href="#"
+                >Crafts</a
+              >
+              <a
+                class="text-sm font-medium hover:text-[var(--primary-color)]"
+                href="#"
+                >About Us</a
+              >
+              <a
+                class="text-sm font-medium hover:text-[var(--primary-color)]"
+                href="#"
+                >Contact</a
+              >
+            </nav>
+            <div class="flex items-center gap-4">
+              <button
+                class="hidden rounded-full p-2 hover:bg-[var(--secondary-color)] sm:block"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="rounded-full p-2 hover:bg-[var(--secondary-color)]"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+              </button>
+              <img
+                alt="User avatar"
+                class="h-10 w-10 rounded-full"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD7eEtJ0zUdEsgaQqFSQUdbmyXLpOprs4HqoOw53sTRWz766kUV4CGN-xyQu2DElpLyHZ_0WdZvof3tQ63epUmYQzd5Nsnzggnb4wzPboR1pBlJsB1Zonq9veUVp5Yt3c7hg6wlFx1KmLLvDHLBPMmEQedqCb6yLF60nGAyNVLUv3d475ippj6slJzNR1JqpY4uCMSRoXR-N6HkmQmrVRtxWnG3WlkyeRwj59tOyl2tXYuvpI_HLYUr_jzi0M_LZ5XRp_DYldVtHg"
+              />
+            </div>
+          </div>
+        </div>
+      </header>
+      <main
+        class="mx-auto w-full max-w-7xl flex-grow px-4 py-8 sm:px-6 lg:px-8"
+      >
+        <div class="flex flex-col gap-12 lg:flex-row">
+          <div class="flex-1">
+            <div class="mb-6">
+              <nav aria-label="Breadcrumb" class="flex text-sm">
+                <ol
+                  class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse"
+                >
+                  <li class="inline-flex items-center">
+                    <a
+                      class="inline-flex items-center text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--primary-color)]"
+                      href="#"
+                    >
+                      Cart
+                    </a>
+                  </li>
+                  <li>
+                    <div class="flex items-center">
+                      <svg
+                        aria-hidden="true"
+                        class="mx-1 h-3 w-3 text-[var(--text-secondary)]"
+                        fill="none"
+                        viewBox="0 0 6 10"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="m1 9 4-4-4-4"
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                        ></path>
+                      </svg>
+                      <span
+                        class="ms-1 font-medium text-[var(--text-primary)] md:ms-2"
+                        >Checkout</span
+                      >
+                    </div>
+                  </li>
+                </ol>
+              </nav>
+            </div>
+            <h2 class="mb-8 text-3xl font-bold tracking-tight">Checkout</h2>
+            <div class="space-y-8">
+              <section>
+                <h3 class="mb-4 text-xl font-semibold">Shipping Information</h3>
+                <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6">
+                  <div class="sm:col-span-2">
+                    <label
+                      class="mb-2 block text-sm font-medium"
+                      for="full-name"
+                      >Full Name</label
+                    >
+                    <input
+                      class="form-input"
+                      id="full-name"
+                      placeholder="Enter your full name"
+                      type="text"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label class="mb-2 block text-sm font-medium" for="address"
+                      >Address</label
+                    >
+                    <input
+                      class="form-input"
+                      id="address"
+                      placeholder="Enter your address"
+                      type="text"
+                    />
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-sm font-medium" for="city"
+                      >City</label
+                    >
+                    <input
+                      class="form-input"
+                      id="city"
+                      placeholder="Enter your city"
+                      type="text"
+                    />
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-sm font-medium" for="state"
+                      >State</label
+                    >
+                    <input
+                      class="form-input"
+                      id="state"
+                      placeholder="Enter your state"
+                      type="text"
+                    />
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-sm font-medium" for="zip-code"
+                      >Zip Code</label
+                    >
+                    <input
+                      class="form-input"
+                      id="zip-code"
+                      placeholder="Enter your zip code"
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </section>
+              <section>
+                <h3 class="mb-4 text-xl font-semibold">Shipping Method</h3>
+                <div class="space-y-4">
+                  <label
+                    class="flex cursor-pointer items-center gap-4 rounded-lg border border-[var(--border-color)] p-4 has-[:checked]:border-[var(--primary-color)] has-[:checked]:bg-[var(--primary-color)]/5"
+                  >
+                    <input
+                      checked=""
+                      class="radio-input radio-dot-svg"
+                      name="shipping-method"
+                      type="radio"
+                    />
+                    <div class="flex-grow">
+                      <p class="font-medium">Standard Shipping</p>
+                      <p class="text-sm text-[var(--text-secondary)]">
+                        5-7 business days
+                      </p>
+                    </div>
+                    <p class="font-medium">$5.00</p>
+                  </label>
+                  <label
+                    class="flex cursor-pointer items-center gap-4 rounded-lg border border-[var(--border-color)] p-4 has-[:checked]:border-[var(--primary-color)] has-[:checked]:bg-[var(--primary-color)]/5"
+                  >
+                    <input
+                      class="radio-input radio-dot-svg"
+                      name="shipping-method"
+                      type="radio"
+                    />
+                    <div class="flex-grow">
+                      <p class="font-medium">Express Shipping</p>
+                      <p class="text-sm text-[var(--text-secondary)]">
+                        2-3 business days
+                      </p>
+                    </div>
+                    <p class="font-medium">$15.00</p>
+                  </label>
+                </div>
+              </section>
+              <section>
+                <h3 class="mb-4 text-xl font-semibold">Payment Information</h3>
+                <div class="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-6">
+                  <div class="sm:col-span-2">
+                    <label
+                      class="mb-2 block text-sm font-medium"
+                      for="card-number"
+                      >Card Number</label
+                    >
+                    <input
+                      class="form-input"
+                      id="card-number"
+                      placeholder="Enter your card number"
+                      type="text"
+                    />
+                  </div>
+                  <div>
+                    <label
+                      class="mb-2 block text-sm font-medium"
+                      for="expiration-date"
+                      >Expiration Date</label
+                    >
+                    <input
+                      class="form-input"
+                      id="expiration-date"
+                      placeholder="MM/YY"
+                      type="text"
+                    />
+                  </div>
+                  <div>
+                    <label class="mb-2 block text-sm font-medium" for="cvv"
+                      >CVV</label
+                    >
+                    <input
+                      class="form-input"
+                      id="cvv"
+                      placeholder="Enter your CVV"
+                      type="text"
+                    />
+                  </div>
+                  <div class="sm:col-span-2">
+                    <label
+                      class="mb-2 block text-sm font-medium"
+                      for="name-on-card"
+                      >Name on Card</label
+                    >
+                    <input
+                      class="form-input"
+                      id="name-on-card"
+                      placeholder="Enter name on card"
+                      type="text"
+                    />
+                  </div>
+                </div>
+              </section>
+              <div class="flex justify-end pt-4">
+                <button
+                  class="w-full rounded-full bg-[var(--primary-color)] px-8 py-3 text-base font-bold text-[var(--text-primary)] transition hover:bg-opacity-90 sm:w-auto"
+                >
+                  Place Order
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="w-full lg:w-96">
+            <div
+              class="sticky top-24 rounded-lg border border-[var(--border-color)] bg-[var(--background-color)] p-6"
+            >
+              <h3 class="mb-6 text-xl font-semibold">Order Summary</h3>
+              <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                  <img
+                    alt="Scented Candle - Lavender"
+                    class="h-16 w-16 rounded-md object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBTuirodiK8afb0W87n_VbNmKkuEnwIVc3Gk1LAsvNDuXU_hAGcdMQ7dLUhSlVJgiRFlAFUiL73PXHIN12NWjYkUbxhtVPy7jm6Uw7hcxEajy5gu-OLzYvYv0CDgJ2Pyi9xHOCppY_q-e5GrVSLq9ps87XbbU7HGiPofvfUMNhBsPoE44zFA7FXbkoIGXA3TlXuuleUu4kwMh5ZtaSvIlEW-vkWzO7bb7JBoYFpOcHsY8HEdWt5z4z03cwjSR4jhH7vAx9EGCbwxg"
+                  />
+                  <div class="flex-grow">
+                    <p class="font-medium">Scented Candle - Lavender</p>
+                    <p class="text-sm text-[var(--text-secondary)]">
+                      Quantity: 2
+                    </p>
+                  </div>
+                  <p class="font-medium">$30.00</p>
+                </div>
+                <div class="flex items-center gap-4">
+                  <img
+                    alt="DIY Craft Kit - Soap Making"
+                    class="h-16 w-16 rounded-md object-cover"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyL-IXJ9dzlsTIE5djidwSV7Mo7rOgg5ECjiyaBma-RuAy-m41Y2F1sWnlnjcTNDWryB_KiISRvBMeFZ8YqHy_nfG_B2TWjcojwg5ifzK93SIkcofMXRxhAkOt-uED_YZoNFCl1UqUi9bhlXVJXjbAAsOexXN1fm7AnMbUQM2YlUYy6O63X5BjCtB4dsEZwXD-9SWtKoLB-IW3isk4RBrzOaOwjPtfN3qshnMq82pEgHMjUQks5cCYMtw3q1GnLNQPSCubhFTZrQ"
+                  />
+                  <div class="flex-grow">
+                    <p class="font-medium">DIY Craft Kit - Soap Making</p>
+                    <p class="text-sm text-[var(--text-secondary)]">
+                      Quantity: 1
+                    </p>
+                  </div>
+                  <p class="font-medium">$15.00</p>
+                </div>
+              </div>
+              <div class="my-6 border-t border-[var(--border-color)]"></div>
+              <div class="space-y-3">
+                <div class="flex justify-between text-sm">
+                  <p class="text-[var(--text-secondary)]">Subtotal</p>
+                  <p class="font-medium">$45.00</p>
+                </div>
+                <div class="flex justify-between text-sm">
+                  <p class="text-[var(--text-secondary)]">Shipping</p>
+                  <p class="font-medium">$5.00</p>
+                </div>
+              </div>
+              <div class="my-6 border-t border-[var(--border-color)]"></div>
+              <div class="flex justify-between text-base font-bold">
+                <p>Total</p>
+                <p>$50.00</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

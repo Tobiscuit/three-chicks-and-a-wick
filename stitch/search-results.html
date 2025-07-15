@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <title>Three Girls and a Wick - Search Results</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-color: #edb5c4;
+        --secondary-color: #fce8ef;
+        --text-primary: #191012;
+        --text-secondary: #8e5766;
+        --background-color: #fbf9f9;
+        --border-color: #f1e9eb;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif;
+      }
+      .product-card-hover {
+        @apply transition-all duration-300 ease-in-out hover:shadow-lg hover:-translate-y-1;
+      }
+    </style>
+  </head>
+  <body class="bg-[var(--background-color)]">
+    <div
+      class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[var(--border-color)] px-10 py-4 shadow-sm"
+        >
+          <div class="flex items-center gap-10">
+            <a
+              class="flex items-center gap-3 text-[var(--text-primary)]"
+              href="#"
+            >
+              <svg
+                class="h-8 w-8 text-[var(--primary-color)]"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <h1 class="text-2xl font-bold tracking-tight">
+                Three Girls and a Wick
+              </h1>
+            </a>
+            <nav class="hidden md:flex items-center gap-8">
+              <a
+                class="text-[var(--text-primary)] hover:text-[var(--primary-color)] text-base font-medium transition-colors"
+                href="#"
+                >New Arrivals</a
+              >
+              <a
+                class="text-[var(--text-primary)] hover:text-[var(--primary-color)] text-base font-medium transition-colors"
+                href="#"
+                >Candles</a
+              >
+              <a
+                class="text-[var(--text-primary)] hover:text-[var(--primary-color)] text-base font-medium transition-colors"
+                href="#"
+                >Crafts</a
+              >
+              <a
+                class="text-[var(--text-primary)] hover:text-[var(--primary-color)] text-base font-medium transition-colors"
+                href="#"
+                >Workshops</a
+              >
+              <a
+                class="text-[var(--text-primary)] hover:text-[var(--primary-color)] text-base font-medium transition-colors"
+                href="#"
+                >About Us</a
+              >
+            </nav>
+          </div>
+          <div class="flex items-center gap-4">
+            <div class="hidden lg:flex">
+              <label class="relative">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-[var(--text-secondary)]"
+                >
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  class="form-input w-full rounded-full border-none bg-[var(--secondary-color)] py-2 pl-10 pr-4 text-base text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                  placeholder="Search"
+                  value=""
+                />
+              </label>
+            </div>
+            <div class="flex items-center gap-2">
+              <button
+                class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--secondary-color)] text-[var(--text-primary)] transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+              >
+                <svg
+                  fill="currentColor"
+                  height="24px"
+                  viewBox="0 0 256 256"
+                  width="24px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="flex h-11 w-11 items-center justify-center rounded-full bg-[var(--secondary-color)] text-[var(--text-primary)] transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+              >
+                <svg
+                  fill="currentColor"
+                  height="24px"
+                  viewBox="0 0 256 256"
+                  width="24px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main class="container mx-auto flex-1 px-4 py-8 sm:px-6 lg:px-8">
+          <div class="mx-auto max-w-4xl">
+            <div class="mb-8">
+              <label class="relative">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[var(--text-secondary)]"
+                >
+                  <svg
+                    fill="currentColor"
+                    height="24px"
+                    viewBox="0 0 256 256"
+                    width="24px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  class="form-input w-full rounded-full border-none bg-[var(--secondary-color)] py-3 pl-12 pr-12 text-lg text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-color)]"
+                  value="Candles"
+                />
+                <div class="absolute inset-y-0 right-0 flex items-center pr-4">
+                  <button
+                    class="text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="24px"
+                      viewBox="0 0 256 256"
+                      width="24px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M165.66,101.66,139.31,128l26.35,26.34a8,8,0,0,1-11.32,11.32L128,139.31l-26.34,26.35a8,8,0,0,1-11.32-11.32L116.69,128,90.34,101.66a8,8,0,0,1,11.32-11.32L128,116.69l26.34-26.35a8,8,0,0,1,11.32,11.32ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+              </label>
+            </div>
+            <div
+              class="mb-6 flex flex-col items-center justify-between gap-4 md:flex-row"
+            >
+              <p class="text-[var(--text-secondary)] text-base">
+                Showing 1-12 of 120 results for "<strong>Candles</strong>"
+              </p>
+              <div class="flex flex-wrap items-center justify-center gap-2">
+                <button
+                  class="flex h-10 items-center gap-x-2 rounded-full bg-[var(--secondary-color)] px-4 text-[var(--text-primary)] transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+                >
+                  <span class="text-sm font-medium">Category</span>
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  class="flex h-10 items-center gap-x-2 rounded-full bg-[var(--secondary-color)] px-4 text-[var(--text-primary)] transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+                >
+                  <span class="text-sm font-medium">Price</span>
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  class="flex h-10 items-center gap-x-2 rounded-full bg-[var(--secondary-color)] px-4 text-[var(--text-primary)] transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+                >
+                  <span class="text-sm font-medium">Rating</span>
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                    ></path>
+                  </svg>
+                </button>
+                <button
+                  class="flex h-10 items-center gap-x-2 rounded-full bg-white px-4 text-[var(--text-primary)] ring-1 ring-inset ring-[var(--border-color)] transition-colors hover:bg-[var(--secondary-color)]"
+                >
+                  <span class="text-sm font-medium">Sort By: Popularity</span>
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                    ></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div
+              class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div class="relative">
+                  <div
+                    class="h-56 w-full bg-cover bg-center"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDPgwfPnIhSlyy6Qx3l4UsSpig4tKtIWZuQWzZm3VXaLQMyc07qF1r9wMr6i3EIE54pNZjZLIswM6hhmIkS3rFl3KWbwQwVhJFHqasTS01Kk2LLGGgmSArVYybWk2EqqEuuOJcq71EY9T2RORqwK1aSujZXRp45WsisVDjEfu7Cv0vcoDw9FF6D6DeKqKriJBKxcvCSpqlhb9WJ6gv8ZKoGN-VXc_6_5IVdrCet-8UmfXrM5q0Ni-Wqe0R9je_oDN3rcZ-ZrJ2Ikw');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[var(--text-secondary)] backdrop-blur-sm transition-colors hover:bg-[var(--primary-color)] hover:text-white"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20px"
+                      viewBox="0 0 256 256"
+                      width="20px"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Lavender Bliss Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $15.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDFUlhiOn1VmBJ8wKlgxfUl495sbtGe0JPhn2M2QFKzx9aLRSwr3-o6w27ul9RGyX969flSF4j851PhX0TK8QL514TytYmmQVD6jrfqnCkxh2oC7qjOjyZ0vWa-r6BGUCWjvEI8uq5_Sg6uoot5Fn82FCK3Wg-oy13304SXpRuPSt2XaTbI0G4K6EoE6jX9T21BCEFHkqrOKHpX0Hlw63Aj0aNF9B-gG-7-Zs2iFxDkGUd_see9Sep37hsMtMh95__PXVdbCrLJCw');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Citrus Burst Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $14.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDuY1e9ZThO2fbA5qkrlXXC5w1Nh4Hk1T2qfNrDQG3sOZrLDqCrG2A-mGn7wvRKZHcozIr7495EkbLQzWh2MbMrUoyw7270M047Higs_Ie-WLxq6usJFEiA2gMbiMQdOQPuLacYnmRNTzXf9cPxu_Cra6thq6_R7QFR0c4zV1DiuF5548eVwnNKnDXTxawDpA9AafslLV3TaNA7tBzdVILeRj0tb8n68tTlLXt2QVevU3FH-4loZ1zJF7LCsF_9Tym1MBlaNipChw');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Rose Garden Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $16.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCiLpfFVyXWIfGZDDoxQIUn4YYbiUBDhuLUWg_v4vuXbnjL_8t19hDVEiy-f2E7KJPLweQUy_nT10gGqBwDMsohHFmFSxJ7cMugNz7OQnJ1YEMjWq4LqerFD5g_2z4iH0w4J33IP_bjqbylSY5mHr64V1pjfQ8lnn298Ms5XKrqdxxXSKe8iHVRamLxgABRwOkKJ0VZk4aHBS8BSptlqhnaYZC0o4DfWdAhrIiBpluph_3Fa4e9fMgRAKDeymmhrGNIo6QB3kcdNQ');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Vanilla Bean Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $12.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAlFQK3mpV84ypdw7kGvXy_8-yZ3bit_9jEsPAwOcpcqoyErCcBPDIVeCFVYiAWfj7VgUcsuJZpzFX5UrLzKSCukKQ71pj6wyPIyqHGN5UA5wf9aesr4ZQBI0Tch55q3mu_GN5mgyY_mm1hewLwy1JhKCwG7YEaF4FioVI_WzEYVSUE4_TdcTC5E5rJXfOO4aK6_VRydNhvp-KVKomYhaVHk3DA977A9PTzYn9m5fPHfIw22kvp5rUwL_0Kodf5h2CZ1_fnC8khyw');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Ocean Breeze Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $13.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC_NSse7FgHMvETZ3cwqxVDw0RgqweY3WETURqsMQ1ZBf0JBf4r30XMJZOYtR6odvGq2jH44MRBxBLa1WEyB03wZuqh7snGq17meU3P88dSVuECyirHGJWpNI7WmkuuPEtH4s1MlsLG_63OZlvGcQOpN8rqJwoSley6wmpkrnBuO2kmSbLTV3EtcaH1WxlZ0nntEzDRcXbBhwQxebX66fWZDwSQDFyIQgD_95lttoSLglYjx06JloMn1v8sCXpBZ-e_v8b5p7nyyw');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Spiced Apple Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $17.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDyzyrXV3-ZwlJ23ZZ80oa-qxojeFXK0Bn4XKzqBo9Y6FBfpv-zceSnga_pdsj-z_8qvBkhlJGVjBGMZrIQVcNIoo34ELtNOaCHPie5p3FSo90yAzqqfsbM0xmoMXlJZ8MliyqrKgX2-Y81V_RomfcGsigtx4z0Q6XVbBgmJNmBuxMyWF6xrnsASCgEfOi8CsBg4y36PttZ8gUhZ1eR6Ceg-REwh332ZqIlmdy3Are0OSfifH-c_pNJGV4BjqRY_CPTrlA0xIGmg');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Peppermint Twist Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $11.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm product-card-hover"
+              >
+                <div
+                  class="h-56 w-full bg-cover bg-center"
+                  style="
+                    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDfWAE0SomON2m49UUxo2LCJNVOP7jMAZR2dBg52GqhvfJwslCq66qVMG7QUU74FFQb4in7X9HmgYumaszqHkpdXq9m1XjgaVi2_Er9Vk3qJypFRnfOkJZwQ9rvzQfopju-Cy5lLYMaVNTQuYr0GD2b_YbBFy_M98oG8iAIs-wOQFJF3iiGDnas-bAo_WpQv9C2HhSLNj6BXZwUcHe1Q29qSDat2tW6Vncbm8Nc_rRlMBWMpfoCQjbUY1-3XvM_pwkROH9_6JOy-g');
+                  "
+                ></div>
+                <div class="flex flex-1 flex-col justify-between p-4">
+                  <div>
+                    <h3
+                      class="text-lg font-semibold text-[var(--text-primary)]"
+                    >
+                      Cinnamon Spice Candle
+                    </h3>
+                    <p class="mt-1 text-base text-[var(--text-secondary)]">
+                      $15.99
+                    </p>
+                  </div>
+                  <button
+                    class="mt-4 w-full rounded-full bg-[var(--primary-color)] py-2.5 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              </div>
+            </div>
+            <nav
+              aria-label="Pagination"
+              class="mt-10 flex items-center justify-center"
+            >
+              <a
+                class="relative inline-flex items-center rounded-l-full px-2 py-2 text-[var(--text-secondary)] ring-1 ring-inset ring-[var(--border-color)] hover:bg-[var(--secondary-color)] focus:z-20 focus:outline-offset-0"
+                href="#"
+              >
+                <span class="sr-only">Previous</span>
+                <svg
+                  aria-hidden="true"
+                  class="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+              <a
+                aria-current="page"
+                class="relative z-10 inline-flex items-center bg-[var(--primary-color)] px-4 py-2 text-sm font-semibold text-white focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary-color)]"
+                href="#"
+                >1</a
+              >
+              <a
+                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[var(--text-primary)] ring-1 ring-inset ring-[var(--border-color)] hover:bg-[var(--secondary-color)] focus:z-20 focus:outline-offset-0"
+                href="#"
+                >2</a
+              >
+              <a
+                class="relative hidden items-center px-4 py-2 text-sm font-semibold text-[var(--text-primary)] ring-1 ring-inset ring-[var(--border-color)] hover:bg-[var(--secondary-color)] focus:z-20 focus:outline-offset-0 md:inline-flex"
+                href="#"
+                >3</a
+              >
+              <span
+                class="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-[var(--text-primary)] ring-1 ring-inset ring-[var(--border-color)]"
+                >...</span
+              >
+              <a
+                class="relative hidden items-center px-4 py-2 text-sm font-semibold text-[var(--text-primary)] ring-1 ring-inset ring-[var(--border-color)] hover:bg-[var(--secondary-color)] focus:z-20 focus:outline-offset-0 md:inline-flex"
+                href="#"
+                >10</a
+              >
+              <a
+                class="relative inline-flex items-center rounded-r-full px-2 py-2 text-[var(--text-secondary)] ring-1 ring-inset ring-[var(--border-color)] hover:bg-[var(--secondary-color)] focus:z-20 focus:outline-offset-0"
+                href="#"
+              >
+                <span class="sr-only">Next</span>
+                <svg
+                  aria-hidden="true"
+                  class="h-5 w-5"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    clip-rule="evenodd"
+                    d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"
+                    fill-rule="evenodd"
+                  ></path>
+                </svg>
+              </a>
+            </nav>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

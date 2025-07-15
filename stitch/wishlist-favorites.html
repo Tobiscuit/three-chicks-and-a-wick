@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B600%3B700%3B800&amp;family=Playful+Display"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <title>Stitch Design</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-50: #fef2f6;
+        --primary-100: #fde6ee;
+        --primary-200: #f9cce0;
+        --primary-300: #f5a3cb;
+        --primary-400: #f070b1;
+        --primary-500: #ed4a75;
+        --primary-600: #d6316a;
+        --primary-700: #b8235f;
+        --primary-800: #971f54;
+        --primary-900: #7c1f4a;
+        --primary-950: #490c29;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+      .playful-heading {
+        font-family: 'Playful Display', cursive;
+      }
+    </style>
+  </head>
+  <body class="bg-primary-50 text-stone-800">
+    <div
+      class="relative flex size-full min-h-screen flex-col overflow-x-hidden group/design-root"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-primary-100 px-10 py-4"
+        >
+          <div class="flex items-center gap-10">
+            <div class="flex items-center gap-3 text-stone-900">
+              <svg
+                class="h-8 w-8 text-primary-500"
+                fill="none"
+                viewBox="0 0 48 48"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                  fill="currentColor"
+                ></path>
+              </svg>
+              <h2
+                class="playful-heading text-2xl font-bold tracking-tight text-stone-900"
+              >
+                Three Girls and a Wick
+              </h2>
+            </div>
+            <nav class="hidden items-center gap-8 md:flex">
+              <a
+                class="text-sm font-medium text-stone-700 hover:text-primary-500 transition-colors"
+                href="#"
+                >New Arrivals</a
+              >
+              <a
+                class="text-sm font-medium text-stone-700 hover:text-primary-500 transition-colors"
+                href="#"
+                >Candles</a
+              >
+              <a
+                class="text-sm font-medium text-stone-700 hover:text-primary-500 transition-colors"
+                href="#"
+                >Crafts</a
+              >
+              <a
+                class="text-sm font-medium text-stone-700 hover:text-primary-500 transition-colors"
+                href="#"
+                >Workshops</a
+              >
+              <a
+                class="text-sm font-medium text-stone-700 hover:text-primary-500 transition-colors"
+                href="#"
+                >About Us</a
+              >
+            </nav>
+          </div>
+          <div class="flex flex-1 items-center justify-end gap-4">
+            <label class="hidden lg:flex items-center min-w-40 !h-10 max-w-64">
+              <div class="relative w-full">
+                <div
+                  class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
+                >
+                  <svg
+                    class="text-stone-500"
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                    ></path>
+                  </svg>
+                </div>
+                <input
+                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-full border-none bg-primary-100/60 h-10 placeholder:text-stone-500 text-sm pl-10 focus:ring-2 focus:ring-primary-400 focus:ring-offset-2 focus:ring-offset-primary-50"
+                  placeholder="Search"
+                  value=""
+                />
+              </div>
+            </label>
+            <div class="flex items-center gap-2">
+              <button
+                class="hidden sm:flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-5 bg-transparent text-sm font-bold leading-normal text-stone-800 hover:bg-primary-100/60 transition-colors"
+              >
+                <span class="truncate">Sign in</span>
+              </button>
+              <button
+                class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white text-stone-800 shadow-sm ring-1 ring-inset ring-stone-200/50 hover:bg-primary-100/60 transition-colors"
+              >
+                <div
+                  class="text-primary-500"
+                  data-icon="Heart"
+                  data-size="20px"
+                  data-weight="fill"
+                >
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M178,32a62.07,62.07,0,0,0-62,62c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32Z"
+                    ></path>
+                  </svg>
+                </div>
+              </button>
+              <button
+                class="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-full bg-white text-stone-800 shadow-sm ring-1 ring-inset ring-stone-200/50 hover:bg-primary-100/60 transition-colors"
+              >
+                <div
+                  class="text-stone-800"
+                  data-icon="ShoppingBag"
+                  data-size="20px"
+                  data-weight="regular"
+                >
+                  <svg
+                    fill="currentColor"
+                    height="20px"
+                    viewBox="0 0 256 256"
+                    width="20px"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                    ></path>
+                  </svg>
+                </div>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main class="flex-1 px-4 sm:px-10 lg:px-20 py-12">
+          <div class="mx-auto max-w-5xl">
+            <div class="mb-8 text-center">
+              <h1
+                class="playful-heading text-4xl font-bold tracking-tight text-stone-900 sm:text-5xl"
+              >
+                My Box of Joy
+              </h1>
+              <p class="mt-4 text-lg text-stone-600">
+                Your curated collection of favorite candles and crafts.
+              </p>
+            </div>
+            <div
+              class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            >
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA_kg15HHvoUEMPH8OKqr0R9yIh1gH2JHkT_5vO45qJmqnZ38IfZkPHgDpmyhU8VnbovL3rTb7bZKoa7T_By0nldnIPp_aqmTBRO4mFXxLq5vvuLcfjI--TjY8TI8-VDPQlwnBNiusLtVVadwD9gne7HUXBk761tI9Fxj_bDd9aIOq7YDf_ts9wAS1rAobF30L5Fd5tYTNVWgQnz46j-yX8j0U8SKB4MbnLnB8NVPAN8CpK650DLSfmoCoOTAs8Wlo5vKpvX8m-tg');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Lavender Bliss Candle
+                  </h3>
+                  <p class="text-sm text-stone-500">$25</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCtBBCx6nkzurbsK2dCs5KgGxdZjUH_zQNITZI5IxZ0QOlAv4m-I2MUG6bNJiUCxEk8Z6DHLzPDOLxiNy-URSvc9KUS6s58yTa65VIabsNRYKBJb68zG2w7mU_CCF6-zMyZzjwkyqisWxIk1ozyqoKPqFYOGVpN8JrBRBR7oz1XKAkxNHWDIMKjdfvFkckOp77MzzsJt8zxPoUx_A2xCosF69wVD-NfNBW0uC8YJafBAuhSX7oLQIf_wKLFDCBdfNBGfKv2UYs54Q');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Citrus Burst Craft Kit
+                  </h3>
+                  <p class="text-sm text-stone-500">$35</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDZBx3chG5Um7lTbN6gqJ6tEPAxOj0nAQykMl5-mk9nQemuYDi57uCV5BzlWsXPFWjndzDp7EJVnCB2zEBHvVZZ1eOkuAIx9iLphEto2U6J9KQH-DvIAolGEob8MhZZzDibCjx0BQ5XS4cAEERGn4-lxNhbdWjgM8cODK3nuSn-O7PHWVpAuRTKBhvSeHz3Cp6xgUhaWSRI678IkY5V7O3xhdR6iE9Uk2fWi-3XJuRn1GVY02X1BU3-FG2IpFgGfBT-XSIz17gn8w');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Forest Whisper Candle
+                  </h3>
+                  <p class="text-sm text-stone-500">$22</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBZA4ltR6Z17GvlN6Tlewp3WOSg42s9X_Vb8eohElvVrJqaPrXRIxDLpiHDZBW9ZV_YpykUvPvIwsHxuv_0fXfgtGNrl2-DEYplLVcbJbAViKCH_HuQt0zPfQmL3Rn7deI2HDZDC18ZHrwfBSfMUXb9xCqteCv-qv1siLOCF5jg8RlBQTCNbNSPnkw0V4eBkOBOrNxxvE1XHv0uWZf9RWwpcLIsBp3E5_0WYFoKHRJqVeGUm-Q3KHnc0FUxkRvSpZWuhDFX5dxzeg');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Ocean Breeze Craft Kit
+                  </h3>
+                  <p class="text-sm text-stone-500">$30</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5cVZjD0zgPqTHfvJZqd42yF7petBpU1bj68Dor3AejKuibQj_ac7jp-EO0hFQEwrVGkEhgZLA1ff9cBsPojS1VAUPOiMc7lPjf2SHtYy9_YEbRhUabWZ8N14y5sgjtGWliRzuUj4SRLhxUq4w3YTRmmFhY5TnrlpDnBD3KGaITkxxKroC1Odsje1b69P3PUGO5qsSwgVi4wfGGvW6Fj1AhwPTw6jd2MerrsnzEAyfcuWJuK6SxW5Dndw8FWy1_KD6Jxprkd_iVQ');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Vanilla Dream Candle
+                  </h3>
+                  <p class="text-sm text-stone-500">$28</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+              <div
+                class="group relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-md transition-shadow hover:shadow-xl"
+              >
+                <div class="relative">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover"
+                    style="
+                      background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD769fpm18na6VwMm1lWtdkaPOJwOhNivl__z4KmdVQESrvdgu30N2LruGxxDbn8NPMup8SYqj17dmfrOxI0tlxEgxKQJTCMUHtPzItZhFy79Fo8s7B0akDUglLXT3ESzlzZblrHUrl3YTTYSYpaVrwEVby6_hwB4CbGQtF1nPXzrZHo-0z5B4UkWRPhDmqDXg91Ps_AiYdFzHYfpD2D828PE3zy0ibmxnvWWetQOqyEZUxjcgNQ36slcVrEREnk50pfzk0AIBUnA');
+                    "
+                  ></div>
+                  <button
+                    class="absolute top-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-white/70 backdrop-blur-sm text-stone-600 hover:text-primary-500 hover:bg-white transition-all"
+                  >
+                    <svg
+                      fill="currentColor"
+                      height="20"
+                      viewBox="0 0 256 256"
+                      width="20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M208.49,191.51a12,12,0,0,1-17,17L128,145,64.49,208.49a12,12,0,0,1-17-17L111,128,47.51,64.49a12,12,0,0,1,17-17L128,111l63.51-63.52a12,12,0,0,1,17,17L145,128Z"
+                      ></path>
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex flex-1 flex-col p-4">
+                  <h3 class="font-semibold text-stone-800">
+                    Summer Meadow Craft Kit
+                  </h3>
+                  <p class="text-sm text-stone-500">$40</p>
+                  <button
+                    class="mt-4 w-full flex items-center justify-center rounded-full bg-primary-500 py-2.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-primary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-400 focus:ring-offset-2"
+                  >
+                    Add to Box
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B600%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <title>Three Girls and a Wick - FAQ</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --brand-primary: #ed4a75;
+        --brand-secondary: #fcebeb;
+        --brand-background: #fdf7f8;
+        --text-primary: #1b0e11;
+        --text-secondary: #994d61;
+        --border-color: #f3e7ea;
+      }
+      .accordion-item[open] .accordion-icon {
+        transform: rotate(180deg);
+      }
+    </style>
+  </head>
+  <body
+    class="bg-[var(--brand-background)]"
+    style="font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif"
+  >
+    <div
+      class="relative flex size-full min-h-screen flex-col overflow-x-hidden"
+    >
+      <header
+        class="sticky top-0 z-10 w-full bg-[var(--brand-background)]/80 backdrop-blur-sm"
+      >
+        <div class="container mx-auto">
+          <div
+            class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[var(--border-color)] px-6 py-4 lg:px-10"
+          >
+            <div class="flex items-center gap-3">
+              <div class="size-8 text-[var(--brand-primary)]">
+                <svg
+                  fill="none"
+                  viewBox="0 0 48 48"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                    fill="currentColor"
+                  ></path>
+                </svg>
+              </div>
+              <h1
+                class="text-xl font-bold tracking-tight text-[var(--text-primary)]"
+              >
+                Three Girls and a Wick
+              </h1>
+            </div>
+            <nav class="hidden items-center gap-8 md:flex">
+              <a
+                class="text-sm font-medium text-[var(--text-primary)] transition-colors hover:text-[var(--brand-primary)]"
+                href="#"
+                >Shop</a
+              >
+              <a
+                class="text-sm font-medium text-[var(--text-primary)] transition-colors hover:text-[var(--brand-primary)]"
+                href="#"
+                >About</a
+              >
+              <a
+                class="text-sm font-medium text-[var(--text-primary)] transition-colors hover:text-[var(--brand-primary)]"
+                href="#"
+                >Contact</a
+              >
+            </nav>
+            <div class="flex items-center gap-2">
+              <button
+                class="flex size-10 items-center justify-center rounded-full bg-transparent text-[var(--text-primary)] transition-colors hover:bg-[var(--brand-secondary)] hover:text-[var(--brand-primary)]"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="flex size-10 items-center justify-center rounded-full bg-transparent text-[var(--text-primary)] transition-colors hover:bg-[var(--brand-secondary)] hover:text-[var(--brand-primary)]"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M230.92,212c-15.23-26.33-38.7-45.21-66.09-54.16a72,72,0,1,0-73.66,0C63.78,166.78,40.31,185.66,25.08,212a8,8,0,1,0,13.85,8c18.84-32.56,52.14-52,89.07-52s70.23,19.44,89.07,52a8,8,0,1,0,13.85-8ZM72,96a56,56,0,1,1,56,56A56.06,56.06,0,0,1,72,96Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="flex size-10 items-center justify-center rounded-full bg-transparent text-[var(--text-primary)] transition-colors hover:bg-[var(--brand-secondary)] hover:text-[var(--brand-primary)]"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="flex size-10 items-center justify-center rounded-full bg-transparent text-[var(--text-primary)] transition-colors hover:bg-[var(--brand-secondary)] hover:text-[var(--brand-primary)] md:hidden"
+              >
+                <svg
+                  fill="currentColor"
+                  height="24px"
+                  viewBox="0 0 256 256"
+                  width="24px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,88H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1">
+        <div class="container mx-auto px-4 py-12 sm:px-6 lg:px-8">
+          <div class="mx-auto max-w-4xl">
+            <div class="mb-12 text-center">
+              <h2
+                class="text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl"
+              >
+                Frequently Asked Questions
+              </h2>
+              <p class="mt-4 text-lg text-[var(--text-secondary)]">
+                Can't find the answer you're looking for? Reach out to our
+                <a
+                  class="font-semibold text-[var(--brand-primary)] hover:underline"
+                  href="#"
+                  >customer support</a
+                >
+                team.
+              </p>
+            </div>
+            <div class="relative mb-12">
+              <div
+                class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4 text-[var(--text-secondary)]"
+              >
+                <svg
+                  fill="currentColor"
+                  height="24px"
+                  viewBox="0 0 256 256"
+                  width="24px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                  ></path>
+                </svg>
+              </div>
+              <input
+                class="w-full rounded-full border-2 border-[var(--border-color)] bg-[var(--brand-background)] py-4 pl-12 pr-4 text-base text-[var(--text-primary)] placeholder:text-[var(--text-secondary)] focus:border-[var(--brand-primary)] focus:outline-none focus:ring-1 focus:ring-[var(--brand-primary)]"
+                placeholder="Search for answers..."
+                type="search"
+              />
+            </div>
+            <div class="space-y-10">
+              <div>
+                <h3 class="mb-6 text-2xl font-bold text-[var(--text-primary)]">
+                  Products
+                </h3>
+                <div class="space-y-4">
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                    open=""
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        What materials are your candles made from?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Our candles are crafted with a natural soy wax blend,
+                      premium fragrance oils, and cotton wicks for a clean and
+                      long-lasting burn.
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        Are your candles eco-friendly?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Yes! We are committed to sustainability. Our soy wax is a
+                      renewable resource, our packaging is recyclable, and we
+                      strive to minimize our environmental impact in every step
+                      of our process.
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        How long do your candles typically burn?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Burn times vary by candle size. Our standard 8oz candles
+                      burn for approximately 40-50 hours with proper care.
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <div>
+                <h3 class="mb-6 text-2xl font-bold text-[var(--text-primary)]">
+                  Shipping &amp; Delivery
+                </h3>
+                <div class="space-y-4">
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        How much does shipping cost?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Shipping costs are calculated at checkout based on your
+                      location and order weight. We offer free shipping on
+                      orders over $50 within the US.
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        Do you offer international shipping?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Currently, we only ship within the United States. We are
+                      hoping to expand to international shipping in the future!
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        How long does delivery take?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      Orders are typically processed within 1-3 business days.
+                      Standard shipping takes an additional 3-5 business days
+                      for delivery.
+                    </div>
+                  </details>
+                </div>
+              </div>
+              <div>
+                <h3 class="mb-6 text-2xl font-bold text-[var(--text-primary)]">
+                  Returns &amp; Exchanges
+                </h3>
+                <div class="space-y-4">
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        What is your return policy?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      We accept returns on unused and undamaged items within 30
+                      days of delivery. Please visit our Returns page for full
+                      details.
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        How do I initiate a return?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      To start a return, please contact our customer service
+                      team with your order number and the reason for the return.
+                    </div>
+                  </details>
+                  <details
+                    class="accordion-item group rounded-2xl border-2 border-transparent bg-white p-1 transition-all duration-300 hover:border-[var(--brand-primary)]"
+                  >
+                    <summary
+                      class="flex cursor-pointer items-center justify-between p-4"
+                    >
+                      <p
+                        class="text-base font-semibold text-[var(--text-primary)]"
+                      >
+                        Can I exchange an item?
+                      </p>
+                      <span
+                        class="accordion-icon text-[var(--text-primary)] transition-transform duration-300"
+                      >
+                        <svg
+                          fill="currentColor"
+                          height="20px"
+                          viewBox="0 0 256 256"
+                          width="20px"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M213.66,101.66l-80,80a8,8,0,0,1-11.32,0l-80-80A8,8,0,0,1,53.66,90.34L128,164.69l74.34-74.35a8,8,0,0,1,11.32,11.32Z"
+                          ></path>
+                        </svg>
+                      </span>
+                    </summary>
+                    <div class="px-4 pb-4 text-sm text-[var(--text-secondary)]">
+                      We are happy to offer exchanges for items of equal value.
+                      Please contact customer service to arrange an exchange.
+                    </div>
+                  </details>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

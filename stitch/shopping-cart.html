@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Three Girls and a Wick - Shopping Cart</title>
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --brand-primary: #f25287;
+        --brand-secondary: #f3e7ea;
+        --brand-text-primary: #1b0e11;
+        --brand-text-secondary: #994d61;
+        --brand-background: #fcf8f9;
+        --brand-border: #e7d0d6;
+      }
+      body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+      }
+    </style>
+  </head>
+  <body class="bg-[var(--brand-background)] text-[var(--brand-text-primary)]">
+    <div
+      class="relative flex size-full min-h-screen flex-col overflow-x-hidden group/design-root"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-[var(--brand-border)] px-4 md:px-10 py-4"
+        >
+          <div class="flex items-center gap-3">
+            <svg
+              class="text-[var(--brand-primary)]"
+              fill="none"
+              height="24"
+              viewBox="0 0 24 24"
+              width="24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+              ></path>
+            </svg>
+            <h1 class="text-xl font-bold tracking-tight">
+              Three Girls and a Wick
+            </h1>
+          </div>
+          <nav class="hidden md:flex items-center gap-8 text-sm font-medium">
+            <a
+              class="hover:text-[var(--brand-primary)] transition-colors"
+              href="#"
+              >Shop</a
+            >
+            <a
+              class="hover:text-[var(--brand-primary)] transition-colors"
+              href="#"
+              >Candles</a
+            >
+            <a
+              class="hover:text-[var(--brand-primary)] transition-colors"
+              href="#"
+              >Crafts</a
+            >
+            <a
+              class="hover:text-[var(--brand-primary)] transition-colors"
+              href="#"
+              >About Us</a
+            >
+            <a
+              class="hover:text-[var(--brand-primary)] transition-colors"
+              href="#"
+              >Contact</a
+            >
+          </nav>
+          <div class="flex items-center gap-4">
+            <button
+              class="p-2 rounded-full hover:bg-[var(--brand-secondary)] transition-colors"
+            >
+              <svg
+                fill="currentColor"
+                height="20"
+                viewBox="0 0 256 256"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                ></path>
+              </svg>
+            </button>
+            <button
+              class="p-2 rounded-full hover:bg-[var(--brand-secondary)] transition-colors relative"
+            >
+              <svg
+                fill="currentColor"
+                height="20"
+                viewBox="0 0 256 256"
+                width="20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                ></path>
+              </svg>
+              <span
+                class="absolute top-0 right-0 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--brand-primary)] text-xs font-bold text-white"
+                >2</span
+              >
+            </button>
+            <button
+              class="md:hidden p-2 rounded-full hover:bg-[var(--brand-secondary)] transition-colors"
+            >
+              <svg
+                class="feather feather-menu"
+                fill="none"
+                height="24"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+                width="24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <line x1="3" x2="21" y1="12" y2="12"></line>
+                <line x1="3" x2="21" y1="6" y2="6"></line>
+                <line x1="3" x2="21" y1="18" y2="18"></line>
+              </svg>
+            </button>
+          </div>
+        </header>
+        <main class="flex-1 px-4 sm:px-6 lg:px-20 xl:px-40 py-12">
+          <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-bold tracking-tight mb-8">Your Cart</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+              <div class="lg:col-span-2">
+                <div class="space-y-6">
+                  <div
+                    class="flex items-center gap-6 p-4 border border-[var(--brand-border)] rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <div class="w-24 h-24 rounded-xl overflow-hidden">
+                      <img
+                        alt="Lavender Candle"
+                        class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDY8NSdWH2ZnuYpZJ6lqXmZS8wHg9HJzAMadoujL81Zx1QzX_S1mkwkGx3FJPMUqtANYldKvudU1FvjBqFBDxWek9FotU00OyoQ8vFVIZD1kEFeQp9m_IiaWUtWnbeIlH-zd--fMeKO6kwKN4y9rJzUwe-Ix0rEsN5doquDT2xim4CozecZUdjCxXCB8ZA8WkQlm93NE8xCFeYIt27vZaJrQGKw3oOSu6t17_EoE42HI0awO-DZe8Zz55fYpYg2a6zR-GIpbbO3sQ"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="font-bold">Candle, 10 oz, Lavender</h3>
+                      <p class="text-sm text-[var(--brand-text-secondary)]">
+                        $25.00
+                      </p>
+                      <div class="flex items-center gap-4 mt-2">
+                        <div
+                          class="flex items-center border border-[var(--brand-border)] rounded-full"
+                        >
+                          <button
+                            class="px-3 py-1 text-[var(--brand-text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                          >
+                            -
+                          </button>
+                          <span class="px-3 py-1">1</span>
+                          <button
+                            class="px-3 py-1 text-[var(--brand-text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          class="text-[var(--brand-text-secondary)] hover:text-red-500 transition-colors"
+                        >
+                          <svg
+                            fill="none"
+                            height="20"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path
+                              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                            ></path>
+                            <line x1="10" x2="10" y1="11" y2="17"></line>
+                            <line x1="14" x2="14" y1="11" y2="17"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="font-bold text-lg">$25.00</p>
+                  </div>
+                  <div
+                    class="flex items-center gap-6 p-4 border border-[var(--brand-border)] rounded-2xl bg-white shadow-sm transition-shadow hover:shadow-md"
+                  >
+                    <div class="w-24 h-24 rounded-xl overflow-hidden">
+                      <img
+                        alt="DIY Soap Making Kit"
+                        class="w-full h-full object-cover"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuALm0dOinnLIlw3xwo_9WMB2P-k3746ffzj_Z-DS0OjaKoH1FWpYHTyChvJ2SxKKO84jBGhTwclV9USRwl3pFrfOi-KvqPQo6SyOQObJWRw8IvzUnNzbEih6GAcJtQWC26cU0nZOrg88ynacaAhClxNOUoVYQjcKTJiBXHH9nUdZKDppS-ZT2EXFGob6iT8cutIodO7ztQ1t7g0_rbOSbSaqF7yQDISOyfjXNmQxF83T_0GGZwQ1K6lkMQpR6a_8zmUmu3RiXz1RA"
+                      />
+                    </div>
+                    <div class="flex-1">
+                      <h3 class="font-bold">Craft Kit, DIY Soap Making</h3>
+                      <p class="text-sm text-[var(--brand-text-secondary)]">
+                        $40.00
+                      </p>
+                      <div class="flex items-center gap-4 mt-2">
+                        <div
+                          class="flex items-center border border-[var(--brand-border)] rounded-full"
+                        >
+                          <button
+                            class="px-3 py-1 text-[var(--brand-text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                          >
+                            -
+                          </button>
+                          <span class="px-3 py-1">2</span>
+                          <button
+                            class="px-3 py-1 text-[var(--brand-text-secondary)] hover:text-[var(--brand-primary)] transition-colors"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <button
+                          class="text-[var(--brand-text-secondary)] hover:text-red-500 transition-colors"
+                        >
+                          <svg
+                            fill="none"
+                            height="20"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path
+                              d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"
+                            ></path>
+                            <line x1="10" x2="10" y1="11" y2="17"></line>
+                            <line x1="14" x2="14" y1="11" y2="17"></line>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
+                    <p class="font-bold text-lg">$80.00</p>
+                  </div>
+                </div>
+                <a
+                  class="inline-flex items-center gap-2 text-sm font-medium text-[var(--brand-primary)] hover:underline mt-8"
+                  href="#"
+                >
+                  <svg
+                    class="feather feather-arrow-left"
+                    fill="none"
+                    height="16"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    viewBox="0 0 24 24"
+                    width="16"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <line x1="19" x2="5" y1="12" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                  </svg>
+                  Continue Shopping
+                </a>
+              </div>
+              <div class="lg:col-span-1">
+                <div
+                  class="bg-white p-6 rounded-2xl border border-[var(--brand-border)] shadow-sm sticky top-28"
+                >
+                  <h3 class="text-xl font-bold mb-4">Order Summary</h3>
+                  <div class="space-y-3">
+                    <div class="flex justify-between text-sm">
+                      <span class="text-[var(--brand-text-secondary)]"
+                        >Subtotal</span
+                      >
+                      <span class="font-medium">$105.00</span>
+                    </div>
+                    <div class="flex justify-between text-sm">
+                      <span class="text-[var(--brand-text-secondary)]"
+                        >Shipping</span
+                      >
+                      <span class="font-medium">Free</span>
+                    </div>
+                    <div
+                      class="border-t border-[var(--brand-border)] my-3"
+                    ></div>
+                    <div class="flex justify-between font-bold text-lg">
+                      <span>Total</span>
+                      <span>$105.00</span>
+                    </div>
+                  </div>
+                  <button
+                    class="w-full mt-6 bg-[var(--brand-primary)] text-white font-bold py-3 px-4 rounded-full hover:bg-opacity-90 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+                  >
+                    Proceed to Checkout
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

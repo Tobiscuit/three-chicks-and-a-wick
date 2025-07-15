@@ -1,0 +1,282 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect" />
+    <link
+      as="style"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&amp;family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800"
+      onload="this.rel='stylesheet'"
+      rel="stylesheet"
+    />
+    <title>Stitch Design</title>
+    <link href="data:image/x-icon;base64," rel="icon" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-50: #fef7f9;
+        --primary-100: #fdeff3;
+        --primary-200: #fbdde7;
+        --primary-300: #f9c0d3;
+        --primary-400: #f596b6;
+        --primary-500: #edb5c4;
+        --primary-600: #d66c91;
+        --primary-700: #b34b71;
+        --primary-800: #974061;
+        --primary-900: #813955;
+        --primary-950: #481b2c;
+      }
+      body {
+        background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23edb5c4" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+      }
+    </style>
+  </head>
+  <body class="bg-white">
+    <div
+      class="relative flex size-full min-h-screen flex-col bg-white group/design-root overflow-x-hidden"
+      style="font-family: 'Plus Jakarta Sans', 'Noto Sans', sans-serif"
+    >
+      <div class="layout-container flex h-full grow flex-col">
+        <header
+          class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-gray-200 px-10 py-4 shadow-sm"
+        >
+          <div class="flex items-center gap-4 text-zinc-900">
+            <svg
+              class="h-8 w-8 text-[var(--primary-500)]"
+              fill="none"
+              viewBox="0 0 48 48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 6H42L36 24L42 42H6L12 24L6 6Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+            <h2
+              class="text-zinc-900 text-xl font-bold leading-tight tracking-[-0.015em]"
+            >
+              Three Girls and a Wick
+            </h2>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a
+                class="text-zinc-900 text-base font-medium leading-normal hover:text-[var(--primary-600)] transition-colors"
+                href="#"
+                >Shop</a
+              >
+              <a
+                class="text-zinc-900 text-base font-medium leading-normal hover:text-[var(--primary-600)] transition-colors"
+                href="#"
+                >About</a
+              >
+              <a
+                class="text-[var(--primary-600)] text-base font-bold leading-normal"
+                href="#"
+                >Contact</a
+              >
+            </div>
+            <div class="flex gap-3">
+              <button
+                class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 bg-gray-100 text-zinc-900 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-3 hover:bg-gray-200 transition-colors"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"
+                  ></path>
+                </svg>
+              </button>
+              <button
+                class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 bg-gray-100 text-zinc-900 gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-3 hover:bg-gray-200 transition-colors"
+              >
+                <svg
+                  fill="currentColor"
+                  height="20px"
+                  viewBox="0 0 256 256"
+                  width="20px"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"
+                  ></path>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </header>
+        <main class="flex-1 px-4 py-12 sm:px-6 lg:px-8">
+          <div
+            class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg"
+          >
+            <div class="flex flex-col justify-center">
+              <h1 class="text-4xl font-bold text-zinc-900 tracking-tight">
+                Get in Touch!
+              </h1>
+              <p class="mt-4 text-lg text-gray-600">
+                We're here to help! Whether you have a question about our
+                products, need assistance with an order, or just want to share
+                your thoughts, we'd love to hear from you.
+              </p>
+              <div class="mt-8">
+                <h3 class="text-xl font-semibold text-zinc-900">
+                  Contact Information
+                </h3>
+                <p class="mt-3 text-base text-gray-600">
+                  For immediate assistance, reach us at:<br />
+                  <a
+                    class="text-[var(--primary-600)] font-medium hover:underline"
+                    href="mailto:support@threegirlsandawick.com"
+                    >support@threegirlsandawick.com</a
+                  >
+                </p>
+                <p class="mt-2 text-base text-gray-600">
+                  We aim to respond within 24-48 hours.
+                </p>
+              </div>
+              <div class="mt-8">
+                <h3 class="text-xl font-semibold text-zinc-900">Follow Us</h3>
+                <div class="mt-4 flex space-x-6">
+                  <a
+                    class="text-gray-500 hover:text-[var(--primary-600)] transition-colors"
+                    href="#"
+                  >
+                    <span class="sr-only">Instagram</span>
+                    <svg
+                      class="h-7 w-7"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"
+                      ></path>
+                    </svg>
+                  </a>
+                  <a
+                    class="text-gray-500 hover:text-[var(--primary-600)] transition-colors"
+                    href="#"
+                  >
+                    <span class="sr-only">Facebook</span>
+                    <svg
+                      class="h-7 w-7"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"
+                      ></path>
+                    </svg>
+                  </a>
+                  <a
+                    class="text-gray-500 hover:text-[var(--primary-600)] transition-colors"
+                    href="#"
+                  >
+                    <span class="sr-only">Twitter</span>
+                    <svg
+                      class="h-7 w-7"
+                      fill="currentColor"
+                      viewBox="0 0 256 256"
+                    >
+                      <path
+                        d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Zm-45,29.41a8,8,0,0,0-2.32,5.14C196,166.58,143.28,216,80,216c-10.56,0-18-1.4-23.22-3.08,11.51-6.25,27.56-17,37.88-32.48A8,8,0,0,0,92,169.08c-.47-.27-43.91-26.34-44-96,16,13,45.25,33.17,78.67,38.79A8,8,0,0,0,136,104V88a32,32,0,0,1,9.6-22.92A30.94,30.94,0,0,1,167.9,56c12.66.16,24.49,7.88,29.44,19.21A8,8,0,0,0,204.67,80h16Z"
+                      ></path>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div
+              class="bg-white p-8 rounded-xl shadow-inner border border-gray-100"
+            >
+              <form action="#" class="space-y-6" method="POST">
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700"
+                    for="name"
+                    >Name</label
+                  >
+                  <div class="mt-1">
+                    <input
+                      autocomplete="name"
+                      class="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
+                      id="name"
+                      name="name"
+                      placeholder="Your Name"
+                      type="text"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700"
+                    for="email"
+                    >Email</label
+                  >
+                  <div class="mt-1">
+                    <input
+                      autocomplete="email"
+                      class="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
+                      id="email"
+                      name="email"
+                      placeholder="you@example.com"
+                      type="email"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700"
+                    for="subject"
+                    >Subject</label
+                  >
+                  <div class="mt-1">
+                    <input
+                      class="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
+                      id="subject"
+                      name="subject"
+                      placeholder="How can we help?"
+                      type="text"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    class="block text-sm font-medium text-gray-700"
+                    for="message"
+                    >Message</label
+                  >
+                  <div class="mt-1">
+                    <textarea
+                      class="form-textarea block w-full rounded-2xl border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm p-4"
+                      id="message"
+                      name="message"
+                      placeholder="Your message..."
+                      rows="4"
+                    ></textarea>
+                  </div>
+                </div>
+                <div class="flex justify-end">
+                  <button
+                    class="inline-flex justify-center rounded-full border border-transparent bg-[var(--primary-500)] py-3 px-8 text-base font-bold text-white shadow-sm hover:bg-[var(--primary-600)] focus:outline-none focus:ring-2 focus:ring-[var(--primary-500)] focus:ring-offset-2 transition-all"
+                    type="submit"
+                  >
+                    Send Message
+                  </button>
+                </div>
+                <div class="text-center">
+                  <p class="text-sm text-gray-500">
+                    Thank you for reaching out!
+                  </p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

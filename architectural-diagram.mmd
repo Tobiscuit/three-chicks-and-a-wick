@@ -1,0 +1,137 @@
+mermaid```
+
+graph TD
+
+    %% --- Core Definitions with Numbered Flow ---
+
+
+
+    User[👩‍💻 Customer] -- "(1) Visits Site" --> DNS["🌐 AWS Route 53
+
+    three-girls-and-a-wick.com"]
+
+
+
+    Client[👩‍💼 Client/Store Owner] -- "Manages Store" --> AdminPanel["🔒 Shopify Admin
+
+    manages products & orders"]
+
+
+
+    DNS -- "(2) Directs Traffic" --> CDN["⚡️ AWS CloudFront
+
+    Global CDN"]
+
+
+
+    CDN -- "(3) Serves Website" --> Frontend["💻 Next.js App
+
+    on AWS Amplify"]
+
+
+
+    %% --- Backend and API Connections ---
+
+
+
+    Frontend -- "(4) Fetches Products" --> CMS["📦 Headless CMS
+
+    Shopify Products & Orders"]
+
+
+
+    Frontend -- "(5) Handles Login/Sign-Up" --> CustomerAccounts["👤 Shopify Customer Accounts
+
+    Login & Order History"]
+
+   
+
+    Frontend -- "(6) Processes Checkout" --> Payment["💳 Payment Gateway
+
+    Shopify Payments (Stripe)"]
+
+
+
+    AdminPanel -- "Updates Products & Orders" --> CMS
+
+    CMS -- "Triggers Site Rebuild" --> Frontend
+
+    CustomerAccounts -- "Links to Orders" --> CMS
+
+
+
+
+
+    %% --- Logical Grouping ---
+
+
+
+    subgraph "Customer Experience"
+
+        User
+
+        DNS
+
+        CDN
+
+        Frontend
+
+    end
+
+
+
+    subgraph "Business Operations"
+
+        Client
+
+        AdminPanel
+
+    end
+
+
+
+    subgraph "Backend Services (Headless)"
+
+        CMS
+
+        Payment
+
+        CustomerAccounts
+
+    end
+
+   
+
+    subgraph "Legend"
+
+        direction LR
+
+        Legend_User["Actors (People)"]
+
+        Legend_AWS["AWS Services (Infrastructure)"]
+
+        Legend_Shopify["Shopify Services (Business Tools)"]
+
+    end
+
+
+
+    %% --- Styling ---
+
+
+
+    classDef aws fill:#FF9900,stroke:#333,stroke-width:2px,color:#000
+
+    classDef shopify fill:#96BF48,stroke:#333,stroke-width:2px,color:#000
+
+    classDef user fill:#ECECEC,stroke:#333,stroke-width:2px,color:#000
+
+
+
+    class User,Client,Legend_User user
+
+    class DNS,CDN,Frontend,Legend_AWS aws
+
+    class AdminPanel,CMS,Payment,CustomerAccounts,Legend_Shopify shopify
+
+```
