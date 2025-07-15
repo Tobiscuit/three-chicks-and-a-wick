@@ -3,6 +3,12 @@ import Link from 'next/link';
 import { Instagram, Facebook, Twitter } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import { Playfair_Display } from 'next/font/google';
+
+const playfairDisplay = Playfair_Display({
+  subsets: ['latin'],
+  variable: '--font-playfair-display',
+});
 
 const makers = [
   {
@@ -24,18 +30,14 @@ const makers = [
 
 export default function AboutUsPage() {
   return (
-    <div className="bg-[var(--background-color)] text-[var(--text-primary)]">
-       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap');
-        .playfair-display {
-          font-family: 'Playfair Display', serif;
-        }
-      `}</style>
+    <div
+      className={`${playfairDisplay.variable} bg-[var(--background-color)] text-[var(--text-primary)]`}
+    >
       <Header />
       <main className="flex-1">
         <section className="text-center py-20 lg:py-32 bg-[var(--secondary-color)]">
           <div className="container mx-auto px-4">
-            <h2 className="playfair-display text-4xl md:text-6xl font-bold mb-4">
+            <h2 className="font-serif text-4xl md:text-6xl font-bold mb-4">
               Our Story
             </h2>
             <p className="max-w-3xl mx-auto text-lg leading-relaxed text-[var(--text-secondary)]">
@@ -52,12 +54,12 @@ export default function AboutUsPage() {
                 <Image
                   src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBqM7bZW14eyo8-Hv7BRwrFH77ZwmI37cbA8l21g0m3G7R1Khkclvg3A10axM0ylV8PwLLGxIXw0IY-ORq5rE8beyiv9aE8DHhK6FEtGNxHoTS-4fRXhVSZLUi0a7SOtFs6l2iqrmybwaVd0RCWbo1MmKIefPC8N2Ek3rB4STh-JmRBim66Z22xviNyouYq4M2lAuFS4xT5cvUMRZh1SDGSPrU1qxzmG5OV0VMKQilWVfibK-XbVci0CdhUdiTMK6qNLkFNCcBsg"
                   alt="Three friends crafting candles together"
-                  layout="fill"
-                  objectFit="cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
               <div>
-                <h3 className="playfair-display text-3xl font-bold mb-4">
+                <h3 className="font-serif text-3xl font-bold mb-4">
                   From a Dream to a Wick
                 </h3>
                 <p className="text-base leading-loose mb-6">
@@ -72,7 +74,7 @@ export default function AboutUsPage() {
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left">
                   <div>
-                    <h4 className="playfair-display text-xl font-bold mb-2">
+                    <h4 className="font-serif text-xl font-bold mb-2">
                       Our Mission
                     </h4>
                     <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -82,7 +84,7 @@ export default function AboutUsPage() {
                     </p>
                   </div>
                   <div>
-                    <h4 className="playfair-display text-xl font-bold mb-2">
+                    <h4 className="font-serif text-xl font-bold mb-2">
                       Our Values
                     </h4>
                     <p className="text-sm leading-relaxed text-[var(--text-secondary)]">
@@ -98,7 +100,7 @@ export default function AboutUsPage() {
 
         <section className="py-16 lg:py-24 bg-white">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="playfair-display text-3xl md:text-4xl font-bold mb-12">
+            <h2 className="font-serif text-3xl md:text-4xl font-bold mb-12">
               Meet the Makers
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -118,7 +120,7 @@ export default function AboutUsPage() {
                       />
                     </div>
                   </div>
-                  <h3 className="playfair-display text-xl font-bold">{maker.name}</h3>
+                  <h3 className="font-serif text-xl font-bold">{maker.name}</h3>
                   <p className="text-[var(--text-secondary)] text-sm font-medium">
                     {maker.role}
                   </p>
@@ -131,7 +133,7 @@ export default function AboutUsPage() {
         <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4">
             <div className="text-center">
-                <h2 className="playfair-display text-3xl md:text-4xl font-bold mb-4">Join Our Community</h2>
+                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-4">Join Our Community</h2>
                 <p className="max-w-2xl mx-auto text-lg text-[var(--text-secondary)] mb-8">
                     Follow our journey and be the first to know about new scents, special offers, and behind-the-scenes moments.
                 </p>
