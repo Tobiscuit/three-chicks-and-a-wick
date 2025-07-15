@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Star } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ProductCard from '@/components/ProductCard';
 
 const product = {
   name: 'Lavender Bliss Candle',
@@ -161,7 +162,7 @@ const ProductInfo = () => (
     <p className="text-3xl font-bold text-[var(--primary-900)]">
       {product.price}
     </p>
-    <button className="flex w-full max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[var(--primary-500)] px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105">
+    <button className="flex w-full max-w-xs cursor-pointer items-center justify-center overflow-hidden rounded-full bg-[var(--primary)] px-8 py-4 text-lg font-bold text-white shadow-lg transition-transform duration-300 ease-in-out hover:scale-105">
       <span className="truncate">Add to My Box of Joy</span>
     </button>
   </div>
@@ -244,24 +245,15 @@ const RelatedProducts = () => (
         <h3 className="text-3xl font-bold tracking-tight text-[var(--neutral-1000)] mb-8">
             You Might Also Like
         </h3>
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
             {product.relatedProducts.map((related) => (
-                <div key={related.id} className="group">
-                    <div className="aspect-square w-full overflow-hidden rounded-xl bg-gray-200 shadow-md transition-all duration-300 group-hover:shadow-xl group-hover:-translate-y-1">
-                        <Image src={related.imageSrc} alt={related.name} width={400} height={400} className="h-full w-full object-cover object-center" />
-                    </div>
-                    <div className="mt-4 text-left">
-                        <h4 className="text-lg font-bold text-[var(--neutral-900)]">
-                            <Link href="/product-details">
-                                <span className="absolute inset-0"></span>
-                                {related.name}
-                            </Link>
-                        </h4>
-                        <p className="mt-1 text-md font-medium text-[var(--primary-800)]">
-                            {related.price}
-                        </p>
-                    </div>
-                </div>
+                <ProductCard
+                    key={related.id}
+                    href="#"
+                    imageUrl={related.imageSrc}
+                    name={related.name}
+                    price={related.price}
+                />
             ))}
         </div>
     </div>
