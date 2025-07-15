@@ -66,6 +66,14 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
         close={() => setOpen(false)}
         slides={slides}
         index={index}
+        styles={{
+          container: {
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          },
+          slide: {
+            borderRadius: '0.75rem',
+          },
+        }}
       />
     </>
   );
