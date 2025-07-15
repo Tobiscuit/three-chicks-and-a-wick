@@ -2,6 +2,28 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
+import ProductCard from '@/components/ProductCard';
+
+const featuredProducts = [
+  {
+    href: '/product-details',
+    imageUrl: '/images/placeholders/product-1.png',
+    name: 'Lavender Bliss Candle',
+    price: '$18.00',
+  },
+  {
+    href: '/product-details',
+    imageUrl: '/images/placeholders/product-2.png',
+    name: 'Ocean Breeze Candle',
+    price: '$18.00',
+  },
+  {
+    href: '/product-details',
+    imageUrl: '/images/placeholders/product-3.png',
+    name: 'Vanilla Bean Candle',
+    price: '$18.00',
+  },
+];
 
 export default function Home() {
   return (
@@ -113,73 +135,10 @@ export default function Home() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-16 grid grid-cols-1 gap-y-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
-              <div className="group relative">
-                <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-          <Image
-                    src="/images/placeholders/product-1.png"
-                    alt="Lavender Bliss Candle"
-                    width={400}
-                    height={400}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-                <div className="mt-6 text-center">
-                  <h3 className="text-xl font-bold text-[var(--neutral-dark)]">
-                    <Link href="/product-details">
-                      <span className="absolute inset-0"></span>
-                      Lavender Bliss Candle
-                    </Link>
-                  </h3>
-                  <p className="mt-1 text-lg font-medium text-[var(--neutral-dark)]/90">
-                    $18.00
-                  </p>
-                </div>
-              </div>
-              <div className="group relative">
-                <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-          <Image
-                    src="/images/placeholders/product-2.png"
-                    alt="Ocean Breeze Candle"
-                    width={400}
-                    height={400}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-                <div className="mt-6 text-center">
-                  <h3 className="text-xl font-bold text-[var(--neutral-dark)]">
-                    <Link href="/product-details">
-                      <span className="absolute inset-0"></span>
-                      Ocean Breeze Candle
-                    </Link>
-                  </h3>
-                  <p className="mt-1 text-lg font-medium text-[var(--neutral-dark)]/90">
-                    $18.00
-                  </p>
-                </div>
-              </div>
-              <div className="group relative">
-                <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-          <Image
-                    src="/images/placeholders/product-3.png"
-                    alt="Vanilla Bean Candle"
-                    width={400}
-                    height={400}
-                    className="h-full w-full object-cover object-center"
-                  />
-                </div>
-                <div className="mt-6 text-center">
-                  <h3 className="text-xl font-bold text-[var(--neutral-dark)]">
-                    <Link href="/product-details">
-                      <span className="absolute inset-0"></span>
-                      Vanilla Bean Candle
-                    </Link>
-                  </h3>
-                  <p className="mt-1 text-lg font-medium text-[var(--neutral-dark)]/90">
-                    $18.00
-                  </p>
-                </div>
-              </div>
+            <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.name} {...product} />
+              ))}
             </div>
             <div className="mt-16 text-center">
               <Link className="btn-secondary" href="/product-listings">
