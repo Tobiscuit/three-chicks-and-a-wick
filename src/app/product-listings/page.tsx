@@ -1,14 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  ChevronDown,
-  Heart,
-  Search,
-  ShoppingCart,
-  Star,
-} from 'lucide-react';
+import { ChevronDown, Star } from 'lucide-react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
+import ProductCard from '@/components/ProductCard';
 
 // Placeholder data for products
 const products = [
@@ -86,79 +81,39 @@ const products = [
   },
 ];
 
-const ProductCard = ({ product }: { product: (typeof products)[0] }) => (
-  <div className="product-card group">
-    <Link href="/product-details" className="block w-full overflow-hidden">
-      <Image
-        src={product.imageSrc}
-        alt={product.name}
-        width={400}
-        height={400}
-        className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-110"
-      />
-    </Link>
-    <div className="p-4">
-      <h3 className="text-lg font-bold text-[var(--neutral-dark)]">
-        <Link href="/product-details">{product.name}</Link>
-      </h3>
-      <p className="mt-1 text-md font-medium text-[var(--neutral-dark)]/90">
-        {product.price}
-      </p>
-      <div className="mt-2 flex items-center">
-        <div className="flex items-center">
-          {[...Array(5)].map((_, i) => (
-            <Star
-              key={i}
-              className={`h-5 w-5 ${
-                i < Math.round(product.rating)
-                  ? 'text-yellow-400'
-                  : 'text-gray-300'
-              }`}
-              fill="currentColor"
-            />
-          ))}
-        </div>
-        <span className="ml-2 text-sm text-gray-500">
-          ({product.reviewCount})
-        </span>
-      </div>
-    </div>
-  </div>
-);
-
 const FilterSort = () => (
-  <div className="bg-[var(--white)] rounded-xl shadow-md p-4 mb-8 flex flex-wrap items-center justify-between gap-4">
-    <div className="flex items-center gap-4 flex-wrap">
-      <span className="font-bold">Filter by:</span>
+  <div className="mb-8 rounded-xl border border-gray-200/80 bg-[var(--white)] p-6 shadow-md flex flex-wrap items-center justify-between gap-6">
+    <div className="flex flex-wrap items-center gap-4">
+      <span className="text-lg font-bold text-[var(--neutral-dark)]">Filter by:</span>
       <div className="relative">
-        <select className="appearance-none rounded-full py-2 pl-4 pr-10 border border-gray-300 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent">
+        <select className="appearance-none rounded-lg border border-gray-300 bg-gray-50 py-3 pl-5 pr-12 text-base font-medium text-[var(--neutral-dark)] transition-colors hover:bg-gray-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
           <option>Category</option>
           <option>Candles</option>
           <option>Crafts</option>
           <option>Kits</option>
         </select>
-        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-5 pr-2 text-gray-700" />
+        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-6 pr-3 text-gray-700" />
       </div>
       <div className="relative">
-        <select className="appearance-none rounded-full py-2 pl-4 pr-10 border border-gray-300 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent">
+        <select className="appearance-none rounded-lg border border-gray-300 bg-gray-50 py-3 pl-5 pr-12 text-base font-medium text-[var(--neutral-dark)] transition-colors hover:bg-gray-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
           <option>Price Range</option>
           <option>$0 - $15</option>
           <option>$15 - $25</option>
           <option>$25+</option>
         </select>
-        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-5 pr-2 text-gray-700" />
+        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-6 pr-3 text-gray-700" />
       </div>
     </div>
     <div className="flex items-center gap-4">
-      <span className="font-bold">Sort by:</span>
+      <span className="text-lg font-bold text-[var(--neutral-dark)]">Sort by:</span>
       <div className="relative">
-        <select className="appearance-none rounded-full py-2 pl-4 pr-10 border border-gray-300 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent">
+        <select className="appearance-none rounded-lg border border-gray-300 bg-gray-50 py-3 pl-5 pr-12 text-base font-medium text-[var(--neutral-dark)] transition-colors hover:bg-gray-100 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-[var(--primary)]">
           <option>Popularity</option>
           <option>New Arrivals</option>
           <option>Price: Low to High</option>
           <option>Price: High to Low</option>
         </select>
-        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-5 pr-2 text-gray-700" />
+        <ChevronDown className="pointer-events-none absolute inset-y-0 right-0 h-full w-6 pr-3 text-gray-700" />
       </div>
     </div>
   </div>
@@ -215,7 +170,13 @@ export default function ProductListings() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
           {products.map((product) => (
-            <ProductCard key={product.id} product={product} />
+            <ProductCard
+              key={product.id}
+              href="/product-details"
+              imageUrl={product.imageSrc}
+              name={product.name}
+              price={product.price}
+            />
           ))}
         </div>
 

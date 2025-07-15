@@ -32,3 +32,28 @@ h5,
 h6 {
   font-family: 'Nunito', sans-serif;
 }
+
+@media (min-width: 768px) {
+  .yarl__root .yarl__navigation_prev {
+    left: 0.5rem !important;
+  }
+  .yarl__root .yarl__navigation_next {
+    right: 0.5rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .yarl__navigation_prev,
+  .yarl__navigation_next {
+    background-color: transparent !important;
+  }
+}
+
+.yarl__button {
+  margin: 0;
+}
+
+.yarl__navigation_prev,
+.yarl__navigation_next {
+  margin: 0.5rem;
+}

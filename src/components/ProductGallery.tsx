@@ -70,6 +70,14 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
           container: {
             backgroundColor: 'rgba(24, 24, 27, 0.9)',
           },
+          button: {
+            filter: 'none',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            borderRadius: '0.5rem',
+          },
+        }}
+        controller={{
+          closeOnBackdropClick: true,
         }}
         carousel={{
           padding: '60px',
