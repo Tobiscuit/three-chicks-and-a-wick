@@ -70,12 +70,14 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
           container: {
             backgroundColor: 'rgba(24, 24, 27, 0.9)',
           },
-          slide: {
-            borderRadius: '0.75rem',
-          },
         }}
         carousel={{
           padding: '60px',
+          imageProps: {
+            style: {
+              borderRadius: '0.75rem',
+            },
+          },
         }}
       />
     </>

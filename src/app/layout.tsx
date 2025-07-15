@@ -30,6 +30,7 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${nunito.variable} ${poppins.variable} antialiased`}
+        suppressHydrationWarning={true}
       >
         {children}
       </body>
