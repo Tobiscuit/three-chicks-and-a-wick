@@ -21,7 +21,7 @@ const newProduct = {
   product: {
     title: "Enchanted Forest Candle",
     body_html: "<strong>A delightful candle with notes of pine, cedar, and a hint of magic.</strong>",
-    vendor: "Three Girls and a Wick",
+    vendor: "Three Chicks and a Wick",
     product_type: "Scented Candle",
     tags: ["candle", "enchanted forest", "pine"],
     variants: [

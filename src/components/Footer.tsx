@@ -4,9 +4,9 @@ export default function Footer() {
   return (
     <footer className="border-t border-[var(--neutral-dark)]/10 bg-[var(--neutral-light)] py-12">
       <div className="container mx-auto px-6">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+        <div className="grid grid-cols-1 justify-items-center gap-8 md:grid-cols-4 md:justify-items-start">
           <div>
-            <h3 className="text-lg font-bold">Three Girls and a Wick</h3>
+            <h3 className="text-lg font-bold">Three Chicks and a Wick</h3>
             <p className="mt-2 text-sm text-[var(--neutral-dark)]/70">
               Handmade with love and a little bit of magic.
             </p>
@@ -113,7 +113,7 @@ export default function Footer() {
         </div>
         <div className="mt-12 border-t border-[var(--neutral-dark)]/10 pt-8 text-center text-sm text-[var(--neutral-dark)]/70">
           <p>
-            © 2024 Three Girls and a Wick. All Rights Reserved.
+            © 2024 Three Chicks and a Wick. All Rights Reserved.
           </p>
         </div>
       </div>

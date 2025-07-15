@@ -63,7 +63,7 @@ export default function AboutUsPage() {
                   From a Dream to a Wick
                 </h3>
                 <p className="text-base leading-loose mb-6">
-                  Three Girls and a Wick was born from a shared love for
+                  Three Chicks and a Wick was born from a shared love for
                   crafting and a desire to create something beautiful and
                   meaningful. Founded by three friends, Sarah, Emily, and
                   Chloe, our journey began in a small workshop filled with

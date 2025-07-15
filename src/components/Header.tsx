@@ -17,7 +17,7 @@ export default function Header() {
             ></path>
           </svg>
           <h2 className="text-2xl font-black tracking-tighter text-[var(--neutral-dark)]">
-            Three Girls and a Wick
+            Three Chicks and a Wick
           </h2>
         </Link>
         <nav className="hidden items-center gap-8 md:flex">

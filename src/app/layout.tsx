@@ -17,8 +17,8 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Three Girls and a Wick",
-  description: "Handmade candles and crafts.",
+  title: 'Three Chicks and a Wick',
+  description: 'Handmade candles and crafts.',
 };
 
 export default function RootLayout({
