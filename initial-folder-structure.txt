@@ -1,0 +1,26 @@
+/three-girls-and-a-wick-store
+├── .next/                  # Next.js build output (auto-generated)
+├── amplify/                # AWS Amplify backend definitions (auto-generated)
+├── app/                    # ✅ NEXT.JS APP ROUTER
+│   ├── (main)/             # Route group for main store pages
+│   │   ├── products/
+│   │   │   └── [handle]/   # Dynamic route for a single product page
+│   │   │       └── page.tsx
+│   │   ├── page.tsx        # Homepage
+│   │   └── layout.tsx      # Main layout (e.g., with Navbar and Footer)
+│   ├── api/                # API routes (e.g., for handling Shopify webhooks)
+│   └── layout.tsx          # Root layout of the entire application
+├── components/             # ✅ YOUR REACT COMPONENTS
+│   ├── ui/                 # UI primitives from shadcn/ui (Button, Card, etc.)
+│   └── shared/             # Reusable, complex components (Navbar, Footer, ProductGrid)
+├── lib/                    # ✅ CORE LOGIC & UTILITIES
+│   ├── shopify/            # All Shopify-related logic
+│   │   ├── index.ts        # Client initialization & main functions (getProducts, etc.)
+│   │   └── types.ts        # TypeScript types for Shopify data
+│   └── utils.ts            # General utility functions (e.g., formatPrice)
+├── public/                 # Static assets (images, fonts, etc.)
+├── .env.local              # 🔒 Environment variables (SHOPIFY_STORE_DOMAIN, SHOPIFY_STOREFRONT_TOKEN)
+├── .gitignore
+├── next.config.mjs
+├── package.json
+└── tsconfig.json

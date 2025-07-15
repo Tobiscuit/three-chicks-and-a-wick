@@ -82,7 +82,7 @@ export default function Home() {
                 <p className="text-[var(--neutral-dark)]/80">
                   Unique handmade items to adorn your life.
                 </p>
-              </div>
+        </div>
               <div className="flex flex-col items-center gap-4 rounded-3xl bg-[var(--white)] p-8 text-center shadow-lg transition-transform duration-300 hover:-translate-y-2">
                 <div className="rounded-full bg-[var(--accent)]/20 p-4 text-[var(--accent)]">
                   <svg
@@ -116,7 +116,7 @@ export default function Home() {
             <div className="mt-16 grid grid-cols-1 gap-y-16 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
               <div className="group relative">
                 <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-                  <Image
+          <Image
                     src="/images/placeholders/product-1.png"
                     alt="Lavender Bliss Candle"
                     width={400}
@@ -138,7 +138,7 @@ export default function Home() {
               </div>
               <div className="group relative">
                 <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-                  <Image
+          <Image
                     src="/images/placeholders/product-2.png"
                     alt="Ocean Breeze Candle"
                     width={400}
@@ -160,7 +160,7 @@ export default function Home() {
               </div>
               <div className="group relative">
                 <div className="aspect-square w-full overflow-hidden rounded-3xl bg-gray-200 transition-all duration-300 group-hover:shadow-2xl">
-                  <Image
+          <Image
                     src="/images/placeholders/product-3.png"
                     alt="Vanilla Bean Candle"
                     width={400}
