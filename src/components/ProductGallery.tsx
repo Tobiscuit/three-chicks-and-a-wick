@@ -68,11 +68,14 @@ export default function ProductGallery({ images }: ProductGalleryProps) {
         index={index}
         styles={{
           container: {
-            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            backgroundColor: 'rgba(24, 24, 27, 0.9)',
           },
           slide: {
             borderRadius: '0.75rem',
           },
+        }}
+        carousel={{
+          padding: '60px',
         }}
       />
     </>
