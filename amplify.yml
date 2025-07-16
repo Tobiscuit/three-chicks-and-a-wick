@@ -20,6 +20,5 @@ backend:
     build:
       commands:
         - npm install --prefix amplify
-        - export PATH=$(npm bin --prefix amplify):$PATH
-        - ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+        - amplify/node_modules/.bin/ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
   nodejs: 20 
