@@ -23,6 +23,9 @@
     "tailwindcss-animate": "^1.0.7",
     "yet-another-react-lightbox": "^3.24.0"
   },
+  "resolutions": {
+    "@aws-amplify/backend-cli": "1.8.0"
+  },
   "devDependencies": {
     "@aws-amplify/backend": "^1.16.1",
     "@aws-amplify/backend-cli": "^1.8.0",
