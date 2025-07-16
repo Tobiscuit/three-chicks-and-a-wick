@@ -1,0 +1,17 @@
+{
+  "name": "three-girls-and-a-wick-backend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@aws-amplify/backend": "^1.0.0",
+    "@aws-amplify/backend-cli": "^1.0.1",
+    "aws-cdk": "^2.134.0",
+    "aws-cdk-lib": "^2.134.0",
+    "constructs": "^10.3.0",
+    "typescript": "^5.3.3"
+  }
+} 
