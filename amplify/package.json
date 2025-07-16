@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "ampx pipeline-deploy"
   },
   "dependencies": {
     "@aws-amplify/backend": "^1.0.0",
