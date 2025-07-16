@@ -115,7 +115,7 @@ export default function Footer() {
             </div>
           </div>
           <div className="mt-12 border-t border-[var(--neutral-dark)]/10 pt-8 text-center text-sm text-[var(--neutral-dark)]/70">
-            <p>© 2024 Three Chicks and a Wick. All Rights Reserved.</p>
+            <p>© 2025 Three Chicks and a Wick. All Rights Reserved.</p>
           </div>
         </div>
       </footer>
