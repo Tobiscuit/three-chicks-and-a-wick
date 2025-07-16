@@ -19,6 +19,5 @@ backend:
   phases:
     build:
       commands:
-        - cd amplify
-        - npm install
+        - npm install --prefix amplify
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID 
