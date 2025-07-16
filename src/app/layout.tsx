@@ -28,7 +28,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body suppressHydrationWarning>
+      <body
+        className={`${nunito.variable} ${poppins.variable}`}
+        suppressHydrationWarning
+      >
         {children}
       </body>
     </html>
