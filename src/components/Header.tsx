@@ -17,7 +17,7 @@ const navLinks = [
 
 function MobileNav() {
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="ghost" size="icon">
@@ -45,7 +45,7 @@ function MobileNav() {
 
 function DesktopNav() {
   return (
-    <nav className="hidden items-center gap-8 md:flex">
+    <nav className="hidden items-center gap-8 lg:flex">
       {navLinks.map(link => (
         <Link
           key={link.href + link.label}
@@ -72,11 +72,11 @@ export default function Header() {
             height={100}
             className="h-16 w-16"
           />
-          <h2 className="text-xl font-black tracking-tighter text-[var(--neutral-dark)] md:text-2xl">
+          <h2 className="text-xl font-black tracking-tighter text-[var(--neutral-dark)] lg:text-2xl">
             Three Chicks and a Wick
           </h2>
         </Link>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-8">
             <DesktopNav />
             <div className="flex items-center gap-4">
             <Link

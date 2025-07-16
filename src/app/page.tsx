@@ -3,6 +3,8 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
+import NewsletterSignup from '@/components/NewsletterSignup';
+import { Button } from '@/components/ui/button';
 
 const featuredProducts = [
   {
@@ -30,9 +32,9 @@ export default function Home() {
     <div className="relative flex size-full min-h-screen flex-col overflow-x-hidden">
       <Header />
       <main className="flex-grow">
-        <section className="relative py-20 sm:py-32">
-          <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-2">
-            <div className="z-10 text-center lg:text-left">
+        <section className="relative pt-12 pb-20 sm:pt-16 sm:pb-32">
+          <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
+            <div className="z-10 text-center lg:col-span-2 lg:text-left">
               <h1 className="text-5xl font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
@@ -41,14 +43,11 @@ export default function Home() {
                 designed to brighten your day and add a touch of whimsy to your
                 home.
               </p>
-              <Link
-                className="btn-primary mt-8 inline-block"
-                href="/product-listings"
-              >
-                Explore Our Collection
-              </Link>
+              <Button asChild className="mt-8" size="lg">
+                <Link href="/product-listings">Explore Our Collection</Link>
+              </Button>
             </div>
-            <div className="relative h-96">
+            <Link href="/product-listings" className="relative h-96 lg:col-span-3">
               <div
                 className="absolute left-0 top-0 h-full w-full rounded-3xl bg-cover bg-center transition-transform duration-500 hover:scale-105"
                 style={{
@@ -56,7 +55,7 @@ export default function Home() {
                     "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBaA6uZZe4HAGz8dOly6GoT4VXFlbpLgRWgT5OK675nTzSRQGw_OMc69UYKOTq0G5ym52lkqMzzoOx6w5uYPMME3qMGbgFhRQS-BkGXTKsVv29U_HvedMXh6Ov-4BEaNjdq59P3xLtm7JnlOwPVY3XZRf-D6r1pMddvW3Ua3jExeNoHK_07Ka7GutgKov0-_uKA6F97CDtvM3a6s5kllCgh9bqBIo3aEnZVnGPKGS3hOBGxLchy04qOBKKxUN9dYSbmexQKSN-aEw')",
                 }}
               ></div>
-            </div>
+            </Link>
           </div>
         </section>
         <section className="py-20 sm:py-24">
