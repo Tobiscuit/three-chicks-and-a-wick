@@ -18,20 +18,17 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: 'Three Chicks and a Wick',
-  description: 'Handmade candles and crafts.',
+  description: 'Handcrafted candles and crafts',
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-        className={`${nunito.variable} ${poppins.variable} antialiased`}
-        suppressHydrationWarning={true}
-      >
+      <body suppressHydrationWarning>
         {children}
       </body>
     </html>

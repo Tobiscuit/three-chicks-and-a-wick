@@ -1,22 +1,19 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-[var(--neutral-light)]/80 backdrop-blur-sm">
       <div className="container mx-auto flex items-center justify-between px-6 py-4">
         <Link className="flex items-center gap-3" href="/">
-          <svg
-            className="h-8 w-8 text-[var(--primary)]"
-            fill="none"
-            viewBox="0 0 48 48"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M24 4C13.5 4 4.8 12.1 4 22.2C3.2 32.3 10.2 41.4 19.8 43.5c1.1.2 1.5-.5 1.5-1.1v-4c-4.5.9-5.4-1.9-5.4-1.9-1-2.5-2.4-3.2-2.4-3.2-1.9-1.3.1-1.3.1-1.3 2.1.1 3.2 2.1 3.2 2.1 1.9 3.2 4.9 2.3 6.1 1.8.2-1.4.7-2.3 1.3-2.8-4.6-.5-9.5-2.3-9.5-10.3 0-2.3.8-4.1 2.1-5.6-.2-.5-.9-2.6.2-5.5 0 0 1.7-.5 5.7 2.1 1.6-.4 3.4-.7 5.1-.7s3.5.2 5.1.7c4-2.7 5.7-2.1 5.7-2.1 1.1 2.9.4 5 .2 5.5 1.3 1.5 2.1 3.3 2.1 5.6 0 8.1-4.8 9.8-9.5 10.3.8.7 1.5 2 1.5 4v5.9c0 .6.4 1.3 1.5 1.1C37.8 41.4 44.8 32.3 44 22.2 43.2 12.1 34.5 4 24 4z"
-              fill="currentColor"
-            ></path>
-          </svg>
-          <h2 className="text-2xl font-black tracking-tighter text-[var(--neutral-dark)]">
+          <Image
+            src="/images/3C&AW.svg"
+            alt="Three Chicks and a Wick logo"
+            width={100}
+            height={100}
+            className="h-16 w-16"
+          />
+          <h2 className="text-xl font-black tracking-tighter text-[var(--neutral-dark)] md:text-2xl">
             Three Chicks and a Wick
           </h2>
         </Link>

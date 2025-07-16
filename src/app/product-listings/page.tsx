@@ -4,6 +4,7 @@ import { ChevronDown, Star } from 'lucide-react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
+import { FilterSheet } from '@/components/FilterSheet';
 
 // Placeholder data for products
 const products = [
@@ -81,8 +82,8 @@ const products = [
   },
 ];
 
-const FilterSort = () => (
-  <div className="mb-8 rounded-xl border border-gray-200/80 bg-[var(--white)] p-6 shadow-md flex flex-wrap items-center justify-between gap-6">
+const DesktopFilterSort = () => (
+  <div className="mb-8 hidden rounded-xl border border-gray-200/80 bg-[var(--white)] p-6 shadow-md md:flex md:flex-wrap md:items-center md:justify-between md:gap-6">
     <div className="flex flex-wrap items-center gap-4">
       <span className="text-lg font-bold text-[var(--neutral-dark)]">Filter by:</span>
       <div className="relative">
@@ -120,11 +121,14 @@ const FilterSort = () => (
 );
 
 const Pagination = () => (
-  <div className="flex items-center justify-center gap-4 mt-12">
-    <button className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 disabled:opacity-50" disabled>
+  <div className="mt-12 flex items-center justify-center gap-4">
+    <button
+      className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-100 disabled:opacity-50"
+      disabled
+    >
       Previous
     </button>
-    <div className="flex items-center gap-2">
+    <div className="hidden items-center gap-2 sm:flex">
       {[1, 2, 3, '...', 8].map((page, index) => (
         <button
           key={index}
@@ -149,7 +153,7 @@ export default function ProductListings() {
   return (
     <div className="flex min-h-screen flex-col text-[var(--neutral-dark)]">
       <Header />
-      <main className="flex-grow container mx-auto px-6 py-8">
+      <main className="container mx-auto flex-grow px-6 pt-6">
         <div className="mb-6">
           <nav className="text-sm font-medium text-[var(--neutral-dark)] opacity-70">
             <Link className="hover:text-[var(--primary)]" href="/">Home</Link>
@@ -157,31 +161,36 @@ export default function ProductListings() {
             <span>Candles &amp; Crafts</span>
           </nav>
         </div>
-        <div className="text-center mb-8">
-          <h2 className="text-5xl font-black text-[var(--neutral-dark)]">
-            All Products
-          </h2>
-          <p className="mt-2 text-lg text-[var(--neutral-dark)] opacity-80">
-            Find your next favorite scent or craft project!
-          </p>
-        </div>
-        
-        <FilterSort />
+        <div className="py-12">
+          <div className="text-center mb-8">
+            <h2 className="text-5xl font-black text-[var(--neutral-dark)]">
+              All Products
+            </h2>
+            <p className="mt-2 text-lg text-[var(--neutral-dark)] opacity-80">
+              Find your next favorite scent or craft project!
+            </p>
+          </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              href="/product-details"
-              imageUrl={product.imageSrc}
-              name={product.name}
-              price={product.price}
-            />
-          ))}
-        </div>
+          {/* Mobile Filter Sheet */}
+          <FilterSheet />
 
-        <Pagination />
-        
+          {/* Desktop Filter Controls */}
+          <DesktopFilterSort />
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 md:gap-8 lg:grid-cols-4">
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                href="/product-details"
+                imageUrl={product.imageSrc}
+                name={product.name}
+                price={product.price}
+              />
+            ))}
+          </div>
+
+          <Pagination />
+        </div>
       </main>
       <Footer />
     </div>
