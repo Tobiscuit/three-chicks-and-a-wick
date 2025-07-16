@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - nvm use 22
         - npm ci
     build:
       commands:
@@ -21,7 +22,3 @@ backend:
       commands:
         - npm install
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
-phases:
-  preBuild:
-    commands:
-      - nvm use 22 
