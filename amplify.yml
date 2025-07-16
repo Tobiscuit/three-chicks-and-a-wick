@@ -3,6 +3,7 @@ frontend:
   phases:
     preBuild:
       commands:
+        - nvm install 22
         - nvm use 22
         - npm ci
     build:
@@ -18,6 +19,10 @@ frontend:
       - .next/cache/**/*
 backend:
   phases:
+    preBuild:
+      commands:
+        - nvm install 22
+        - nvm use 22
     build:
       commands:
         - npm install
