@@ -4,7 +4,6 @@ import { ChevronDown, Star } from 'lucide-react';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import ProductCard from '@/components/ProductCard';
-import { FilterSheet } from '@/components/FilterSheet';
 
 // Placeholder data for products
 const products = [
@@ -170,9 +169,6 @@ export default function ProductListings() {
               Find your next favorite scent or craft project!
             </p>
           </div>
-
-          {/* Mobile Filter Sheet */}
-          <FilterSheet />
 
           {/* Desktop Filter Controls */}
           <DesktopFilterSort />

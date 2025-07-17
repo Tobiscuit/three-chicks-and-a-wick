@@ -1,12 +1,9 @@
+"use client";
+
 import Link from 'next/link';
 import Image from 'next/image';
-import { Menu } from 'lucide-react';
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from '@/components/ui/sheet';
-import { Button } from './ui/button';
+import { Menu, X } from 'lucide-react';
+import { useState } from 'react';
 
 const navLinks = [
   { href: '/product-listings', label: 'Candles' },
@@ -16,29 +13,51 @@ const navLinks = [
 ];
 
 function MobileNav() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
     <div className="lg:hidden">
-      <Sheet>
-        <SheetTrigger asChild>
-          <button className="rounded-full bg-white p-3 shadow-md transition-transform duration-300 ease-in-out hover:scale-110">
-            <Menu className="h-6 w-6 text-neutral-dark" />
-            <span className="sr-only">Open menu</span>
-          </button>
-        </SheetTrigger>
-        <SheetContent side="bottom" className="h-[65vh] rounded-t-3xl">
-          <nav className="flex h-full flex-col items-center justify-evenly gap-6">
-            {navLinks.map(link => (
-              <Link
-                key={link.href + link.label}
-                className="text-2xl font-semibold text-[var(--neutral-dark)] hover:text-[var(--primary)]"
-                href={link.href}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </SheetContent>
-      </Sheet>
+      <button
+        onClick={() => setIsOpen(true)}
+        className="rounded-full bg-white p-3 shadow-md transition-transform duration-300 ease-in-out hover:scale-110"
+      >
+        <Menu className="h-6 w-6 text-neutral-dark" />
+        <span className="sr-only">Open menu</span>
+      </button>
+
+      <div
+        className={`fixed inset-0 z-50 transform transition-transform duration-500 ease-in-out ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
+        }`}
+      >
+        <div
+          className="absolute inset-0 bg-black/50"
+          onClick={() => setIsOpen(false)}
+        ></div>
+        <div className="absolute bottom-0 left-0 right-0 h-[65vh] rounded-t-3xl bg-white shadow-lg">
+          <div className="relative flex h-full flex-col">
+            <button
+              onClick={() => setIsOpen(false)}
+              className="absolute top-4 right-4 rounded-full bg-white p-2 shadow-md transition-transform hover:scale-110"
+            >
+              <X className="size-6 text-[var(--neutral-dark)]" />
+              <span className="sr-only">Close menu</span>
+            </button>
+            <nav className="flex h-full flex-col items-center justify-evenly gap-6">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href + link.label}
+                  className="text-2xl font-semibold text-[var(--neutral-dark)] hover:text-[var(--primary)]"
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

@@ -1,0 +1,181 @@
+2025-07-17T00:36:58.949Z [INFO]: # Build environment configured with Standard build compute type: 8GiB Memory, 4vCPUs, 128GB Disk Space
+2025-07-17T00:36:59.346Z [INFO]: # Cloning repository: git@github.com:Tobiscuit/three-girls-and-a-wick.git
+2025-07-17T00:37:00.652Z [INFO]: 
+2025-07-17T00:37:00.652Z [INFO]: Cloning into 'three-girls-and-a-wick'...
+2025-07-17T00:37:00.652Z [INFO]: # Switching to commit: 8159ef100e03311a31faf433162536f2b8534b6f
+2025-07-17T00:37:00.787Z [INFO]: Note: switching to '8159ef100e03311a31faf433162536f2b8534b6f'.
+                                 You are in 'detached HEAD' state. You can look around, make experimental
+                                 changes and commit them, and you can discard any commits you make in this
+                                 state without impacting any branches by switching back to a branch.
+                                 If you want to create a new branch to retain commits you create, you may
+                                 do so (now or later) by using -c with the switch command. Example:
+                                 git switch -c <new-branch-name>
+                                 Or undo this operation with:
+                                 git switch -
+                                 Turn off this advice by setting config variable advice.detachedHead to false
+                                 HEAD is now at 8159ef1 fix(deps): add missing ui component dependencies
+2025-07-17T00:37:00.873Z [INFO]: Successfully cleaned up Git credentials
+2025-07-17T00:37:00.873Z [INFO]: # Checking for Git submodules at: /codebuild/output/src85457544/src/three-girls-and-a-wick/.gitmodules
+2025-07-17T00:37:00.883Z [INFO]: # Retrieving environment cache...
+2025-07-17T00:37:00.948Z [INFO]: # Retrieved environment cache
+2025-07-17T00:37:00.949Z [INFO]: ---- Setting Up SSM Secrets ----
+2025-07-17T00:37:00.949Z [INFO]: SSM params {"Path":"/amplify/d1w3stn04e1j2e/main/","WithDecryption":true}
+2025-07-17T00:37:01.961Z [INFO]: # No package override configuration found.
+2025-07-17T00:37:01.965Z [INFO]: # Retrieving cache...
+2025-07-17T00:37:11.958Z [INFO]: # Extracting cache...
+2025-07-17T00:37:13.452Z [INFO]: # Extraction completed
+2025-07-17T00:37:13.497Z [INFO]: # Retrieved cache
+2025-07-17T00:37:17.888Z [INFO]: ## Starting Backend Build
+                                 # Starting phase: preBuild
+                                 # Executing command: nvm use 20
+2025-07-17T00:37:25.762Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-07-17T00:37:25.766Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm install
+2025-07-17T00:39:00.062Z [WARNING]: npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-07-17T00:39:00.155Z [WARNING]: npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+2025-07-17T00:39:00.303Z [WARNING]: npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-07-17T00:39:00.521Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-07-17T00:39:00.549Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-07-17T00:39:01.868Z [WARNING]: npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2025-07-17T00:39:02.493Z [WARNING]: npm warn deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+2025-07-17T00:39:17.457Z [WARNING]: npm warn deprecated core-js@2.6.12: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
+2025-07-17T00:39:32.967Z [INFO]: added 1832 packages, and audited 2688 packages in 2m
+2025-07-17T00:39:32.973Z [INFO]: 248 packages are looking for funding
+                                 run `npm fund` for details
+                                 1 low severity vulnerability
+                                 To address all issues, run:
+                                 npm audit fix
+                                 Run `npm audit` for details.
+2025-07-17T00:39:33.005Z [INFO]: # Executing command: npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+2025-07-17T00:39:37.198Z [INFO]: 12:39:36 AM Synthesizing backend...
+2025-07-17T00:39:37.207Z [INFO]: 
+2025-07-17T00:39:38.355Z [WARNING]: Bundling asset amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9/AmplifyBranchLinker/CustomResourceLambda/Code/Stage...
+2025-07-17T00:39:38.727Z [WARNING]: ...251f8dcf98cef5bc6d0e24a51261bdc7c86bd0e39ae64e-building/index.js  989.5kb
+                                    ⚡ Done in 74ms
+2025-07-17T00:39:39.447Z [INFO]: 12:39:39 AM ✔ Backend synthesized in 2.7 seconds
+2025-07-17T00:39:39.447Z [INFO]: 12:39:39 AM Running type checks...
+2025-07-17T00:39:46.071Z [INFO]: 12:39:46 AM ✔ Type checks completed in 6.62 seconds
+2025-07-17T00:39:46.086Z [INFO]: 12:39:46 AM Building and publishing assets...
+2025-07-17T00:39:46.086Z [INFO]: 
+2025-07-17T00:39:47.489Z [INFO]: 12:39:47 AM ✔ Built and published assets
+2025-07-17T00:39:50.318Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   0 | 12:39:48 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 User Initiated
+2025-07-17T00:39:52.421Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   0 | 12:39:51 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | auth.NestedStack/auth.NestedStackResource (auth179371D7)
+2025-07-17T00:39:54.567Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   1 | 12:39:52 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | auth.NestedStack/auth.NestedStackResource (auth179371D7)
+2025-07-17T00:39:54.571Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   1 | 12:39:53 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | data.NestedStack/data.NestedStackResource (data7552DF31)
+                                 amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   1 | 12:39:54 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU User Initiated
+2025-07-17T00:40:01.109Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   1 | 12:39:58 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | data/amplifyData/AmplifyTableManager.NestedStack/AmplifyTableManager.NestedStackResource (amplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource86290833)
+2025-07-17T00:40:01.114Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   1 | 12:39:58 AM | UPDATE_IN_PROGRESS | AWS::AppSync::ApiKey | data/amplifyData/GraphQLAPI/DefaultApiKey (amplifyDataGraphQLAPIDefaultApiKey1C8ED374)
+                                 amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   2 | 12:39:59 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data/amplifyData/AmplifyTableManager.NestedStack/AmplifyTableManager.NestedStackResource (amplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource86290833)
+                                 amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   3 | 12:39:59 AM | UPDATE_COMPLETE | AWS::AppSync::ApiKey | data/amplifyData/GraphQLAPI/DefaultApiKey (amplifyDataGraphQLAPIDefaultApiKey1C8ED374)
+                                 amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   3 | 12:40:00 AM | UPDATE_IN_PROGRESS | AWS::CloudFormation::Stack | data/amplifyData/Product.NestedStack/Product.NestedStackResource (amplifyDataProductNestedStackProductNestedStackResource648F4D75)
+2025-07-17T00:40:03.377Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   4 | 12:40:01 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data/amplifyData/Product.NestedStack/Product.NestedStackResource (amplifyDataProductNestedStackProductNestedStackResource648F4D75)
+2025-07-17T00:40:05.614Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   5 | 12:40:03 AM | UPDATE_COMPLETE_CLEANUP_IN_PROGRESS | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU
+2025-07-17T00:40:05.619Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   6 | 12:40:04 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data.NestedStack/data.NestedStackResource (data7552DF31)
+2025-07-17T00:40:07.831Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   7 | 12:40:05 AM | UPDATE_COMPLETE_CLEANUP_IN_PROGRESS | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9
+2025-07-17T00:40:10.060Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   6 | 12:40:08 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data/amplifyData/Product.NestedStack/Product.NestedStackResource (amplifyDataProductNestedStackProductNestedStackResource648F4D75)
+2025-07-17T00:40:10.064Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   5 | 12:40:09 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data/amplifyData/AmplifyTableManager.NestedStack/AmplifyTableManager.NestedStackResource (amplifyDataAmplifyTableManagerNestedStackAmplifyTableManagerNestedStackResource86290833)
+                                 amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU |   6 | 12:40:09 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9-data7552DF31-19B4CTMAHDQUU
+2025-07-17T00:40:18.446Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   5 | 12:40:17 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | data.NestedStack/data.NestedStackResource (data7552DF31)
+2025-07-17T00:40:18.450Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   4 | 12:40:18 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | auth.NestedStack/auth.NestedStackResource (auth179371D7)
+2025-07-17T00:40:20.534Z [INFO]: amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9 |   5 | 12:40:18 AM | UPDATE_COMPLETE | AWS::CloudFormation::Stack | amplify-d1w3stn04e1j2e-main-branch-f752a5d6d9
+2025-07-17T00:40:23.608Z [INFO]: 12:40:23 AM ✔ Deployment completed in 36.118 seconds
+2025-07-17T00:40:23.613Z [INFO]: 12:40:23 AM AppSync API endpoint = https://njvvn535obhq5ospvhbn6nt7ge.appsync-api.us-east-1.amazonaws.com/graphql
+2025-07-17T00:40:23.910Z [INFO]: 12:40:23 AM File written: amplify_outputs.json
+2025-07-17T00:40:24.213Z [INFO]: # Completed phase: build
+                                 ## Completed Backend Build
+2025-07-17T00:40:24.218Z [INFO]: ## Starting Frontend Build
+                                 # Starting phase: preBuild
+2025-07-17T00:40:24.218Z [INFO]: # Executing command: nvm use 20
+2025-07-17T00:40:24.410Z [INFO]: Now using node v20.19.0 (npm v10.8.2)
+2025-07-17T00:40:24.411Z [INFO]: # Executing command: npm ci
+2025-07-17T00:41:53.290Z [WARNING]: npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+2025-07-17T00:41:53.419Z [WARNING]: npm warn deprecated @babel/plugin-proposal-class-properties@7.18.6: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-class-properties instead.
+2025-07-17T00:41:53.643Z [WARNING]: npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+2025-07-17T00:41:53.915Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-07-17T00:41:53.964Z [WARNING]: npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+2025-07-17T00:41:53.986Z [WARNING]: npm warn deprecated @babel/plugin-proposal-object-rest-spread@7.20.7: This proposal has been merged to the ECMAScript standard and thus this plugin is no longer maintained. Please use @babel/plugin-transform-object-rest-spread instead.
+2025-07-17T00:41:55.418Z [WARNING]: npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+2025-07-17T00:42:03.321Z [WARNING]: npm warn deprecated core-js@2.6.12: core-js@<3.23.3 is no longer maintained and not recommended for usage due to the number of issues. Because of the V8 engine whims, feature detection in old core-js versions could cause a slowdown up to 100x even if nothing is polyfilled. Some versions have web compatibility issues. Please, upgrade your dependencies to the actual version of core-js.
+2025-07-17T00:42:23.364Z [INFO]: added 1832 packages, and audited 2688 packages in 2m
+2025-07-17T00:42:23.368Z [INFO]: 248 packages are looking for funding
+                                 run `npm fund` for details
+                                 1 low severity vulnerability
+                                 To address all issues, run:
+                                 npm audit fix
+                                 Run `npm audit` for details.
+2025-07-17T00:42:23.446Z [INFO]: # Completed phase: preBuild
+                                 # Starting phase: build
+                                 # Executing command: npm run build
+2025-07-17T00:42:23.571Z [INFO]: > three-girls-and-a-wick@0.1.0 build
+                                 > next build
+2025-07-17T00:42:24.494Z [INFO]: ▲ Next.js 15.4.1
+2025-07-17T00:42:24.495Z [INFO]: 
+2025-07-17T00:42:24.522Z [INFO]: Creating an optimized production build ...
+2025-07-17T00:42:33.703Z [WARNING]: [Error: Can't resolve 'tw-animate-css' in '/codebuild/output/src85457544/src/three-girls-and-a-wick/src/app'] {
+                                    details: "resolve 'tw-animate-css' in '/codebuild/output/src85457544/src/three-girls-and-a-wick/src/app'\n" +
+                                    '  Parsed request is a module\n' +
+                                    '  using description file: /codebuild/output/src85457544/src/three-girls-and-a-wick/package.json (relative path: ./src/app)\n' +
+                                    '    resolve as module\n' +
+                                    "      /codebuild/output/src85457544/src/three-girls-and-a-wick/src/app/node_modules doesn't exist or is not a directory\n" +
+                                    "      /codebuild/output/src85457544/src/three-girls-and-a-wick/src/node_modules doesn't exist or is not a directory\n" +
+                                    '      looking for modules in /codebuild/output/src85457544/src/three-girls-and-a-wick/node_modules\n' +
+                                    '        single file module\n' +
+                                    '          using description file: /codebuild/output/src85457544/src/three-girls-and-a-wick/package.json (relative path: ./node_modules/tw-animate-css)\n' +
+                                    '            no extension\n' +
+                                    "              /codebuild/output/src85457544/src/three-girls-and-a-wick/node_modules/tw-animate-css doesn't exist\n" +
+                                    '            .css\n' +
+                                    "              /codebuild/output/src85457544/src/three-girls-and-a-wick/node_modules/tw-animate-css.css doesn't exist\n" +
+                                    "        /codebuild/output/src85457544/src/three-girls-and-a-wick/node_modules/tw-animate-css doesn't exist\n" +
+                                    "      /codebuild/output/src85457544/src/node_modules doesn't exist or is not a directory\n" +
+                                    "      /codebuild/output/src85457544/node_modules doesn't exist or is not a directory\n" +
+                                    "      /codebuild/output/node_modules doesn't exist or is not a directory\n" +
+                                    "      /codebuild/node_modules doesn't exist or is not a directory\n" +
+                                    "      /node_modules doesn't exist or is not a directory"
+                                    }
+2025-07-17T00:42:35.597Z [INFO]: ✓ Compiled successfully in 7.0s
+2025-07-17T00:42:35.601Z [INFO]: Linting and checking validity of types ...
+2025-07-17T00:42:38.257Z [INFO]: ./src/app/page.tsx
+                                 1:8  Warning: 'Image' is defined but never used.  @typescript-eslint/no-unused-vars
+                                 6:8  Warning: 'NewsletterSignup' is defined but never used.  @typescript-eslint/no-unused-vars
+                                 ./src/app/product-details/page.tsx
+                                 1:8  Warning: 'Image' is defined but never used.  @typescript-eslint/no-unused-vars
+                                 ./src/app/product-listings/page.tsx
+                                 1:8  Warning: 'Image' is defined but never used.  @typescript-eslint/no-unused-vars
+                                 3:23  Warning: 'Star' is defined but never used.  @typescript-eslint/no-unused-vars
+                                 info  - Need to disable some ESLint rules? Learn more here: https://nextjs.org/docs/app/api-reference/config/eslint#disabling-rules
+2025-07-17T00:42:44.642Z [INFO]: Collecting page data ...
+2025-07-17T00:42:46.285Z [INFO]: Generating static pages (0/9) ...
+2025-07-17T00:42:47.183Z [INFO]: Generating static pages (2/9)
+2025-07-17T00:42:47.183Z [INFO]: Generating static pages (4/9)
+                                 Generating static pages (6/9)
+                                 ✓ Generating static pages (9/9)
+2025-07-17T00:42:47.925Z [INFO]: Finalizing page optimization ...
+2025-07-17T00:42:47.935Z [INFO]: Collecting build traces ...
+2025-07-17T00:43:05.429Z [INFO]: 
+2025-07-17T00:43:05.434Z [INFO]: Route (app)                                 Size  First Load JS
+                                 ┌ ○ /                                    1.07 kB         126 kB
+                                 ├ ○ /_not-found                            993 B         100 kB
+                                 ├ ○ /about-us                            1.17 kB         126 kB
+                                 ├ ○ /contact-us                          1.07 kB         126 kB
+                                 ├ ○ /product-details                     12.4 kB         138 kB
+                                 └ ○ /product-listings                    2.65 kB         128 kB
+                                 + First Load JS shared by all            99.5 kB
+                                 ├ chunks/4bd1b696-2385f465b218746f.js  54.1 kB
+                                 ├ chunks/964-cb8adfbca15d1653.js       43.4 kB
+                                 └ other shared chunks (total)          1.89 kB
+                                 ○  (Static)  prerendered as static content
+2025-07-17T00:43:05.466Z [INFO]: # Completed phase: build
+                                 ## Completed Frontend Build
+2025-07-17T00:43:05.597Z [INFO]: ## Build completed successfully
+2025-07-17T00:43:05.598Z [INFO]: # Starting caching...
+2025-07-17T00:43:05.606Z [INFO]: # Creating cache artifact...
+2025-07-17T00:43:09.174Z [INFO]: # Created cache artifact
+2025-07-17T00:43:09.310Z [INFO]: # Uploading cache artifact...
+2025-07-17T00:43:13.834Z [INFO]: # Uploaded cache artifact
+2025-07-17T00:43:13.940Z [INFO]: # Caching completed
+2025-07-17T00:43:38.954Z [INFO]: # Starting environment caching...
+2025-07-17T00:43:39.056Z [INFO]: # Uploading environment cache artifact...
+2025-07-17T00:43:39.169Z [INFO]: # Uploaded environment cache artifact
+2025-07-17T00:43:39.169Z [INFO]: # Environment caching completed
+
