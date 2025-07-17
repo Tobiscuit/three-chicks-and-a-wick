@@ -9,22 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@radix-ui/react-dialog": "^1.1.14",
-    "@radix-ui/react-slot": "^1.2.3",
     "aws-amplify": "^6.15.3",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
     "dotenv": "^17.2.0",
     "lucide-react": "^0.525.0",
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
     "yet-another-react-lightbox": "^3.24.0"
-  },
-  "resolutions": {
-    "@aws-amplify/backend-cli": "1.8.0"
   },
   "devDependencies": {
     "@aws-amplify/backend": "^1.16.1",
@@ -32,8 +23,8 @@
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "aws-cdk-lib": "^2.189.1",
     "constructs": "^10.4.2",
     "esbuild": "^0.25.6",
