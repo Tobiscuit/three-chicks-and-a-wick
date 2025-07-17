@@ -20,13 +20,13 @@ function MobileNav() {
     <div className="lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon">
-            <Menu className="h-6 w-6" />
+          <button className="rounded-full bg-white p-3 shadow-md transition-transform duration-300 ease-in-out hover:scale-110">
+            <Menu className="h-6 w-6 text-neutral-dark" />
             <span className="sr-only">Open menu</span>
-          </Button>
+          </button>
         </SheetTrigger>
-        <SheetContent side="left">
-          <nav className="mt-8 flex flex-col gap-6">
+        <SheetContent side="bottom" className="h-[65vh] rounded-t-3xl">
+          <nav className="flex h-full flex-col items-center justify-evenly gap-6">
             {navLinks.map(link => (
               <Link
                 key={link.href + link.label}

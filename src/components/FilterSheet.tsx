@@ -8,18 +8,17 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, SlidersHorizontal } from "lucide-react";
+import { SlidersHorizontal, ChevronDown } from "lucide-react";
 
 export function FilterSheet() {
   return (
     <div className="mb-8 flex justify-center md:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="lg" className="flex items-center gap-2 rounded-full py-2 font-semibold shadow-md">
+          <button className="btn-secondary flex items-center gap-2">
             <SlidersHorizontal />
             <span>Filter & Sort</span>
-          </Button>
+          </button>
         </SheetTrigger>
         <SheetContent>
           <SheetHeader>

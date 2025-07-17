@@ -43,9 +43,9 @@ export default function Home() {
                 designed to brighten your day and add a touch of whimsy to your
                 home.
               </p>
-              <Button asChild className="mt-8" size="lg">
-                <Link href="/product-listings">Explore Our Collection</Link>
-              </Button>
+              <Link className="btn-primary mt-8 inline-block" href="/product-listings">
+                Explore Our Collection
+              </Link>
             </div>
             <Link href="/product-listings" className="relative h-96 lg:col-span-3">
               <div
