@@ -1,9 +1,8 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState } from 'react';
 
 const navLinks = [
   { href: '/product-listings', label: 'Candles' },
@@ -74,44 +73,38 @@ function ShoppingCartIcon(props: React.SVGProps<SVGSVGElement>) {
   );
 }
 
-function MobileNav() {
-  const [isOpen, setIsOpen] = useState(false);
-
+function MobileNavPanel({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   return (
-    <div className="lg:hidden">
-      <button
-        onClick={() => setIsOpen(true)}
-        className="rounded-full bg-white p-3 shadow-md transition-transform duration-300 ease-in-out hover:scale-110"
-        aria-label="Open navigation menu"
-      >
-        <MenuIcon className="h-6 w-6 text-neutral-dark" />
-      </button>
-
+    <div
+      className={`fixed inset-0 z-50 bg-black/30 backdrop-blur-sm transition-opacity ${
+        isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+      }`}
+      onClick={onClose}
+    >
       <div
-        className={`fixed inset-0 z-50 transform bg-black/30 backdrop-blur-sm transition-opacity ${
-          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        className={`absolute bottom-0 left-0 right-0 rounded-t-3xl bg-[var(--neutral-light)] shadow-2xl transition-transform duration-300 ease-out-back ${
+          isOpen ? 'translate-y-0' : 'translate-y-full'
         }`}
-        onClick={() => setIsOpen(false)}
+        onClick={(e) => e.stopPropagation()}
       >
-        <div
-          className={`absolute bottom-0 left-0 right-0 rounded-t-3xl bg-[var(--neutral-light)] shadow-2xl transition-transform duration-500 ease-in-out ${
-            isOpen ? 'translate-y-0' : 'translate-y-full'
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
-          <nav className="flex flex-col items-center justify-center gap-8 p-12">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href + link.label}
-                className="text-3xl font-bold text-[var(--neutral-dark)] transition-colors hover:text-[var(--primary)]"
-                href={link.href}
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-        </div>
+        <nav className="flex flex-col items-center justify-center gap-8 p-12">
+          {navLinks.map((link) => (
+            <Link
+              key={link.href + link.label}
+              className="text-3xl font-bold text-[var(--neutral-dark)] transition-colors hover:text-[var(--primary)]"
+              href={link.href}
+              onClick={onClose}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </div>
     </div>
   );
@@ -134,38 +127,54 @@ function DesktopNav() {
 }
 
 export default function Header() {
+  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-b-black/5 bg-[var(--neutral-light)]/80 backdrop-blur-sm">
-      <div className="container mx-auto flex items-center justify-between p-4">
-        <Link
-          className="flex items-center gap-2 text-2xl font-black tracking-tighter text-[var(--neutral-dark)]"
-          href="/"
-        >
-          <Image
-            src="/images/3C&AW.svg"
-            alt="Three Girls and a Wick logo"
-            width={48}
-            height={48}
-            className="h-12 w-12"
-          />
-          <span className="hidden sm:inline">Three Girls and a Wick</span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <DesktopNav />
-          <div className="hidden h-8 w-px bg-black/10 lg:block" />
-          <div className="flex items-center gap-2">
-            <button className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white sm:block">
-              <SearchIcon className="h-5 w-5" />
-              <span className="sr-only">Search</span>
-            </button>
-            <button className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white">
-              <ShoppingCartIcon className="h-5 w-5" />
-              <span className="sr-only">Shopping Cart</span>
-            </button>
-            <MobileNav />
+    <>
+      <header className="sticky top-0 z-40 w-full border-b border-b-black/5 bg-[var(--neutral-light)]/80 backdrop-blur-sm">
+        <div className="container mx-auto flex items-center justify-between p-4">
+          <Link
+            className="flex items-center gap-2 text-2xl font-black tracking-tighter text-[var(--neutral-dark)]"
+            href="/"
+          >
+            <Image
+              src="/images/3C&AW.svg"
+              alt="Three Girls and a Wick logo"
+              width={48}
+              height={48}
+              className="h-12 w-12"
+            />
+            <span className="hidden sm:inline">Three Girls and a Wick</span>
+          </Link>
+          <div className="flex items-center gap-4">
+            <DesktopNav />
+            <div className="hidden h-8 w-px bg-black/10 lg:block" />
+            <div className="flex items-center gap-2">
+              <button className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white sm:block">
+                <SearchIcon className="h-5 w-5" />
+                <span className="sr-only">Search</span>
+              </button>
+              <button className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white">
+                <ShoppingCartIcon className="h-5 w-5" />
+                <span className="sr-only">Shopping Cart</span>
+              </button>
+              <div className="lg:hidden">
+                <button
+                  onClick={() => setMobileMenuOpen(true)}
+                  className="rounded-full bg-white p-3 shadow-md transition-transform duration-300 ease-in-out hover:scale-110"
+                  aria-label="Open navigation menu"
+                >
+                  <MenuIcon className="h-6 w-6 text-neutral-dark" />
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+      <MobileNavPanel
+        isOpen={isMobileMenuOpen}
+        onClose={() => setMobileMenuOpen(false)}
+      />
+    </>
   );
 } 
