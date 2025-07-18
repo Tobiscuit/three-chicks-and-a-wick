@@ -205,8 +205,8 @@ export default function Header() {
             href="/"
           >
             <Image
-              src="/images/VectorLogoV2-Filled-NewFont.svg"
-              alt="Three Girls and a Wick logo"
+              src="/images/Correct-Name-2.svg"
+              alt="Three Chicks and a Wick logo"
               width={128}
               height={35}
               className="h-auto w-32"
