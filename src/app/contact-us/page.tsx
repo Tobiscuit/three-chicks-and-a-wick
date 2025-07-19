@@ -1,177 +1,84 @@
-import { Instagram, Facebook, Twitter, Mail, Phone } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import { Instagram, Facebook, Twitter, Mail, Phone, MapPin } from 'lucide-react';
 import Link from 'next/link';
 
-const socialLinks = [
-  {
-    name: 'Instagram',
-    icon: Instagram,
-    href: '#',
-  },
-  {
-    name: 'Facebook',
-    icon: Facebook,
-    href: '#',
-  },
-  {
-    name: 'Twitter',
-    icon: Twitter,
-    href: '#',
-  },
-];
-
-const ContactInfo = () => (
-  <div className="flex flex-col justify-center">
-    <h1 className="text-4xl font-bold text-zinc-900 tracking-tight">
-      Get in Touch!
-    </h1>
-    <p className="mt-4 text-lg text-gray-600">
-      We&apos;re here to help! Whether you have a question about our products,
-      need assistance with an order, or just want to share your thoughts,
-      we&apos;d love to hear from you.
-    </p>
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold text-zinc-900">
-        Contact Information
-      </h3>
-      <div className="mt-3 text-base text-gray-600 space-y-2">
-        <p className="flex items-center gap-3">
-            <Mail className="h-5 w-5 text-[var(--primary-600)]" />
-            <a
-            className="text-[var(--primary-600)] font-medium hover:underline"
-            href="mailto:support@threegirlsandawick.com"
-            >
-            support@threegirlsandawick.com
-            </a>
-        </p>
-        <p className="flex items-center gap-3">
-            <Phone className="h-5 w-5 text-[var(--primary-600)]" />
-            <span className='font-medium'>+1 (555) 123-4567</span>
-        </p>
-        <p className="text-sm pt-2">
-          We aim to respond within 24-48 hours.
-        </p>
-      </div>
-
-    </div>
-    <div className="mt-8">
-      <h3 className="text-xl font-semibold text-zinc-900">Follow Us</h3>
-      <div className="mt-4 flex space-x-6">
-        {socialLinks.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            className="text-gray-500 hover:text-[var(--primary-600)] transition-colors"
-          >
-            <span className="sr-only">{link.name}</span>
-            <link.icon className="h-7 w-7" />
-          </Link>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-const ContactForm = () => (
-  <div className="bg-white p-8 rounded-xl shadow-inner border border-gray-100">
-    <form action="#" className="space-y-6" method="POST">
-      <div>
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="name"
-        >
-          Name
-        </label>
-        <div className="mt-1">
-          <input
-            autoComplete="name"
-            className="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
-            id="name"
-            name="name"
-            placeholder="Your Name"
-            type="text"
-          />
-        </div>
-      </div>
-      <div>
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="email"
-        >
-          Email
-        </label>
-        <div className="mt-1">
-          <input
-            autoComplete="email"
-            className="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
-            id="email"
-            name="email"
-            placeholder="you@example.com"
-            type="email"
-          />
-        </div>
-      </div>
-      <div>
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="subject"
-        >
-          Subject
-        </label>
-        <div className="mt-1">
-          <input
-            className="form-input block w-full rounded-full border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm h-12 px-5"
-            id="subject"
-            name="subject"
-            placeholder="How can we help?"
-            type="text"
-          />
-        </div>
-      </div>
-      <div>
-        <label
-          className="block text-sm font-medium text-gray-700"
-          htmlFor="message"
-        >
-          Message
-        </label>
-        <div className="mt-1">
-          <textarea
-            className="form-textarea block w-full rounded-2xl border-gray-300 shadow-sm focus:border-[var(--primary-500)] focus:ring-[var(--primary-500)] sm:text-sm p-5"
-            id="message"
-            name="message"
-            placeholder="Your message..."
-            rows={5}
-          ></textarea>
-        </div>
-      </div>
-      <div>
-        <button
-          className="w-full flex justify-center py-3 px-4 border border-transparent rounded-full shadow-sm text-base font-medium text-white bg-[var(--primary-600)] hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[var(--primary-500)] transition-transform duration-300 ease-in-out hover:scale-105"
-          type="submit"
-        >
-          Send Message
-        </button>
-      </div>
-    </form>
-  </div>
-);
-
-
 export default function ContactUsPage() {
-    return (
-        <div className="bg-white">
-            <Header />
-            <main className="flex-1 px-4 py-12 sm:px-6 lg:px-8">
-                <div
-                    className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-12 bg-white/80 backdrop-blur-sm p-8 rounded-2xl shadow-lg"
-                >
-                    <ContactInfo />
-                    <ContactForm />
-                </div>
-            </main>
-            <Footer />
+  return (
+    <div className="bg-cream text-neutral-dark min-h-screen">
+      <main className="container mx-auto px-6 py-12 md:py-24">
+        {/* Centered Header */}
+        <div className="text-center mb-12">
+          <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight text-neutral-dark mb-4">
+            Let&apos;s Chat!
+          </h1>
+          <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">
+            Have a question, a brilliant idea for a new scent, or just want to say hello? 
+            We&apos;re all ears and would love to hear from you.
+          </p>
         </div>
-    )
+
+        {/* Main Content Card */}
+        <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-lg p-8 md:p-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+            
+            {/* Left Side: Contact Info */}
+            <div>
+              <h2 className="text-3xl font-bold font-display mb-6">Contact Information</h2>
+              <p className="text-neutral-dark/80 mb-8">
+                Find us on social media or drop us a line directly. We aim to respond within 24-48 hours!
+              </p>
+              <div className="space-y-4">
+                <a href="mailto:support@threechicksandawick.com" className="flex items-center gap-4 group">
+                  <Mail className="h-6 w-6 text-primary/80 group-hover:text-primary transition-colors" />
+                  <span className="font-semibold text-neutral-dark group-hover:text-primary transition-colors">support@threechicksandawick.com</span>
+                </a>
+                <div className="flex items-center gap-4">
+                  <Phone className="h-6 w-6 text-primary/80" />
+                  <span className="font-semibold text-neutral-dark">+1 (555) 123-4567</span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <MapPin className="h-6 w-6 text-primary/80" />
+                  <span className="font-semibold text-neutral-dark">Made with ❤️ in the USA</span>
+                </div>
+              </div>
+              <div className="mt-10 pt-8 border-t border-neutral-dark/10">
+                 <h3 className="text-xl font-bold font-display mb-4">Follow Our Adventures</h3>
+                 <div className="flex space-x-4">
+                    <Link href="#" className="text-neutral-dark/60 hover:text-primary transition-colors"><Instagram size={28} /></Link>
+                    <Link href="#" className="text-neutral-dark/60 hover:text-primary transition-colors"><Facebook size={28} /></Link>
+                    <Link href="#" className="text-neutral-dark/60 hover:text-primary transition-colors"><Twitter size={28} /></Link>
+                 </div>
+              </div>
+            </div>
+
+            {/* Right Side: Contact Form */}
+            <div>
+              <form action="#" method="POST" className="space-y-6">
+                <div>
+                  <label htmlFor="name" className="block text-sm font-bold text-neutral-dark/90 mb-2">Full Name</label>
+                  <input type="text" name="name" id="name" placeholder="Your Name" className="form-input" />
+                </div>
+                <div>
+                  <label htmlFor="email" className="block text-sm font-bold text-neutral-dark/90 mb-2">Email Address</label>
+                  <input type="email" name="email" id="email" placeholder="you@example.com" className="form-input" />
+                </div>
+                 <div>
+                  <label htmlFor="subject" className="block text-sm font-bold text-neutral-dark/90 mb-2">Subject</label>
+                  <input type="text" name="subject" id="subject" placeholder="How can we help?" className="form-input" />
+                </div>
+                <div>
+                  <label htmlFor="message" className="block text-sm font-bold text-neutral-dark/90 mb-2">Message</label>
+                  <textarea name="message" id="message" rows={5} placeholder="Your message..." className="form-textarea"></textarea>
+                </div>
+                <div>
+                  <button type="submit" className="w-full btn-primary">
+                    Send Message
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 } 

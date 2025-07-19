@@ -1,8 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Instagram, Facebook, Twitter } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+// import Header from '@/components/Header';
+// import Footer from '@/components/Footer';
 import { Playfair_Display } from 'next/font/google';
 
 const playfairDisplay = Playfair_Display({
@@ -33,7 +33,6 @@ export default function AboutUsPage() {
     <div
       className={`${playfairDisplay.variable} bg-[var(--background-color)] text-[var(--text-primary)]`}
     >
-      <Header />
       <main className="flex-1">
         <section className="text-center py-20 lg:py-32 bg-[var(--secondary-color)]">
           <div className="container mx-auto px-4">
@@ -152,7 +151,7 @@ export default function AboutUsPage() {
           </div>
         </section>
       </main>
-      <Footer />
+      {/* Footer is handled by layout */}
     </div>
   );
 } 
