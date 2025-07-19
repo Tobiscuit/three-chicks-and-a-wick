@@ -4,21 +4,21 @@ import ProductCard from '@/components/ProductCard';
 const featuredProducts = [
   {
     href: '/product-details',
-    imageUrl: '/images/placeholders/product-1.png',
+    imageUrl: '/images/products/lavender-bliss-candle.png',
     name: 'Lavender Bliss Candle',
-    price: '$18.00',
+    price: '$24.99',
   },
   {
     href: '/product-details',
-    imageUrl: '/images/placeholders/product-2.png',
+    imageUrl: '/images/products/ocean-breeze-candle.png',
     name: 'Ocean Breeze Candle',
-    price: '$18.00',
+    price: '$22.00',
   },
   {
     href: '/product-details',
-    imageUrl: '/images/placeholders/product-3.png',
-    name: 'Vanilla Bean Candle',
-    price: '$18.00',
+    imageUrl: '/images/products/enchanted-forest-wax-melts.png',
+    name: 'Enchanted Forest Wax Melts',
+    price: '$12.50',
   },
 ];
 
@@ -46,7 +46,7 @@ export default function Home() {
                 className="absolute left-0 top-0 h-full w-full rounded-3xl bg-cover bg-center transition-transform duration-500 hover:scale-105"
                 style={{
                   backgroundImage:
-                    "url('https://lh3.googleusercontent.com/aida-public/AB6AXuBaA6uZZe4HAGz8dOly6GoT4VXFlbpLgRWgT5OK675nTzSRQGw_OMc69UYKOTq0G5ym52lkqMzzoOx6w5uYPMME3qMGbgFhRQS-BkGXTKsVv29U_HvedMXh6Ov-4BEaNjdq59P3xLtm7JnlOwPVY3XZRf-D6r1pMddvW3Ua3jExeNoHK_07Ka7GutgKov0-_uKA6F97CDtvM3a6s5kllCgh9bqBIo3aEnZVnGPKGS3hOBGxLchy04qOBKKxUN9dYSbmexQKSN-aEw')",
+                    "url('/images/products/diy-macrame-plant-hanger-kit.png')",
                 }}
               ></div>
             </Link>

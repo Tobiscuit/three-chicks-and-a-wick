@@ -8,6 +8,8 @@
   --neutral-light: #FEF9E7;
   --neutral-dark: #343A40;
   --white: #ffffff;
+  --destructive: #E63946;
+  --subtle-border: #E5E7EB;
 }
 
 @layer components {
