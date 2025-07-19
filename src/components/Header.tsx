@@ -83,7 +83,7 @@ export default function Header() {
           <div className="flex-1 flex justify-center md:justify-start">
             <Link href="/">
               <Image
-                src="/images/VectorLogoV2-filled.svg" // Corrected Path
+                src="/images/VectorLogoV2-Filled.svg" // Corrected Path
                 alt="Three Chicks and a Wick Logo"
                 width={100}
                 height={50}
