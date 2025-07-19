@@ -1,7 +1,5 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import NewsletterSignup from '@/components/NewsletterSignup';
 
@@ -28,8 +26,7 @@ const featuredProducts = [
 
 export default function Home() {
   return (
-    <div className="relative flex size-full min-h-screen flex-col overflow-x-hidden">
-      <Header />
+    <>
       <main className="flex-grow">
         <section className="relative pt-12 pb-20 sm:pt-16 sm:pb-32">
           <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
@@ -187,7 +184,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <Footer />
-    </div>
+      {/* Footer is now handled by the layout */}
+    </>
   );
 }
