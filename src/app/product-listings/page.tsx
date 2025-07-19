@@ -4,6 +4,7 @@ import { shopifyFetch } from '@/lib/shopify';
 import { useCart, CartProduct } from '@/context/CartContext';
 import { useEffect, useState } from 'react';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton';
+import Image from 'next/image';
 
 const getProductsQuery = `
   query getProducts {
@@ -123,11 +124,15 @@ export default function ProductListingsPage() {
             {products.map((product) => (
           <div key={product.id} className="border rounded-lg overflow-hidden shadow-lg hover:shadow-2xl transition-shadow duration-300 flex flex-col">
             {product.images.edges.length > 0 && (
-              <img
-                src={product.images.edges[0].node.url}
-                alt={product.images.edges[0].node.altText || product.title}
-                className="w-full h-64 object-cover"
-              />
+              <div className="relative w-full h-64">
+                <Image
+                  src={product.images.edges[0].node.url}
+                  alt={product.images.edges[0].node.altText || product.title}
+                  layout="fill"
+                  objectFit="cover"
+                  className="w-full h-full"
+                />
+              </div>
             )}
             <div className="p-4 flex flex-col flex-grow">
               <h2 className="text-xl font-semibold mb-2 flex-grow">{product.title}</h2>

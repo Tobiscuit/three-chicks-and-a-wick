@@ -2,7 +2,7 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import { X, Minus, Plus } from 'lucide-react';
+import { X } from 'lucide-react';
 import Image from 'next/image';
 
 interface CartProps {
@@ -32,7 +32,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
         {cartItems.length === 0 ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center p-6">
             <h3 className="text-xl font-semibold text-neutral-dark mb-2">Your cart is empty!</h3>
-            <p className="text-neutral-dark/80 mb-6">Looks like you haven't added anything yet.</p>
+            <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
             <button
                 onClick={onClose}
                 className="btn-primary"

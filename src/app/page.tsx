@@ -1,7 +1,5 @@
-import Image from 'next/image';
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
-import NewsletterSignup from '@/components/NewsletterSignup';
 
 const featuredProducts = [
   {
