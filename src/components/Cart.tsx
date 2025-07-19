@@ -20,18 +20,24 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   }, 0);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-60 z-50 flex justify-end" onClick={onClose}>
-      <div className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col" onClick={(e) => e.stopPropagation()}>
+    <div 
+      className="fixed inset-0 bg-[var(--neutral-dark)]/60 backdrop-blur-sm z-50 flex justify-center items-center" 
+      onClick={onClose}
+    >
+      <div 
+        className="w-full max-w-md h-full bg-[var(--neutral-light)] shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl" 
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="flex justify-between items-center p-6 border-b border-neutral-dark/10">
-          <h2 className="text-2xl font-bold text-neutral-dark">Your Cart</h2>
-          <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
+          <h2 className="text-[32px] font-extrabold text-neutral-dark">Your Cart</h2>
+          <button onClick={onClose} className="text-neutral-dark hover:text-[var(--primary)] transition-colors">
             <X size={28} />
           </button>
         </div>
         
         {cartItems.length === 0 ? (
           <div className="flex-grow flex flex-col items-center justify-center text-center p-6">
-            <h3 className="text-xl font-semibold text-neutral-dark mb-2">Your cart is empty!</h3>
+            <h3 className="text-[28px] font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
             <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
             <button
                 onClick={onClose}
@@ -62,7 +68,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                         {/* Quantity controls will go here */}
                         <p className="font-bold">{item.quantity}</p>
                     </div>
-                    <button onClick={() => removeFromCart(item.product.id)} className="text-neutral-dark/50 hover:text-red-500 transition-colors">
+                    <button onClick={() => removeFromCart(item.product.id)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
                       <X size={20} />
                     </button>
                   </li>
