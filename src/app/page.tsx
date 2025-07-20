@@ -29,7 +29,7 @@ export default function Home() {
         <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20">
           <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
-              <h1 className="text-5xl font-black leading-tight tracking-tighter md:text-7xl">
+              <h1 className="text-5xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
               <p className="mt-6 max-w-lg text-lg text-[var(--neutral-dark)]/80 lg:mx-0">
@@ -62,7 +62,7 @@ export default function Home() {
         <section className="overflow-hidden py-16 sm:py-20">
           <div className="container mx-auto px-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black tracking-tight md:text-5xl">
+              <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 Featured Products
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
@@ -84,7 +84,7 @@ export default function Home() {
         <section className="bg-white py-20 sm:py-24">
           <div className="container mx-auto px-6">
             <div className="text-center">
-              <h2 className="text-4xl font-black tracking-tight md:text-5xl">
+              <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 What Our Customers Say
               </h2>
               <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--neutral-dark)]/80">

@@ -24,9 +24,9 @@ export default function AboutUsPage() {
   return (
     <div className="bg-cream">
       {/* Hero Section */}
-      <section className="text-center py-20 lg:py-28">
+      <section className="text-center pt-16">
         <div className="container mx-auto px-6">
-          <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight text-neutral-dark mb-4">
+          <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tight text-neutral-dark mb-4">
             Our Story
           </h1>
           <p className="max-w-3xl mx-auto text-lg leading-relaxed text-neutral-dark/80">
@@ -36,7 +36,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-6 pt-16 mb-8">
+      <div className="container mx-auto px-6 pt-16 pb-16">
         <div className="bg-white rounded-3xl shadow-lg p-8 md:p-16">
           {/* Story Section */}
           <section className="mb-16">
@@ -52,19 +52,19 @@ export default function AboutUsPage() {
                 </div>
               </div>
               <div className="text-left">
-                <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">From a Dream to a Wick</h2>
+                <h2 className="text-4xl md:text-5xl font-sans font-bold mb-6">From a Dream to a Wick</h2>
                 <p className="text-lg leading-relaxed mb-6 text-neutral-dark/90">
                   Three Chicks and a Wick was born from a shared love for crafting and a desire to create something beautiful and meaningful. Founded by three friends, Sarah, Emily, and Chloe, our journey began in a small workshop filled with laughter, creativity, and the sweet scent of essential oils. We believe in the power of handmade goods to bring warmth and joy into everyday life.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-left mt-8">
                   <div>
-                    <h3 className="text-2xl font-display font-bold mb-2">Our Mission</h3>
+                    <h3 className="text-2xl font-sans font-bold mb-2">Our Mission</h3>
                     <p className="leading-relaxed text-neutral-dark/80">
                       To craft high-quality, eco-friendly candles and goods that inspire and uplift, using sustainable materials and a personal touch.
                     </p>
                   </div>
                   <div>
-                    <h3 className="text-2xl font-display font-bold mb-2">Our Values</h3>
+                    <h3 className="text-2xl font-sans font-bold mb-2">Our Values</h3>
                     <p className="leading-relaxed text-neutral-dark/80">
                       We champion creativity, sustainability, and community, celebrating the simple joys of life through our craft.
                     </p>
@@ -79,7 +79,7 @@ export default function AboutUsPage() {
           {/* Meet the Makers Section */}
           <section className="mb-16">
             <div className="text-center">
-              <h2 className="text-4xl md:text-5xl font-display font-bold mb-12">Meet the Makers</h2>
+              <h2 className="text-4xl md:text-5xl font-sans font-bold mb-12">Meet the Makers</h2>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
                 {makers.map((maker) => (
                   <div key={maker.name} className="flex flex-col items-center group">
@@ -94,7 +94,7 @@ export default function AboutUsPage() {
                         />
                       </div>
                     </div>
-                    <h3 className="text-2xl font-display font-bold mt-2">{maker.name}</h3>
+                    <h3 className="text-2xl font-sans font-bold mt-2">{maker.name}</h3>
                     <p className="text-neutral-dark/80 font-medium">{maker.role}</p>
                   </div>
                 ))}
@@ -107,7 +107,7 @@ export default function AboutUsPage() {
           {/* Join Community Section */}
           <section>
             <div className="text-center">
-                <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">Join Our Community</h2>
+                <h2 className="text-4xl md:text-5xl font-sans font-bold mb-4">Join Our Community</h2>
                 <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80 mb-8">
                     Follow our journey and be the first to know about new scents, special offers, and behind-the-scenes moments.
                 </p>

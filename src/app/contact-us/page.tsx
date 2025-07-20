@@ -11,10 +11,10 @@ import Link from 'next/link';
 export default function ContactUsPage() {
   return (
     <div className="bg-cream text-neutral-dark min-h-screen">
-      <main className="container mx-auto px-6 pt-12 pb-8 md:pt-24">
+      <main className="container mx-auto px-6 pt-16 pb-16">
         {/* Centered Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight text-neutral-dark mb-4">
+          <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tight text-neutral-dark mb-4">
             Let&apos;s Chat!
           </h1>
           <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">
@@ -28,7 +28,7 @@ export default function ContactUsPage() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Left Side: Contact Info */}
             <div className="p-8 md:p-12 bg-neutral-light/50">
-              <h2 className="text-3xl font-bold font-display mb-6">
+              <h2 className="text-3xl font-bold font-sans mb-6">
                 Contact Information
               </h2>
               <p className="text-neutral-dark/80 mb-8">
@@ -65,7 +65,7 @@ export default function ContactUsPage() {
                 </li>
               </ul>
               <div className="mt-10 pt-8 border-t border-neutral-dark/10">
-                <h3 className="text-xl font-bold font-display mb-4">
+                <h3 className="text-xl font-bold font-sans mb-4">
                   Follow Our Adventures
                 </h3>
                 <div className="flex space-x-4">

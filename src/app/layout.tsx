@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} ${poppins.variable}`}
+        className={`${nunito.variable} ${poppins.variable} font-body`}
         suppressHydrationWarning
       >
         <CartProvider>
