@@ -14,7 +14,7 @@ export default function ContactUsPage() {
       <main className="container mx-auto px-6 pt-16 pb-16">
         {/* Centered Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tight text-neutral-dark mb-4">
+          <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-4">
             Let&apos;s Chat!
           </h1>
           <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">

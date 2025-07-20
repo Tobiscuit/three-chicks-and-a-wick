@@ -88,19 +88,19 @@ export default function ProductListingsPage() {
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 pt-16 pb-16">
-        <h1 className="text-4xl font-sans font-bold mb-8 text-center">Explore Our Creations</h1>
+        <h1 className="text-5xl font-sans font-black tracking-tight mb-8 text-center">Explore Our Creations</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 10 }).map((_, i) => (
             <ProductCardSkeleton key={i} />
-      ))}
-    </div>
-  </div>
-);
+          ))}
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="container mx-auto px-4 pt-16 pb-16">
-      <h1 className="text-4xl font-sans font-bold mb-8 text-center">Explore Our Creations</h1>
+      <h1 className="text-5xl font-sans font-black tracking-tight mb-8 text-center">Explore Our Creations</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
             {products.map((product) => (
               <ProductCard

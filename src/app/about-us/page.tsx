@@ -26,7 +26,7 @@ export default function AboutUsPage() {
       {/* Hero Section */}
       <section className="text-center pt-16">
         <div className="container mx-auto px-6">
-          <h1 className="text-5xl md:text-7xl font-sans font-black tracking-tight text-neutral-dark mb-4">
+          <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-4">
             Our Story
           </h1>
           <p className="max-w-3xl mx-auto text-lg leading-relaxed text-neutral-dark/80">
