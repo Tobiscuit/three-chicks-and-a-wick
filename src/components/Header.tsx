@@ -1,7 +1,7 @@
 // src/components/Header.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Search, Menu as MenuIcon, X } from 'lucide-react';
@@ -30,7 +30,7 @@ const MobileMenu = ({
       onClick={onClose}
     >
       <div
-        className="fixed left-0 top-0 h-full w-4/5 max-w-sm bg-cream p-6"
+        className="fixed inset-y-0 left-0 w-full bg-cream p-6 shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-end">
@@ -42,7 +42,7 @@ const MobileMenu = ({
             <span className="sr-only">Close menu</span>
           </button>
         </div>
-        <nav className="mt-8 flex flex-col gap-6">
+        <nav className="mt-16 flex flex-col items-center gap-8 text-center">
           {navLinks.map((link) => (
             <Link
               key={link.href}
@@ -59,21 +59,25 @@ const MobileMenu = ({
   );
 };
 
-export default function Header() {
-  const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
+export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMobileMenuToggle: (isOpen: boolean) => void; isMobileMenuOpen: boolean; }) {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const { cartItems } = useCart();
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <>
-      <header className="py-4">
+      <header className={`py-4 transition-transform duration-300`}>
         <div className="container mx-auto flex items-center justify-between px-6">
           <div className="flex-1 md:hidden">
             <button
               className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
-              onClick={() => setMobileMenuOpen(true)}
+              onClick={() => onMobileMenuToggle(true)}
             >
               <MenuIcon className="h-5 w-5" />
               <span className="sr-only">Open menu</span>
@@ -114,7 +118,7 @@ export default function Header() {
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
             >
               <ShoppingCart className="h-5 w-5" />
-              {totalItems > 0 && (
+              {hasMounted && totalItems > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs text-white">
                   {totalItems}
                 </span>
@@ -126,7 +130,7 @@ export default function Header() {
       </header>
       <MobileMenu
         isOpen={isMobileMenuOpen}
-        onClose={() => setMobileMenuOpen(false)}
+        onClose={() => onMobileMenuToggle(false)}
       />
       <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>

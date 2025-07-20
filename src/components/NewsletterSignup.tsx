@@ -1,3 +1,7 @@
+'use client';
+
+import { usePathname } from 'next/navigation';
+
 export default function NewsletterSignup() {
   return (
     <section className="py-20 sm:py-24">

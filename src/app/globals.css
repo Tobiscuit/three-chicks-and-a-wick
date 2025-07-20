@@ -8,6 +8,8 @@
   --neutral-light: #FEF9E7;
   --neutral-dark: #343A40;
   --white: #ffffff;
+  --destructive: #E63946;
+  --subtle-border: #E5E7EB;
 }
 
 @layer components {
@@ -21,17 +23,7 @@
 
 body {
   color: var(--neutral-dark);
-  font-family: 'Poppins', sans-serif;
   background-color: var(--neutral-light);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Nunito', sans-serif;
 }
 
 @media (min-width: 768px) {

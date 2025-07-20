@@ -2,8 +2,7 @@ import type { Metadata } from 'next';
 import { Nunito, Poppins } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import PageWrapper from '@/components/PageWrapper';
 
 const nunito = Nunito({
   subsets: ['latin'],
@@ -32,13 +31,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} ${poppins.variable}`}
+        className={`${nunito.variable} ${poppins.variable} font-body`}
         suppressHydrationWarning
       >
         <CartProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
+          <PageWrapper>
+            {children}
+          </PageWrapper>
         </CartProvider>
       </body>
     </html>

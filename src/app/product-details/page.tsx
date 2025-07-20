@@ -1,7 +1,5 @@
 import Link from 'next/link';
 import { Star } from 'lucide-react';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import ProductGallery from '@/components/ProductGallery';
 
@@ -228,7 +226,6 @@ const RelatedProducts = () => (
 export default function ProductDetailsPage() {
   return (
     <div className="bg-[var(--neutral-50)]" style={{ fontFamily: "'Plus Jakarta Sans', 'Noto Sans', sans-serif" }}>
-      <Header />
       <main className="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex max-w-7xl flex-1 flex-col gap-8">
             <Breadcrumbs />
@@ -240,7 +237,6 @@ export default function ProductDetailsPage() {
             <RelatedProducts />
         </div>
       </main>
-      <Footer />
     </div>
   );
 } 

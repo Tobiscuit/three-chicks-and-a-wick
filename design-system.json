@@ -1,0 +1,78 @@
+{
+  "brandName": "Three Chicks and a Wick",
+  "brandPersona": {
+    "multidimensionalArchetype": {
+      "primary": "The Creator",
+      "secondary": ["The Jester"],
+      "description": "The brand's core is The Creator, celebrating handmade artistry and imagination. This is supported by The Jester's sense of fun, novelty, and joy. The core feeling is the pride of someone showing you what they made 'with a bright smile'."
+    },
+    "voiceAndTone": {
+      "adjectives": ["Playful", "Creative", "Vibrant", "Joyful", "Handmade"],
+      "description": "The brand voice is energetic and cheerful, like talking to a creative friend who is excited to show you their latest project. It's encouraging, fun, and full of possibility."
+    }
+  },
+  "colorPalette": {
+    "primary": {
+      "playfulPink": {
+        "value": "#F25287",
+        "description": "The main brand color. It's energetic, fun, and grabs attention. Used for primary buttons and major calls-to-action."
+      }
+    },
+    "secondary": {
+      "sunnyYellow": {
+        "value": "#F9D423",
+        "description": "A joyful, optimistic yellow. Used for highlights, sale banners, or secondary accents that need to pop."
+      },
+      "creativeTeal": {
+        "value": "#00A19D",
+        "description": "A cool, creative teal. Provides a refreshing contrast to the warmer colors. Good for secondary buttons or informational callouts."
+      }
+    },
+    "neutral": {
+      "candlelightCream": {
+        "value": "#FEF9E7",
+        "description": "The primary background color. A soft, creamy off-white that feels warm and natural, like fresh candle wax."
+      },
+      "charcoalTin": {
+        "value": "#343A40",
+        "description": "The primary color for all body text. A soft, dark charcoal that is easy to read but less harsh than pure black."
+      },
+      "white": {
+        "value": "#FFFFFF",
+        "description": "Pure white, used for backgrounds of cards or text on dark/colored backgrounds."
+      }
+    },
+    "utility": {
+      "destructivePoppy": {
+        "value": "#E63946",
+        "description": "Used for destructive actions like deleting an item or confirming a cancellation. Provides a clear warning signal that is universally understood."
+      },
+      "subtleBorder": {
+        "value": "#E5E7EB",
+        "description": "A very light gray for subtle borders on interactive elements, like form inputs on hover."
+      }
+    }
+  },
+  "typography": {
+    "fontFamilies": {
+      "headings": {
+        "family": "Nunito",
+        "importUrl": "https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&display=swap",
+        "description": "A friendly, rounded sans-serif that feels modern, approachable, and fun. Used for all headings."
+      },
+      "body": {
+        "family": "Poppins",
+        "importUrl": "https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap",
+        "description": "A clean, geometric sans-serif that is highly readable and pairs beautifully with the playful nature of Nunito."
+      }
+    },
+    "fontScale": {
+      "h1": { "fontSize": "40px", "fontWeight": "800", "lineHeight": "120%" },
+      "h2": { "fontSize": "32px", "fontWeight": "800", "lineHeight": "130%" },
+      "h3": { "fontSize": "28px", "fontWeight": "700", "lineHeight": "140%" },
+      "h4": { "fontSize": "24px", "fontWeight": "700", "lineHeight": "150%" },
+      "body": { "fontSize": "16px", "fontWeight": "400", "lineHeight": "160%" },
+      "caption": { "fontSize": "14px", "fontWeight": "400", "lineHeight": "150%" }
+    }
+  }
+}

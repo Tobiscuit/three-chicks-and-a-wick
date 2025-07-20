@@ -9,8 +9,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['var(--font-poppins)'],
-        serif: ['var(--font-nunito)'],
+        sans: ['var(--font-nunito)'],
+        body: ['var(--font-poppins)'],
       },
       transitionTimingFunction: {
         'out-back': 'cubic-bezier(0.34, 1.56, 0.64, 1)',
