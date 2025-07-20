@@ -26,7 +26,7 @@ export default function Home() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative pt-12 pb-20 sm:pt-16 sm:pb-32">
+        <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20">
           <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
               <h1 className="text-5xl font-black leading-tight tracking-tighter md:text-7xl">
@@ -59,7 +59,7 @@ export default function Home() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-20 sm:py-24">
+        <section className="overflow-hidden py-16 sm:py-20">
           <div className="container mx-auto px-6">
             <div className="text-center">
               <h2 className="text-4xl font-black tracking-tight md:text-5xl">
