@@ -41,13 +41,15 @@ export default function AboutUsPage() {
           {/* Story Section */}
           <section className="mb-16">
             <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-              <div className="relative rounded-3xl overflow-hidden shadow-lg aspect-[4/5] order-last md:order-first">
-                <Image
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBqM7bZW14eyo8-Hv7BRwrFH77ZwmI37cbA8l21g0m3G7R1Khkclvg3A10axM0ylV8PwLLGxIXw0IY-ORq5rE8beyiv9aE8DHhK6FEtGNxHoTS-4fRXhVSZLUi0a7SOtFs6l2iqrmybwaVd0RCWbo1MmKIefPC8N2Ek3rB4STh-JmRBim66Z22xviNyouYq4M2lAuFS4xT5cvUMRZh1SDGSPrU1qxzmG5OV0VMKQilWVfibK-XbVci0CdhUdiTMK6qNLkFNCcBsg"
-                  alt="Three friends crafting candles together"
-                  layout="fill"
-                  className="object-cover"
-                />
+              <div className="mx-auto max-w-lg">
+                <div className="relative rounded-3xl overflow-hidden shadow-lg aspect-[4/5] order-last md:order-first">
+                  <Image
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBqM7bZW14eyo8-Hv7BRwrFH77ZwmI37cbA8l21g0m3G7R1Khkclvg3A10axM0ylV8PwLLGxIXw0IY-ORq5rE8beyiv9aE8DHhK6FEtGNxHoTS-4fRXhVSZLUi0a7SOtFs6l2iqrmybwaVd0RCWbo1MmKIefPC8N2Ek3rB4STh-JmRBim66Z22xviNyouYq4M2lAuFS4xT5cvUMRZh1SDGSPrU1qxzmG5OV0VMKQilWVfibK-XbVci0CdhUdiTMK6qNLkFNCcBsg"
+                    alt="Three friends crafting candles together"
+                    layout="fill"
+                    className="object-cover"
+                  />
+                </div>
               </div>
               <div className="text-left">
                 <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">From a Dream to a Wick</h2>
