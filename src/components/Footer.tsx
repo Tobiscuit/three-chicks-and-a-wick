@@ -17,66 +17,68 @@ export default function Footer() {
                   Handmade with love and a little bit of magic.
                 </p>
               </div>
-              <div className="text-left">
-                <h3 className="text-lg font-bold">Shop</h3>
-                <ul className="mt-4 space-y-2 text-sm">
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/product-listings"
-                    >
-                      Candles
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/product-listings"
-                    >
-                      Crafts
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/product-listings"
-                    >
-                      New Arrivals
-                    </Link>
-                  </li>
-                </ul>
+              <div className="grid grid-cols-2 gap-10 sm:gap-16">
+                <div className="text-left">
+                  <h3 className="text-lg font-bold">Shop</h3>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/product-listings"
+                      >
+                        Candles
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/product-listings"
+                      >
+                        Crafts
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/product-listings"
+                      >
+                        New Arrivals
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div className="text-left">
+                  <h3 className="text-lg font-bold">About</h3>
+                  <ul className="mt-4 space-y-2 text-sm">
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/about-us"
+                      >
+                        Our Story
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/contact-us"
+                      >
+                        Contact Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link
+                        className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
+                        href="/faq"
+                      >
+                        FAQs
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
               </div>
             </div>
             <div className="flex flex-col gap-10 text-left sm:flex-row sm:gap-16 md:text-right">
-              <div className="text-left md:text-right">
-                <h3 className="text-lg font-bold">About</h3>
-                <ul className="mt-4 space-y-2 text-sm">
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/about-us"
-                    >
-                      Our Story
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/contact-us"
-                    >
-                      Contact Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link
-                      className="text-[var(--neutral-dark)]/70 hover:text-[var(--primary)]"
-                      href="/faq"
-                    >
-                      FAQs
-                    </Link>
-                  </li>
-                </ul>
-              </div>
               <div className="text-left md:text-right">
                 <h3 className="text-lg font-bold">Follow Us</h3>
                 <div className="mt-4 flex space-x-4 md:justify-end">

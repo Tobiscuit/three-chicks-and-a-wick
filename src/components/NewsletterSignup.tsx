@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 
 export default function NewsletterSignup() {
   return (
-    <section className="py-16 sm:py-24">
+    <section className="py-8 sm:py-16">
       <div className="container mx-auto">
         <div className="rounded-3xl bg-[var(--primary)] p-8 sm:p-16 text-center text-white">
           <h2 className="text-4xl font-black tracking-tight">
