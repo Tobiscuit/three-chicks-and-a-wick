@@ -1,22 +1,22 @@
 import type { Metadata } from 'next';
-import { Nunito, Poppins } from 'next/font/google';
+// import { Nunito, Poppins } from 'next/font/google';
 import './globals.css';
 import { CartProvider } from '@/context/CartContext';
 import PageWrapper from '@/components/PageWrapper';
 
-const nunito = Nunito({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-nunito',
-  weight: ['700', '900'],
-});
+// const nunito = Nunito({
+//   subsets: ['latin'],
+//   display: 'swap',
+//   variable: '--font-nunito',
+//   weight: ['700', '900'],
+// });
 
-const poppins = Poppins({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-poppins',
-  weight: ['400', '500', '700'],
-});
+// const poppins = Poppins({
+//   subsets: ['latin'],
+//   display: 'swap',
+//   variable: '--font-poppins',
+//   weight: ['400', '500', '700'],
+// });
 
 export const metadata: Metadata = {
   title: 'Three Chicks and a Wick',
@@ -31,7 +31,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${nunito.variable} ${poppins.variable} font-body`}
+        className={`font-body`}
         suppressHydrationWarning
       >
         <CartProvider>

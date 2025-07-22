@@ -26,22 +26,22 @@ export default function Home() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative pt-12 pb-16 sm:pt-16 sm:pb-20">
-          <div className="container mx-auto grid grid-cols-1 items-center gap-16 px-6 lg:grid-cols-5">
+        <section className="relative pt-8 pb-8 sm:pt-16 sm:pb-20">
+          <div className="container mx-auto grid grid-cols-1 items-center gap-8 px-6 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
-              <h1 className="text-5xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
+              <h1 className="text-4xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
-              <p className="mt-6 max-w-lg text-lg text-[var(--neutral-dark)]/80 lg:mx-0">
+              <p className="mt-4 max-w-lg text-lg text-[var(--neutral-dark)]/80 lg:mx-0">
                 Discover our unique collection of handmade candles and crafts,
                 designed to brighten your day and add a touch of whimsy to your
                 home.
               </p>
-              <Link className="btn-primary mt-8 inline-block" href="/product-listings">
+              <Link className="btn-primary mt-6 inline-block" href="/product-listings">
                 Explore Our Collection
               </Link>
             </div>
-            <Link href="/product-listings" className="relative h-96 lg:col-span-3">
+            <Link href="/product-listings" className="relative h-80 lg:h-96 lg:col-span-3">
               <div
                 className="absolute left-0 top-0 h-full w-full rounded-3xl bg-cover bg-center transition-transform duration-500 hover:scale-105"
                 style={{
@@ -59,7 +59,7 @@ export default function Home() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-16 sm:py-20">
+        <section className="overflow-hidden py-8 sm:py-16">
           <div className="container mx-auto px-6">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
@@ -69,7 +69,7 @@ export default function Home() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-16 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
+            <div className="mt-16 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
               {featuredProducts.map((product) => (
                 <ProductCard key={product.name} {...product} />
               ))}
