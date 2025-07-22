@@ -116,7 +116,7 @@ const Breadcrumbs = () => (
 );
 
 const ProductInfo = () => (
-  <div className="flex flex-col gap-6">
+  <div className="flex flex-col gap-8">
     <h2 className="text-4xl font-bold tracking-tight text-[var(--neutral-1000)]">
       {product.name}
     </h2>
@@ -133,11 +133,11 @@ const ProductInfo = () => (
 );
 
 const ReviewsSection = () => (
-  <div className="border-t border-[var(--neutral-200)] pt-8">
+  <div className="border-t border-[var(--neutral-200)] pt-12">
     <h3 className="text-3xl font-bold tracking-tight text-[var(--neutral-1000)]">
       Customer Reviews
     </h3>
-    <div className="mt-6 flex flex-wrap items-center gap-x-12 gap-y-6">
+    <div className="mt-8 flex flex-wrap items-center gap-x-12 gap-y-6">
       <div className="flex flex-col gap-2">
         <p className="text-5xl font-extrabold text-[var(--neutral-1000)]">
           {product.rating}
@@ -177,9 +177,9 @@ const ReviewsSection = () => (
       </div>
     </div>
 
-    <div className="mt-10 space-y-8 border-t border-[var(--neutral-200)] pt-10">
+    <div className="mt-12 space-y-8 border-t border-[var(--neutral-200)] pt-12">
       {product.reviews.map((review) => (
-        <div key={review.id} className="flex flex-col gap-3">
+        <div key={review.id} className="flex flex-col gap-4">
           <div className="flex items-center gap-2">
             {[...Array(5)].map((_, i) => (
               <Star
@@ -205,11 +205,11 @@ const ReviewsSection = () => (
 );
 
 const RelatedProducts = () => (
-    <div className="border-t border-[var(--neutral-200)] pt-8">
+    <div className="border-t border-[var(--neutral-200)] pt-12">
         <h3 className="text-3xl font-bold tracking-tight text-[var(--neutral-1000)] mb-8">
             You Might Also Like
         </h3>
-        <div className="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {product.relatedProducts.map((related) => (
                 <ProductCard
                     key={related.id}
@@ -225,16 +225,20 @@ const RelatedProducts = () => (
 
 export default function ProductDetailsPage() {
   return (
-    <div className="bg-[var(--neutral-50)]" style={{ fontFamily: "'Plus Jakarta Sans', 'Noto Sans', sans-serif" }}>
-      <main className="flex flex-1 justify-center px-4 py-8 sm:px-6 lg:px-8">
-        <div className="flex max-w-7xl flex-1 flex-col gap-8">
+    <div className="bg-cream">
+      <main className="container mx-auto py-16 sm:py-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
+          <div>
             <Breadcrumbs />
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-2">
-                <ProductGallery images={product.images} />
-                <ProductInfo />
+            <div className="mt-8">
+              <ProductGallery images={product.images} />
             </div>
-            <ReviewsSection />
-            <RelatedProducts />
+          </div>
+          <ProductInfo />
+        </div>
+        <div className="mt-16 sm:mt-24 space-y-16 sm:space-y-24">
+          <ReviewsSection />
+          <RelatedProducts />
         </div>
       </main>
     </div>

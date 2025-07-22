@@ -73,7 +73,7 @@ export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMob
   return (
     <>
       <header className={`py-4 transition-transform duration-300`}>
-        <div className="container mx-auto flex items-center justify-between px-6">
+        <div className="container mx-auto flex items-center justify-between">
           <div className="flex-1 md:hidden">
             <button
               className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"

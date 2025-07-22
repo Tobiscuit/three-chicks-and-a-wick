@@ -11,10 +11,10 @@ import Link from 'next/link';
 export default function ContactUsPage() {
   return (
     <div className="bg-cream text-neutral-dark min-h-screen">
-      <main className="container mx-auto px-6 pt-16 pb-16">
+      <main className="container mx-auto py-16 sm:py-24">
         {/* Centered Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-4">
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">
             Let&apos;s Chat!
           </h1>
           <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">
@@ -27,7 +27,7 @@ export default function ContactUsPage() {
         <div className="max-w-5xl mx-auto bg-white rounded-3xl shadow-lg overflow-hidden">
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Left Side: Contact Info */}
-            <div className="p-8 md:p-12 bg-neutral-light/50">
+            <div className="p-8 lg:p-12 bg-neutral-light/50">
               <h2 className="text-3xl font-bold font-sans mb-6">
                 Contact Information
               </h2>
@@ -35,7 +35,7 @@ export default function ContactUsPage() {
                 Find us on social media or drop us a line directly. We aim to
                 respond within 24-48 hours!
               </p>
-              <ul className="space-y-6">
+              <ul className="space-y-8">
                 <li>
                   <a
                     href="mailto:support@threechicksandawick.com"
@@ -64,11 +64,11 @@ export default function ContactUsPage() {
                   </div>
                 </li>
               </ul>
-              <div className="mt-10 pt-8 border-t border-neutral-dark/10">
-                <h3 className="text-xl font-bold font-sans mb-4">
+              <div className="mt-12 pt-12 border-t border-neutral-dark/10">
+                <h3 className="text-xl font-bold font-sans mb-6">
                   Follow Our Adventures
                 </h3>
-                <div className="flex space-x-4">
+                <div className="flex space-x-6">
                   <Link
                     href="#"
                     className="text-neutral-dark/60 hover:text-primary transition-colors"
@@ -92,8 +92,8 @@ export default function ContactUsPage() {
             </div>
 
             {/* Right Side: Contact Form */}
-            <div className="p-8 md:p-12">
-              <form action="#" method="POST" className="space-y-6">
+            <div className="p-8 lg:p-12">
+              <form action="#" method="POST" className="space-y-8">
                 <div>
                   <label
                     htmlFor="name"

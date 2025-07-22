@@ -26,8 +26,8 @@ export default function Home() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative pt-8 pb-8 sm:pt-16 sm:pb-20">
-          <div className="container mx-auto grid grid-cols-1 items-center gap-8 px-6 lg:grid-cols-5">
+        <section className="relative py-16 sm:py-24">
+          <div className="container mx-auto grid grid-cols-1 items-center gap-8 lg:gap-16 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
               <h1 className="text-4xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
@@ -37,7 +37,7 @@ export default function Home() {
                 designed to brighten your day and add a touch of whimsy to your
                 home.
               </p>
-              <Link className="btn-primary mt-6 inline-block" href="/product-listings">
+              <Link className="btn-primary mt-8 inline-block" href="/product-listings">
                 Explore Our Collection
               </Link>
             </div>
@@ -59,8 +59,8 @@ export default function Home() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-8 sm:py-16">
-          <div className="container mx-auto px-6">
+        <section className="overflow-hidden py-16 sm:py-24">
+          <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 Featured Products
@@ -69,7 +69,7 @@ export default function Home() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-16 grid grid-cols-2 gap-x-4 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-8">
+            <div className="mt-12 grid grid-cols-1 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
               {featuredProducts.map((product) => (
                 <ProductCard key={product.name} {...product} />
               ))}
@@ -81,8 +81,8 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="bg-white py-20 sm:py-24">
-          <div className="container mx-auto px-6">
+        <section className="bg-white py-16 sm:py-24">
+          <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 What Our Customers Say
@@ -91,7 +91,7 @@ export default function Home() {
                 &quot;We love our customers, and they love us back.&quot;
               </p>
             </div>
-            <div className="mt-16 grid grid-cols-1 gap-8 lg:grid-cols-3">
+            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
               <div className="rounded-3xl bg-[var(--neutral-light)] p-8">
                 <p className="text-lg text-[var(--neutral-dark)]/90">
                   &quot;Absolutely in love with my new candle! It smells amazing and
