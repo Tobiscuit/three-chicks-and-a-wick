@@ -32,7 +32,7 @@ export default function ProductCard({
           </div>
         </div>
         <div className="p-3 text-center">
-          <h3 className="text-lg font-bold text-[var(--neutral-dark)]">{name}</h3>
+          <h3 className="text-lg font-bold text-[var(--neutral-dark)] h-14 flex items-center justify-center line-clamp-2 sm:line-clamp-none">{name}</h3>
           <p className="mt-1 text-base font-medium text-[var(--neutral-dark)]/70">
             {price}
           </p>

@@ -101,7 +101,7 @@ export default function ProductListingsPage() {
       <div className="bg-cream">
         <main className="container mx-auto py-16 sm:py-24">
           {header}
-          <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
             {Array.from({ length: 12 }).map((_, index) => (
               <ProductCardSkeleton key={index} />
             ))}
@@ -115,7 +115,7 @@ export default function ProductListingsPage() {
     <div className="bg-cream">
       <main className="container mx-auto py-16 sm:py-24">
         {header}
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
           {products.map((product) => (
             <ProductCard
               key={product.id}
