@@ -85,33 +85,48 @@ export default function ProductListingsPage() {
     fetchProducts();
   }, []);
 
+  const header = (
+    <header className="text-center mb-12">
+      <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">
+        Our Collection
+      </h1>
+      <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">
+        Browse our curated selection of handcrafted goods, made with love and attention to detail.
+      </p>
+    </header>
+  );
+
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 pt-16 pb-16">
-        <h1 className="text-5xl font-sans font-black tracking-tight mb-8 text-center">Explore Our Creations</h1>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-          {Array.from({ length: 10 }).map((_, i) => (
-            <ProductCardSkeleton key={i} />
-          ))}
-        </div>
+      <div className="bg-cream">
+        <main className="container mx-auto py-16 sm:py-24">
+          {header}
+          <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {Array.from({ length: 12 }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 pt-16 pb-16">
-      <h1 className="text-5xl font-sans font-black tracking-tight mb-8 text-center">Explore Our Creations</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                href={`/product-details?handle=${product.handle}`}
-                imageUrl={product.images.edges[0]?.node.url}
-                name={product.title}
-                price={`$${product.priceRange.minVariantPrice.amount}`}
-              />
-        ))}
+    <div className="bg-cream">
+      <main className="container mx-auto py-16 sm:py-24">
+        {header}
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              href={`/product-details?handle=${product.handle}`}
+              imageUrl={product.images.edges[0]?.node.url}
+              name={product.title}
+              price={`$${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}`}
+            />
+          ))}
         </div>
+      </main>
     </div>
   );
 } 

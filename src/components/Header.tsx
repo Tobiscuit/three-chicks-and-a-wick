@@ -73,13 +73,13 @@ export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMob
   return (
     <>
       <header className={`py-4 transition-transform duration-300`}>
-        <div className="container mx-auto flex items-center justify-between px-6">
+        <div className="container mx-auto flex items-center justify-between">
           <div className="flex-1 md:hidden">
             <button
               className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
               onClick={() => onMobileMenuToggle(true)}
             >
-              <MenuIcon className="h-5 w-5" />
+              <MenuIcon className="h-6 w-6" />
               <span className="sr-only">Open menu</span>
             </button>
           </div>
@@ -117,7 +117,7 @@ export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMob
               onClick={() => setIsCartOpen(true)}
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
             >
-              <ShoppingCart className="h-5 w-5" />
+              <ShoppingCart className="h-6 w-6" />
               {hasMounted && totalItems > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs text-white">
                   {totalItems}
