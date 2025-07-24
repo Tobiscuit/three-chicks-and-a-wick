@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.5",
     "aws-amplify": "^6.15.3",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.0",
