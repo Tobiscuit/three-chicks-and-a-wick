@@ -1,29 +1,81 @@
 import Link from 'next/link';
-import ProductCard from '@/components/ProductCard';
 import ProductCarousel from '@/components/ProductCarousel';
+import { shopifyFetch } from '@/lib/shopify';
 
-const featuredProducts = [
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/lavender-bliss-candle.png',
-    name: 'Lavender Bliss Candle',
-    price: '$24.99',
-  },
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/ocean-breeze-candle.png',
-    name: 'Ocean Breeze Candle',
-    price: '$22.00',
-  },
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/enchanted-forest-wax-melts.png',
-    name: 'Enchanted Forest Wax Melts',
-    price: '$12.50',
-  },
-];
+const GET_FEATURED_PRODUCTS_QUERY = `
+  query getFeaturedProducts {
+    collection(handle: "featured") {
+      products(first: 10) {
+        edges {
+          node {
+            id
+            title
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
-export default function Home() {
+type ShopifyProduct = {
+  id: string;
+  title: string;
+  handle: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  images: {
+    edges: { node: { url: string; altText: string } }[];
+  };
+  variants: {
+    edges: { node: { id: string } }[];
+  };
+};
+
+async function getFeaturedProducts() {
+  const { data } = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
+    query: GET_FEATURED_PRODUCTS_QUERY,
+  });
+
+  return data?.collection?.products?.edges.map(({ node }) => ({
+    href: `/product-details/${node.handle}`,
+    imageUrl: node.images.edges[0]?.node.url,
+    name: node.title,
+    price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+    id: node.id,
+    variantId: node.variants.edges[0]?.node.id,
+  })) || [];
+}
+
+
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts();
+
   return (
     <>
       <main className="flex-grow">

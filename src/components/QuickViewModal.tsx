@@ -5,6 +5,7 @@ import { Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { X } from 'lucide-react';
+import { useCart, CartProduct } from '@/context/CartContext';
 
 interface QuickViewModalProps {
   isOpen: boolean;
@@ -14,10 +15,34 @@ interface QuickViewModalProps {
     imageUrl: string;
     name: string;
     price: string;
+    id: string; // Product ID
+    variantId: string; // Variant ID
   };
 }
 
 export default function QuickViewModal({ isOpen, onClose, product }: QuickViewModalProps) {
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    const productToAdd: CartProduct = {
+      id: product.id,
+      variantId: product.variantId,
+      title: product.name,
+      price: {
+        amount: product.price.replace('$', ''), // Assuming price is in format "$XX.XX"
+        currencyCode: 'USD', // Assuming USD
+      },
+      image: {
+        url: product.imageUrl,
+        altText: product.name,
+      },
+    };
+    addToCart(productToAdd);
+    onClose(); // Close modal after adding to cart
+  };
+
+  if (!product) return null;
+
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
@@ -76,7 +101,7 @@ export default function QuickViewModal({ isOpen, onClose, product }: QuickViewMo
                       This is a placeholder description. Full product details are available on the product page.
                     </p>
                     <div className="mt-10">
-                      <button type="button" className="btn-primary w-full">
+                      <button type="button" className="btn-primary w-full" onClick={handleAddToCart}>
                         Add to cart
                       </button>
                       <p className="mt-6 text-center">

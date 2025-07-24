@@ -6,7 +6,7 @@ import Lightbox from 'yet-another-react-lightbox';
 import 'yet-another-react-lightbox/styles.css';
 
 interface ProductImage {
-  id: number;
+  id: string;
   src: string;
   alt: string;
 }

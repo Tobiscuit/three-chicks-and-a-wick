@@ -11,6 +11,8 @@ interface Product {
   imageUrl: string;
   name: string;
   price: string;
+  id: string;
+  variantId: string;
 }
 
 interface ProductCarouselProps {
