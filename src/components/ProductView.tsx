@@ -41,7 +41,13 @@ export default function ProductView({
   relatedProducts,
 }: {
   product: ShopifyProduct;
-  relatedProducts: any[]; // You can define a more specific type for related products
+  relatedProducts: {
+    id: string;
+    href: string;
+    imageUrl: string;
+    name: string;
+    price: string;
+  }[];
 }) {
   const { addToCart, isCartLoading } = useCart();
   const [quantity, setQuantity] = useState(1);
@@ -72,41 +78,65 @@ export default function ProductView({
 
   return (
     <div className="bg-cream">
-      <main className="container mx-auto py-16 sm:py-24">
+      <main className="container mx-auto pt-8 pb-16 sm:pb-24">
+        <nav aria-label="Breadcrumb" className="mb-8">
+          <ol className="flex items-center gap-2 text-sm">
+            <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
+            <li><span className="font-medium text-gray-500">/</span></li>
+            <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/product-listings">Products</Link></li>
+            <li><span className="font-medium text-gray-500">/</span></li>
+            <li><span className="font-medium text-gray-900">{product.title}</span></li>
+          </ol>
+        </nav>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
           <div>
-            <nav aria-label="Breadcrumb">
-              <ol className="flex items-center gap-2 text-sm">
-                <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
-                <li><span className="font-medium text-gray-500">/</span></li>
-                <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/product-listings">Products</Link></li>
-                <li><span className="font-medium text-gray-500">/</span></li>
-                <li><span className="font-medium text-gray-900">{product.title}</span></li>
-              </ol>
-            </nav>
-            <div className="mt-8">
-              <ProductGallery images={productImages} />
-            </div>
+            <ProductGallery images={productImages} />
           </div>
           <div className="flex flex-col gap-8">
             <h2 className="text-4xl font-bold tracking-tight">{product.title}</h2>
-            <p className="text-lg leading-relaxed">{product.description}</p>
-            <p className="text-3xl font-bold text-gray-900">
-              ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
-            </p>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
-                  <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
-                      <Minus size={16} />
-                  </button>
-                  <p className="font-bold w-8 text-center text-lg">{quantity}</p>
-                  <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                      <Plus size={16} />
-                  </button>
+            
+            {/* Action block - visible on mobile */}
+            <div className="md:hidden">
+              <p className="text-3xl font-bold text-gray-900 mb-4">
+                ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
+              </p>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
+                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
+                        <Minus size={16} />
+                    </button>
+                    <p className="font-bold w-8 text-center text-lg">{quantity}</p>
+                    <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <Plus size={16} />
+                    </button>
+                </div>
+                <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
+                  {isCartLoading ? 'Adding...' : 'Add to Cart'}
+                </button>
               </div>
-              <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
-                {isCartLoading ? 'Adding...' : 'Add to Cart'}
-              </button>
+            </div>
+
+            <p className="text-lg leading-relaxed">{product.description}</p>
+            
+            {/* Action block - visible on desktop */}
+            <div className="hidden md:block">
+              <p className="text-3xl font-bold text-gray-900">
+                ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
+              </p>
+              <div className="flex items-center gap-4 mt-4">
+                <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
+                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
+                        <Minus size={16} />
+                    </button>
+                    <p className="font-bold w-8 text-center text-lg">{quantity}</p>
+                    <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                        <Plus size={16} />
+                    </button>
+                </div>
+                <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
+                  {isCartLoading ? 'Adding...' : 'Add to Cart'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
