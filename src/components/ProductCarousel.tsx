@@ -28,7 +28,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
     skipSnaps: false,
     inViewThreshold: 0.7,
   });
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
 
   const scrollPrev = useCallback(() => {
     if (emblaApi) emblaApi.scrollPrev();
@@ -37,6 +37,11 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
   const scrollNext = useCallback(() => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
+
+  const getHandleFromHref = (href: string) => {
+    const parts = href.split('/');
+    return parts[parts.length - 1];
+  }
 
   return (
     <>
@@ -51,7 +56,7 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
                 <div className="p-2">
                   <ProductCard
                     {...product}
-                    onQuickView={() => setSelectedProduct(product)}
+                    onQuickView={() => setSelectedProductHandle(getHandleFromHref(product.href))}
                   />
                 </div>
               </div>
@@ -71,13 +76,11 @@ export const ProductCarousel: React.FC<ProductCarouselProps> = ({
           <ChevronRight className="h-6 w-6 text-neutral-dark" />
         </button>
       </div>
-      {selectedProduct && (
-        <QuickViewModal
-          isOpen={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          product={selectedProduct}
-        />
-      )}
+      <QuickViewModal
+        isOpen={!!selectedProductHandle}
+        onClose={() => setSelectedProductHandle(null)}
+        productHandle={selectedProductHandle}
+      />
     </>
   );
 };

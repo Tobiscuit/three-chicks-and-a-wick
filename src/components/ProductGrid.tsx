@@ -19,7 +19,12 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({ products }: ProductGridProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedProductHandle, setSelectedProductHandle] = useState<string | null>(null);
+
+  const getHandleFromHref = (href: string) => {
+    const parts = href.split('/');
+    return parts[parts.length - 1];
+  }
 
   return (
     <>
@@ -28,18 +33,16 @@ export default function ProductGrid({ products }: ProductGridProps) {
           <ProductCard
             key={product.id}
             {...product}
-            onQuickView={() => setSelectedProduct(product)}
+            onQuickView={() => setSelectedProductHandle(getHandleFromHref(product.href))}
           />
         ))}
       </div>
 
-      {selectedProduct && (
-        <QuickViewModal
-          isOpen={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          product={selectedProduct}
-        />
-      )}
+      <QuickViewModal
+        isOpen={!!selectedProductHandle}
+        onClose={() => setSelectedProductHandle(null)}
+        productHandle={selectedProductHandle}
+      />
     </>
   );
 } 

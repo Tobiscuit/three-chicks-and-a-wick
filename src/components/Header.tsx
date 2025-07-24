@@ -5,7 +5,6 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Search, Menu as MenuIcon, X } from 'lucide-react';
-import Cart from './Cart';
 import { useCart } from '@/context/CartContext';
 
 const navLinks = [
@@ -59,8 +58,15 @@ const MobileMenu = ({
   );
 };
 
-export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMobileMenuToggle: (isOpen: boolean) => void; isMobileMenuOpen: boolean; }) {
-  const [isCartOpen, setIsCartOpen] = useState(false);
+export default function Header({
+  onMobileMenuToggle,
+  isMobileMenuOpen,
+  onCartToggle,
+}: {
+  onMobileMenuToggle: (isOpen: boolean) => void;
+  isMobileMenuOpen: boolean;
+  onCartToggle: () => void;
+}) {
   const { cartItems } = useCart();
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -114,7 +120,7 @@ export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMob
               <span className="sr-only">Search</span>
             </button>
             <button
-              onClick={() => setIsCartOpen(true)}
+              onClick={onCartToggle}
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
             >
               <ShoppingCart className="h-6 w-6" />
@@ -132,7 +138,6 @@ export default function Header({ onMobileMenuToggle, isMobileMenuOpen }: { onMob
         isOpen={isMobileMenuOpen}
         onClose={() => onMobileMenuToggle(false)}
       />
-      <Cart isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </>
   );
 } 

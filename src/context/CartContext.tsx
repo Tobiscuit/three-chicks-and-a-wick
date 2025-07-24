@@ -1,7 +1,9 @@
 // src/context/CartContext.tsx
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import { useMutation } from '@apollo/client';
+import { CREATE_CART_MUTATION, ADD_TO_CART_MUTATION } from '@/lib/shopify';
 
 // This is a simplified version of the Product type from the product-listings page.
 // We only need a few fields for the cart.
@@ -24,20 +26,98 @@ export type CartItem = {
   quantity: number;
 };
 
+
 type CartContextType = {
   cartItems: CartItem[];
   addToCart: (product: CartProduct, quantity?: number) => void;
   removeFromCart: (variantId: string) => void;
   increaseQuantity: (variantId: string) => void;
   decreaseQuantity: (variantId: string) => void;
+  checkoutUrl: string | null;
+  isCartLoading: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [cartId, setCartId] = useState<string | null>(null);
+  const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
+  const [isCartLoading, setIsCartLoading] = useState(true);
 
-  const addToCart = (product: CartProduct, quantity: number = 1) => {
+  const [createCart] = useMutation(CREATE_CART_MUTATION);
+  const [addToCartMutation] = useMutation(ADD_TO_CART_MUTATION);
+
+  useEffect(() => {
+    const storedCartId = localStorage.getItem('shopify_cart_id');
+    if (storedCartId) {
+      setCartId(storedCartId);
+      // Here you would typically fetch the cart data from Shopify to populate the cart
+      // For now, we'll just set loading to false.
+    }
+    setIsCartLoading(false);
+  }, []);
+
+  const addToCart = async (product: CartProduct, quantity: number = 1) => {
+    setIsCartLoading(true);
+    let currentCartId = cartId;
+    let newCart = false;
+
+    if (!currentCartId) {
+      try {
+        const { data } = await createCart({
+          variables: {
+            input: {
+              lines: [
+                {
+                  merchandiseId: product.variantId,
+                  quantity: quantity,
+                },
+              ],
+            },
+          },
+        });
+        if (data.cartCreate.cart) {
+          currentCartId = data.cartCreate.cart.id;
+          setCartId(currentCartId);
+          setCheckoutUrl(data.cartCreate.cart.checkoutUrl);
+          localStorage.setItem('shopify_cart_id', currentCartId);
+          newCart = true;
+        } else {
+          // Handle user errors
+          console.error("Error creating cart:", data.cartCreate.userErrors);
+          setIsCartLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.error("Failed to create cart:", error);
+        setIsCartLoading(false);
+        return;
+      }
+    }
+
+    if (!newCart && currentCartId) {
+      try {
+        await addToCartMutation({
+          variables: {
+            cartId: currentCartId,
+            lines: [
+              {
+                merchandiseId: product.variantId,
+                quantity: quantity,
+              },
+            ],
+          },
+        });
+      } catch (error) {
+        console.error("Failed to add to cart:", error);
+        setIsCartLoading(false);
+        return;
+      }
+    }
+
+    // This part still uses local state for immediate UI feedback.
+    // A more robust solution would refetch the cart state from Shopify.
     setCartItems(prevItems => {
       const existingItem = prevItems.find(item => item.product.variantId === product.variantId);
       if (existingItem) {
@@ -49,6 +129,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       }
       return [...prevItems, { product, quantity }];
     });
+    
+    setIsCartLoading(false);
   };
 
   const removeFromCart = (variantId: string) => {
@@ -76,7 +158,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, increaseQuantity, decreaseQuantity }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, checkoutUrl, isCartLoading }}>
       {children}
     </CartContext.Provider>
   );

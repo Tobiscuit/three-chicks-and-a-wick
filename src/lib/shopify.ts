@@ -1,6 +1,52 @@
 // src/lib/shopify.ts
 
 import { SHOPIFY_STOREFRONT_API_TOKEN, SHOPIFY_STORE_DOMAIN } from './constants';
+import { gql } from '@apollo/client';
+
+export const CREATE_CART_MUTATION = gql`
+  mutation cartCreate($input: CartInput!) {
+    cartCreate(input: $input) {
+      cart {
+        id
+        checkoutUrl
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const ADD_TO_CART_MUTATION = gql`
+  mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+    cartLinesAdd(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+        lines(first: 100) {
+          edges {
+            node {
+              id
+              quantity
+              merchandise {
+                ... on ProductVariant {
+                  id
+                  product {
+                    title
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
 
 type GraphQLError = {
   message: string;

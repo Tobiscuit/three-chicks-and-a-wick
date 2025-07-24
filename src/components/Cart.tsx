@@ -1,125 +1,118 @@
-// src/components/Cart.tsx
 'use client';
 
+import { Fragment, useState } from 'react';
+import { Dialog, Transition } from '@headlessui/react';
+import { X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import { createCheckout } from '@/app/checkout/actions';
 
-interface CartProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-export default function Cart({ isOpen, onClose }: CartProps) {
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
-
-  if (!isOpen) return null;
-
-  const subtotal = cartItems.reduce((sum, item) => {
-    return sum + parseFloat(item.product.price.amount) * item.quantity;
-  }, 0);
-
-  const handleCheckout = async () => {
-    setIsCheckingOut(true);
-    const lineItems = cartItems.map(item => ({
-      variantId: item.product.variantId,
-      quantity: item.quantity,
-    }));
-
-    try {
-      await createCheckout(lineItems);
-      // The createCheckout action will handle the redirect on success.
-    } catch (error) {
-      console.error("Checkout failed:", error);
-      // Optionally, show an error message to the user
-      setIsCheckingOut(false);
-    }
-  };
+export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
+  const { cartItems, checkoutUrl } = useCart();
 
   return (
-    <div 
-      className="fixed inset-0 bg-[var(--neutral-dark)]/60 backdrop-blur-sm z-50 flex justify-center items-center" 
-      onClick={onClose}
-    >
-      <div 
-        className="w-full max-w-md h-full bg-[var(--neutral-light)] shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl" 
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center p-6 border-b border-neutral-dark/10">
-          <h2 className="text-[32px] font-extrabold text-neutral-dark">Your Cart</h2>
-          <button onClick={onClose} className="text-neutral-dark hover:text-[var(--primary)] transition-colors">
-            <X size={28} />
-          </button>
-        </div>
-        
-        {cartItems.length === 0 ? (
-          <div className="flex-grow flex flex-col items-center justify-center text-center p-6">
-            <h3 className="text-[28px] font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
-            <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
-            <button
-                onClick={onClose}
-                className="btn-primary"
-            >
-                Start Shopping
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex-grow p-6 overflow-y-auto">
-              <ul>
-                {cartItems.map(item => (
-                  <li key={item.product.id} className="flex items-center gap-4 mb-6">
-                    <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-neutral-dark/10">
-                        <Image
-                            src={item.product.image.url}
-                            alt={item.product.image.altText}
-                            layout="fill"
-                            objectFit="cover"
-                        />
-                    </div>
-                    <div className="flex-grow">
-                      <h3 className="font-bold text-neutral-dark">{item.product.title}</h3>
-                      <p className="text-sm text-neutral-dark/80">${item.product.price.amount}</p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        <button onClick={() => decreaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
-                            <Minus size={16} />
-                        </button>
-                        <p className="font-bold w-6 text-center">{item.quantity}</p>
-                        <button onClick={() => increaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
-                            <Plus size={16} />
-                        </button>
-                    </div>
-                    <button onClick={() => removeFromCart(item.product.variantId)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
-                      <X size={20} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+    <Transition.Root show={open} as={Fragment}>
+      <Dialog as="div" className="relative z-50" onClose={setOpen}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-in-out duration-500"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in-out duration-500"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+        </Transition.Child>
 
-            <div className="p-6 border-t border-neutral-dark/10">
-                <div className="flex justify-between items-center mb-4">
-                    <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
-                    <p className="text-xl font-bold text-neutral-dark">${subtotal.toFixed(2)}</p>
-                </div>
-                <button 
-                  className="w-full btn-primary"
-                  onClick={handleCheckout}
-                  disabled={isCheckingOut}
-                >
-                  {isCheckingOut ? 'Redirecting...' : 'Proceed to Checkout'}
-                </button>
-                 <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
-                    or Continue Shopping
-                </button>
+        <div className="fixed inset-0 overflow-hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+              <Transition.Child
+                as={Fragment}
+                enter="transform transition ease-in-out duration-500 sm:duration-700"
+                enterFrom="translate-x-full"
+                enterTo="translate-x-0"
+                leave="transform transition ease-in-out duration-500 sm:duration-700"
+                leaveFrom="translate-x-0"
+                leaveTo="translate-x-full"
+              >
+                <Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+                  <div className="flex h-full flex-col overflow-y-scroll bg-white shadow-xl">
+                    <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6">
+                      <div className="flex items-start justify-between">
+                        <Dialog.Title className="text-lg font-medium text-gray-900">Shopping cart</Dialog.Title>
+                        <div className="ml-3 flex h-7 items-center">
+                          <button
+                            type="button"
+                            className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+                            onClick={() => setOpen(false)}
+                          >
+                            <span className="sr-only">Close panel</span>
+                            <X className="h-6 w-6" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="mt-8">
+                        <div className="flow-root">
+                          <ul role="list" className="-my-6 divide-y divide-gray-200">
+                            {cartItems.map((item) => (
+                              <li key={item.product.variantId} className="flex py-6">
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                  <Image
+                                    src={item.product.image.url}
+                                    alt={item.product.image.altText}
+                                    width={96}
+                                    height={96}
+                                    className="h-full w-full object-cover object-center"
+                                  />
+                                </div>
+
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-gray-900">
+                                      <h3>{item.product.title}</h3>
+                                      <p className="ml-4">{item.product.price.amount}</p>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <p className="text-gray-500">Qty {item.quantity}</p>
+                                    <div className="flex">
+                                      <button type="button" className="font-medium text-indigo-600 hover:text-indigo-500">
+                                        Remove
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+                      <div className="flex justify-between text-base font-medium text-gray-900">
+                        <p>Subtotal</p>
+                        <p>$0.00</p>
+                      </div>
+                      <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+                      <div className="mt-6">
+                        <a
+                          href={checkoutUrl || '#'}
+                          className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
+                        >
+                          Checkout
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
             </div>
-          </>
-        )}
-      </div>
-    </div>
+          </div>
+        </div>
+      </Dialog>
+    </Transition.Root>
   );
 } 
