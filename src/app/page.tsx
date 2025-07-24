@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import ProductCard from '@/components/ProductCard';
+import ProductCarousel from '@/components/ProductCarousel';
 
 const featuredProducts = [
   {
@@ -69,10 +70,8 @@ export default function Home() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.name} {...product} />
-              ))}
+            <div className="mt-12">
+              <ProductCarousel products={featuredProducts} />
             </div>
             <div className="mt-16 text-center">
               <Link className="btn-secondary" href="/product-listings">
