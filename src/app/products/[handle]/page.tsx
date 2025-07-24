@@ -1,12 +1,13 @@
-import { shopifyFetch } from '@/lib/shopify';
+import { getClient } from '@/lib/client';
+import { gql } from '@apollo/client';
 import Link from 'next/link';
 import { Star } from 'lucide-react';
 import ProductGallery from '@/components/ProductGallery';
-import ProductCard from '@/components/ProductCard'; // Assuming you have this component
+import ProductCard from '@/components/ProductCard';
 import { notFound } from 'next/navigation';
 
-const GET_PRODUCT_QUERY = `
-  query getProduct($handle: String!) {
+const GET_PRODUCT_AND_RELATED_QUERY = gql`
+  query getProductAndRelated($handle: String!) {
     product(handle: $handle) {
       id
       title
@@ -33,13 +34,7 @@ const GET_PRODUCT_QUERY = `
         }
       }
     }
-  }
-`;
-
-// This is a placeholder for a more advanced related products implementation
-const GET_RELATED_PRODUCTS_QUERY = `
-  query getRelatedProducts {
-    products(first: 4) {
+    relatedProducts: products(first: 4) {
       edges {
         node {
           id
@@ -55,6 +50,13 @@ const GET_RELATED_PRODUCTS_QUERY = `
               node {
                 url
                 altText
+              }
+            }
+          }
+           variants(first: 1) {
+            edges {
+              node {
+                id
               }
             }
           }
@@ -76,12 +78,12 @@ type ShopifyVariant = {
 type ShopifyProduct = {
   id: string;
   title: string;
-  description: string;
   handle: string;
+  description: string;
   priceRange: {
     minVariantPrice: {
       amount: string;
-      currencyCode: string;
+      currencyCode?: string;
     };
   };
   images: {
@@ -92,35 +94,41 @@ type ShopifyProduct = {
   };
 };
 
-async function getProduct(handle: string) {
-  const { data } = await shopifyFetch<{ product: ShopifyProduct }>({
-    query: GET_PRODUCT_QUERY,
+type ProductAndRelatedQueryResponse = {
+  product: ShopifyProduct;
+  relatedProducts: {
+    edges: { node: ShopifyProduct }[];
+  };
+};
+
+async function getProductAndRelated(handle: string) {
+  const { data } = await getClient().query<ProductAndRelatedQueryResponse>({
+    query: GET_PRODUCT_AND_RELATED_QUERY,
     variables: { handle },
   });
+
   if (!data?.product) {
     notFound();
   }
-  return data.product;
+
+  const product = data.product;
+  const relatedProducts = data?.relatedProducts?.edges.map(({ node }: { node: ShopifyProduct }) => ({
+      id: node.id,
+      variantId: node.variants.edges[0]?.node.id,
+      href: `/products/${node.handle}`,
+      imageUrl: node.images.edges[0]?.node.url || '/images/placeholders/product-1.png',
+      name: node.title,
+      price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+  })) || [];
+
+  return { product, relatedProducts };
 }
 
-async function getRelatedProducts() {
-    const { data } = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
-        query: GET_RELATED_PRODUCTS_QUERY,
-    });
-    return data?.products?.edges.map(({ node }) => ({
-        href: `/products/${node.handle}`,
-        imageUrl: node.images.edges[0]?.node.url || '/images/placeholders/product-1.png',
-        name: node.title,
-        price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
-    })) || [];
-}
+export default async function ProductPage({ params }: { params: { handle:string } }) {
+  const { product, relatedProducts } = await getProductAndRelated(params.handle);
 
-export default async function ProductPage({ params }: { params: { handle: string } }) {
-  const product = await getProduct(params.handle);
-  const relatedProducts = await getRelatedProducts();
-
-  const productImages = product.images.edges.map((edge) => ({
-    id: edge.node.url, // Using URL as a temporary unique ID
+  const productImages = product.images.edges.map((edge: { node: ShopifyProductImage }) => ({
+    id: edge.node.url,
     src: edge.node.url,
     alt: edge.node.altText || product.title,
   }));
@@ -160,9 +168,9 @@ export default async function ProductPage({ params }: { params: { handle: string
                     You Might Also Like
                 </h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {relatedProducts.map((related, index) => (
+                    {relatedProducts.map((related: { id: string; href: string; imageUrl: string; name: string; price: string; }) => (
                         <ProductCard
-                            key={index}
+                            key={related.id}
                             href={related.href}
                             imageUrl={related.imageUrl}
                             name={related.name}

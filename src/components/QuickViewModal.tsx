@@ -1,54 +1,67 @@
 'use client';
 
+import { useQuery, gql } from '@apollo/client';
+import ProductGallery from '@/components/ProductGallery';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { X, Plus, Minus } from 'lucide-react';
-import { useCart, CartProduct } from '@/context/CartContext';
-import { useState } from 'react';
+import { X } from 'lucide-react';
 
-interface QuickViewModalProps {
+const GET_PRODUCT_DETAILS_QUERY = gql`
+  query GetProductForModal($handle: String!) {
+    product(handle: $handle) {
+      id
+      title
+      description
+      priceRange {
+        minVariantPrice {
+          amount
+          currencyCode
+        }
+      }
+      images(first: 5) {
+        edges {
+          node {
+            url
+            altText
+          }
+        }
+      }
+      variants(first: 1) {
+        edges {
+          node {
+            id
+          }
+        }
+      }
+    }
+  }
+`;
+
+export default function QuickViewModal({
+  productHandle,
+  isOpen,
+  onClose,
+}: {
+  productHandle: string | null;
   isOpen: boolean;
   onClose: () => void;
-  product: {
-    href: string;
-    imageUrl: string;
-    name: string;
-    price: string;
-    id: string; // Product ID
-    variantId: string; // Variant ID
-  };
-}
+}) {
+  const { loading, error, data } = useQuery(GET_PRODUCT_DETAILS_QUERY, {
+    variables: { handle: productHandle },
+    skip: !productHandle,
+  });
 
-export default function QuickViewModal({ isOpen, onClose, product }: QuickViewModalProps) {
-  const { addToCart } = useCart();
-  const [quantity, setQuantity] = useState(1);
+  const product = data?.product;
 
-  const handleAddToCart = () => {
-    const productToAdd: CartProduct = {
-      id: product.id,
-      variantId: product.variantId,
-      title: product.name,
-      price: {
-        amount: product.price.replace('$', ''), // Assuming price is in format "$XX.XX"
-        currencyCode: 'USD', // Assuming USD
-      },
-      image: {
-        url: product.imageUrl,
-        altText: product.name,
-      },
-    };
-    addToCart(productToAdd, quantity);
-    onClose(); // Close modal after adding to cart
-  };
-
-  if (!product) return null;
+  const productImages = product?.images.edges.map((edge: { node: { url: string; altText: string } }) => ({
+    id: edge.node.url,
+    src: edge.node.url,
+    alt: edge.node.altText || product.title,
+  }));
 
   return (
-    <Transition appear show={isOpen} as={Fragment}>
+    <Transition.Root show={isOpen} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={onClose}>
-        {/* Backdrop */}
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -58,76 +71,69 @@ export default function QuickViewModal({ isOpen, onClose, product }: QuickViewMo
           leaveFrom="opacity-100"
           leaveTo="opacity-0"
         >
-          <div className="fixed inset-0 bg-neutral-dark/40 backdrop-blur-sm" />
+          <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
         </Transition.Child>
 
-        {/* Modal Panel */}
-        <div className="fixed inset-0 overflow-y-auto">
-          <div className="flex min-h-full items-center justify-end">
+        <div className="fixed inset-0 z-10 overflow-y-auto">
+          <div className="flex min-h-full items-stretch justify-center text-center md:items-center md:px-2 lg:px-4">
             <Transition.Child
               as={Fragment}
-              enter="ease-out duration-500"
-              enterFrom="translate-x-full"
-              enterTo="translate-x-0"
-              leave="ease-in duration-500"
-              leaveFrom="translate-x-0"
-              leaveTo="translate-x-full"
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
+              enterTo="opacity-100 translate-y-0 md:scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 translate-y-0 md:scale-100"
+              leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
             >
-              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-l-2xl bg-white p-6 text-left align-middle shadow-xl transition-all h-screen">
-                <div className="flex justify-between items-center">
-                  <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                    Quick View
-                  </Dialog.Title>
+              <Dialog.Panel className="flex w-full transform text-left text-base transition md:my-8 md:max-w-2xl lg:max-w-4xl">
+                <div className="relative flex w-full items-center overflow-hidden bg-white px-4 pb-8 pt-14 shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
                   <button
                     type="button"
-                    className="rounded-md p-2 text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                    className="absolute right-4 top-4 text-gray-400 hover:text-gray-500 sm:right-6 sm:top-8 md:right-6 md:top-6 lg:right-8 lg:top-8"
                     onClick={onClose}
                   >
-                    <X className="h-6 w-6" />
                     <span className="sr-only">Close</span>
+                    <X className="h-6 w-6" aria-hidden="true" />
                   </button>
-                </div>
-                <div className="mt-8">
-                  <div className="aspect-square relative w-full overflow-hidden rounded-lg bg-gray-100">
-                    <Image
-                      src={product.imageUrl}
-                      alt={product.name}
-                      fill
-                      className="object-cover object-center"
-                    />
-                  </div>
-                  <div className="mt-6">
-                    <h2 className="text-2xl font-bold text-gray-900">{product.name}</h2>
-                    <p className="text-2xl mt-2 text-gray-900">{product.price}</p>
-                    <p className="mt-4 text-gray-500">
-                      This is a placeholder description. Full product details are available on the product page.
-                    </p>
-                    <div className="mt-10 flex items-center gap-4">
-                      <div className="flex items-center gap-2 rounded-full border border-gray-300 p-2">
-                        <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-1 rounded-full text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
-                          <Minus size={16} />
-                        </button>
-                        <span className="font-bold w-6 text-center">{quantity}</span>
-                        <button onClick={() => setQuantity(q => q + 1)} className="p-1 rounded-full text-gray-500 hover:bg-gray-100">
-                          <Plus size={16} />
-                        </button>
+
+                  {loading && <div className="w-full text-center">Loading...</div>}
+                  {error && <div className="w-full text-center text-red-500">Error: {error.message}</div>}
+
+                  {product && (
+                    <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8">
+                      <div className="sm:col-span-4 lg:col-span-5">
+                        <ProductGallery images={productImages || []} />
                       </div>
-                      <button type="button" className="btn-primary w-full" onClick={handleAddToCart}>
-                        Add to cart
-                      </button>
+                      <div className="sm:col-span-8 lg:col-span-7">
+                        <h2 className="text-2xl font-bold text-gray-900 sm:pr-12">{product.title}</h2>
+                        <section aria-labelledby="information-heading" className="mt-2">
+                          <h3 id="information-heading" className="sr-only">
+                            Product information
+                          </h3>
+                          <p className="text-2xl text-gray-900">
+                            ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
+                          </p>
+                        </section>
+                        <section aria-labelledby="options-heading" className="mt-10">
+                          <div className="mt-4">
+                            <p className="text-base text-gray-700">{product.description}</p>
+                          </div>
+                          <button
+                            type="button"
+                            className="mt-6 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          >
+                            Add to bag
+                          </button>
+                        </section>
+                      </div>
                     </div>
-                    <div className="mt-6 text-center">
-                      <Link href={product.href} className="text-sm font-medium text-primary hover:text-primary/80" onClick={onClose}>
-                        View full details
-                      </Link>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </Dialog.Panel>
             </Transition.Child>
           </div>
         </div>
       </Dialog>
-    </Transition>
+    </Transition.Root>
   );
-} 
+}

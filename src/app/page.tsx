@@ -1,8 +1,9 @@
 import Link from 'next/link';
 import ProductCarousel from '@/components/ProductCarousel';
-import { shopifyFetch } from '@/lib/shopify';
+import { getClient } from '@/lib/client';
+import { gql } from '@apollo/client';
 
-const GET_FEATURED_PRODUCTS_QUERY = `
+const GET_FEATURED_PRODUCTS_QUERY = gql`
   query getFeaturedProducts {
     collection(handle: "featured") {
       products(first: 10) {
@@ -66,21 +67,26 @@ type ShopifyProduct = {
   };
 };
 
+type FeaturedProductsQueryResponse = {
+  collection: {
+    products: {
+      edges: { node: ShopifyProduct }[];
+    };
+  };
+};
+
 async function getFeaturedProducts() {
-  const { data } = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
+  const { data } = await getClient().query<FeaturedProductsQueryResponse>({
     query: GET_FEATURED_PRODUCTS_QUERY,
-    cache: 'no-store', // Force a fresh fetch to bypass any stale cache
   });
 
-  // The diagnostic logging is no longer needed.
-
-  return data?.collection?.products?.edges.map(({ node }) => ({
+  return data?.collection?.products?.edges.map(({ node }: { node: ShopifyProduct }) => ({
+    id: node.id,
+    variantId: node.variants.edges[0]?.node.id,
     href: `/products/${node.handle}`,
     imageUrl: node.images.edges[0]?.node.url,
     name: node.title,
     price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
-    id: node.id,
-    variantId: node.variants.edges[0]?.node.id,
   })) || [];
 }
 

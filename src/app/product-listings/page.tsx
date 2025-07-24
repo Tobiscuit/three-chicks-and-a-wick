@@ -1,9 +1,10 @@
-import { shopifyFetch } from '@/lib/shopify';
-import ProductGrid from '@/components/ProductGrid'; // We will create this next
+import ProductGrid from '@/components/ProductGrid';
+import { gql } from '@apollo/client';
+import { getClient } from '@/lib/client';
 
-const getProductsQuery = `
+const GET_PRODUCTS_QUERY = gql`
   query getProducts {
-    products(first: 20) { // Fetch more products
+    products(first: 20) {
       edges {
         node {
           id
@@ -54,13 +55,18 @@ type ShopifyProduct = {
   };
 };
 
+type ProductsQueryResponse = {
+  products: {
+    edges: { node: ShopifyProduct }[];
+  };
+};
+
 async function getProducts() {
-  const { data } = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
-    query: getProductsQuery,
-    cache: 'no-store', // For now, let's keep it fresh
+  const { data } = await getClient().query<ProductsQueryResponse>({
+    query: GET_PRODUCTS_QUERY,
   });
 
-  return data?.products?.edges.map(({ node }) => ({
+  const products = data?.products?.edges.map(({ node }: { node: ShopifyProduct }) => ({
     id: node.id,
     variantId: node.variants.edges[0]?.node.id,
     href: `/products/${node.handle}`,
@@ -68,6 +74,8 @@ async function getProducts() {
     imageUrl: node.images.edges[0]?.node.url,
     price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
   })) || [];
+
+  return products;
 }
 
 
@@ -83,7 +91,7 @@ export default async function ProductListingsPage() {
         Browse our curated selection of handcrafted goods, made with love and attention to detail.
       </p>
     </header>
-  );
+    );
 
   return (
     <div className="bg-cream">
