@@ -4,6 +4,8 @@
 import { useCart } from '@/context/CartContext';
 import { X } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
+import { createCheckout } from '@/app/checkout/actions';
 
 interface CartProps {
   isOpen: boolean;
@@ -12,12 +14,30 @@ interface CartProps {
 
 export default function Cart({ isOpen, onClose }: CartProps) {
   const { cartItems, removeFromCart } = useCart();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((sum, item) => {
     return sum + parseFloat(item.product.price.amount) * item.quantity;
   }, 0);
+
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    const lineItems = cartItems.map(item => ({
+      variantId: item.product.variantId,
+      quantity: item.quantity,
+    }));
+
+    try {
+      await createCheckout(lineItems);
+      // The createCheckout action will handle the redirect on success.
+    } catch (error) {
+      console.error("Checkout failed:", error);
+      // Optionally, show an error message to the user
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div 
@@ -81,8 +101,12 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                     <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
                     <p className="text-xl font-bold text-neutral-dark">${subtotal.toFixed(2)}</p>
                 </div>
-                <button className="w-full btn-primary">
-                    Proceed to Checkout
+                <button 
+                  className="w-full btn-primary"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                >
+                  {isCheckingOut ? 'Redirecting...' : 'Proceed to Checkout'}
                 </button>
                  <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
                     or Continue Shopping

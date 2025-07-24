@@ -39,6 +39,15 @@ const GET_FEATURED_PRODUCTS_QUERY = `
   }
 `;
 
+type ShopifyProductImage = {
+  url: string;
+  altText: string;
+};
+
+type ShopifyVariant = {
+  id: string;
+};
+
 type ShopifyProduct = {
   id: string;
   title: string;
@@ -50,20 +59,23 @@ type ShopifyProduct = {
     };
   };
   images: {
-    edges: { node: { url: string; altText: string } }[];
+    edges: { node: ShopifyProductImage }[];
   };
   variants: {
-    edges: { node: { id: string } }[];
+    edges: { node: ShopifyVariant }[];
   };
 };
 
 async function getFeaturedProducts() {
   const { data } = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
     query: GET_FEATURED_PRODUCTS_QUERY,
+    // cache: 'no-store', // Temporarily disabled for debugging
   });
 
+  // console.log('Featured products data from Shopify:', JSON.stringify(data, null, 2));
+
   return data?.collection?.products?.edges.map(({ node }) => ({
-    href: `/product-details/${node.handle}`,
+    href: `/products/${node.handle}`,
     imageUrl: node.images.edges[0]?.node.url,
     name: node.title,
     price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,

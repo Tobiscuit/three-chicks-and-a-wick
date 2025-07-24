@@ -17,9 +17,11 @@ type GraphQLResponse<T> = {
 export async function shopifyFetch<T>({
   query,
   variables,
+  cache = 'force-cache',
 }: {
   query: string;
   variables?: Record<string, unknown>;
+  cache?: RequestCache;
 }): Promise<GraphQLResponse<T>> {
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_API_TOKEN) {
     throw new Error(
@@ -37,6 +39,7 @@ export async function shopifyFetch<T>({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),
+      cache,
     });
 
     if (!response.ok) {
