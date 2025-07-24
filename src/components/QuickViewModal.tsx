@@ -39,10 +39,10 @@ export default function QuickViewModal({ isOpen, onClose, product }: QuickViewMo
           <div className="flex min-h-full items-center justify-end">
             <Transition.Child
               as={Fragment}
-              enter="transform transition ease-in-out duration-500 sm:duration-700"
+              enter="ease-out duration-500"
               enterFrom="translate-x-full"
               enterTo="translate-x-0"
-              leave="transform transition ease-in-out duration-500 sm:duration-700"
+              leave="ease-in duration-500"
               leaveFrom="translate-x-0"
               leaveTo="translate-x-full"
             >
