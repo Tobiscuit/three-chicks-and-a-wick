@@ -4,6 +4,8 @@ import Link from 'next/link';
 import ProductGallery from '@/components/ProductGallery';
 import ProductCard from '@/components/ProductCard';
 import { useCart } from '@/context/CartContext';
+import { useState } from 'react';
+import { Minus, Plus } from 'lucide-react';
 
 // Define the types right in the component file for clarity
 type ShopifyProductImage = {
@@ -42,6 +44,7 @@ export default function ProductView({
   relatedProducts: any[]; // You can define a more specific type for related products
 }) {
   const { addToCart, isCartLoading } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   const productImages = product.images.edges.map((edge: { node: ShopifyProductImage }) => ({
     id: edge.node.url,
@@ -63,7 +66,8 @@ export default function ProductView({
         altText: product.images.edges[0].node.altText,
       },
     };
-    addToCart(cartProduct, 1);
+    addToCart(cartProduct, quantity);
+    setQuantity(1); // Reset quantity after adding to cart
   };
 
   return (
@@ -90,9 +94,20 @@ export default function ProductView({
             <p className="text-3xl font-bold text-gray-900">
               ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
             </p>
-            <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary max-w-xs">
-              {isCartLoading ? 'Adding...' : 'Add to Cart'}
-            </button>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
+                  <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
+                      <Minus size={16} />
+                  </button>
+                  <p className="font-bold w-8 text-center text-lg">{quantity}</p>
+                  <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                      <Plus size={16} />
+                  </button>
+              </div>
+              <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
+                {isCartLoading ? 'Adding...' : 'Add to Cart'}
+              </button>
+            </div>
           </div>
         </div>
         <div className="mt-16 sm:mt-24 space-y-16 sm:space-y-24">
