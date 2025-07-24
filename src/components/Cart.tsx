@@ -61,7 +61,7 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
                                 <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
                                   <Image
                                     src={item.product.image.url}
-                                    alt={item.product.image.altText}
+                                    alt={item.product.image.altText || item.product.title}
                                     width={96}
                                     height={96}
                                     className="h-full w-full object-cover object-center"

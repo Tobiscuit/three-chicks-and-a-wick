@@ -48,6 +48,42 @@ export const ADD_TO_CART_MUTATION = gql`
   }
 `;
 
+export const GET_CART_QUERY = gql`
+  query getCart($cartId: ID!) {
+    cart(id: $cartId) {
+      id
+      checkoutUrl
+      lines(first: 100) {
+        edges {
+          node {
+            id
+            quantity
+            merchandise {
+              ... on ProductVariant {
+                id
+                title
+                price {
+                  amount
+                  currencyCode
+                }
+                image {
+                  url
+                  altText
+                }
+                product {
+                  id
+                  title
+                  handle
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
 type GraphQLError = {
   message: string;
   locations?: { line: number; column: number }[];

@@ -2,8 +2,8 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { useMutation } from '@apollo/client';
-import { CREATE_CART_MUTATION, ADD_TO_CART_MUTATION } from '@/lib/shopify';
+import { useMutation, useLazyQuery } from '@apollo/client';
+import { CREATE_CART_MUTATION, ADD_TO_CART_MUTATION, GET_CART_QUERY } from '@/lib/shopify';
 
 // This is a simplified version of the Product type from the product-listings page.
 // We only need a few fields for the cart.
@@ -47,16 +47,43 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [createCart] = useMutation(CREATE_CART_MUTATION);
   const [addToCartMutation] = useMutation(ADD_TO_CART_MUTATION);
+  const [getCart, { data: cartData }] = useLazyQuery(GET_CART_QUERY);
 
   useEffect(() => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
     if (storedCartId) {
       setCartId(storedCartId);
-      // Here you would typically fetch the cart data from Shopify to populate the cart
-      // For now, we'll just set loading to false.
+      getCart({ variables: { cartId: storedCartId } });
     }
     setIsCartLoading(false);
-  }, []);
+  }, [getCart]);
+  
+  useEffect(() => {
+    if (cartData && cartData.cart) {
+      setCheckoutUrl(cartData.cart.checkoutUrl);
+      const items = cartData.cart.lines.edges.map((edge: any) => {
+        const { merchandise, quantity } = edge.node;
+        return {
+          product: {
+            id: merchandise.product.id,
+            variantId: merchandise.id,
+            title: merchandise.product.title,
+            price: {
+              amount: merchandise.price.amount,
+              currencyCode: merchandise.price.currencyCode,
+            },
+            image: {
+              url: merchandise.image.url,
+              altText: merchandise.image.altText || merchandise.product.title,
+            },
+          },
+          quantity,
+        };
+      });
+      setCartItems(items);
+    }
+  }, [cartData]);
+
 
   const addToCart = async (product: CartProduct, quantity: number = 1) => {
     setIsCartLoading(true);
