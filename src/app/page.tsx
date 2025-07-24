@@ -69,10 +69,10 @@ type ShopifyProduct = {
 async function getFeaturedProducts() {
   const { data } = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
     query: GET_FEATURED_PRODUCTS_QUERY,
-    // cache: 'no-store', // Temporarily disabled for debugging
+    cache: 'no-store', // Force a fresh fetch to bypass any stale cache
   });
 
-  // console.log('Featured products data from Shopify:', JSON.stringify(data, null, 2));
+  // The diagnostic logging is no longer needed.
 
   return data?.collection?.products?.edges.map(({ node }) => ({
     href: `/products/${node.handle}`,

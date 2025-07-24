@@ -2,7 +2,7 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 import { createCheckout } from '@/app/checkout/actions';
@@ -13,7 +13,7 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  const { cartItems, removeFromCart } = useCart();
+  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   if (!isOpen) return null;
@@ -85,10 +85,15 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                       <p className="text-sm text-neutral-dark/80">${item.product.price.amount}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Quantity controls will go here */}
-                        <p className="font-bold">{item.quantity}</p>
+                        <button onClick={() => decreaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                            <Minus size={16} />
+                        </button>
+                        <p className="font-bold w-6 text-center">{item.quantity}</p>
+                        <button onClick={() => increaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+                            <Plus size={16} />
+                        </button>
                     </div>
-                    <button onClick={() => removeFromCart(item.product.id)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
+                    <button onClick={() => removeFromCart(item.product.variantId)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
                       <X size={20} />
                     </button>
                   </li>

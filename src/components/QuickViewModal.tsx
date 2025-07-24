@@ -4,8 +4,9 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { X } from 'lucide-react';
+import { X, Plus, Minus } from 'lucide-react';
 import { useCart, CartProduct } from '@/context/CartContext';
+import { useState } from 'react';
 
 interface QuickViewModalProps {
   isOpen: boolean;
@@ -22,6 +23,7 @@ interface QuickViewModalProps {
 
 export default function QuickViewModal({ isOpen, onClose, product }: QuickViewModalProps) {
   const { addToCart } = useCart();
+  const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
     const productToAdd: CartProduct = {
@@ -37,7 +39,7 @@ export default function QuickViewModal({ isOpen, onClose, product }: QuickViewMo
         altText: product.name,
       },
     };
-    addToCart(productToAdd);
+    addToCart(productToAdd, quantity);
     onClose(); // Close modal after adding to cart
   };
 
@@ -100,15 +102,24 @@ export default function QuickViewModal({ isOpen, onClose, product }: QuickViewMo
                     <p className="mt-4 text-gray-500">
                       This is a placeholder description. Full product details are available on the product page.
                     </p>
-                    <div className="mt-10">
+                    <div className="mt-10 flex items-center gap-4">
+                      <div className="flex items-center gap-2 rounded-full border border-gray-300 p-2">
+                        <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-1 rounded-full text-gray-500 hover:bg-gray-100 disabled:opacity-50" disabled={quantity <= 1}>
+                          <Minus size={16} />
+                        </button>
+                        <span className="font-bold w-6 text-center">{quantity}</span>
+                        <button onClick={() => setQuantity(q => q + 1)} className="p-1 rounded-full text-gray-500 hover:bg-gray-100">
+                          <Plus size={16} />
+                        </button>
+                      </div>
                       <button type="button" className="btn-primary w-full" onClick={handleAddToCart}>
                         Add to cart
                       </button>
-                      <p className="mt-6 text-center">
-                        <Link href={product.href} className="text-sm font-medium text-primary hover:text-primary/80" onClick={onClose}>
-                          View full details
-                        </Link>
-                      </p>
+                    </div>
+                    <div className="mt-6 text-center">
+                      <Link href={product.href} className="text-sm font-medium text-primary hover:text-primary/80" onClick={onClose}>
+                        View full details
+                      </Link>
                     </div>
                   </div>
                 </div>

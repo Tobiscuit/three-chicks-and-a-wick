@@ -1,20 +1,20 @@
-'use client';
-
 import { shopifyFetch } from '@/lib/shopify';
-import { useCart, CartProduct } from '@/context/CartContext';
-import { useEffect, useState } from 'react';
-import ProductCardSkeleton from '@/components/ProductCardSkeleton';
-import ProductCard from '@/components/ProductCard';
+import ProductGrid from '@/components/ProductGrid'; // We will create this next
 
 const getProductsQuery = `
   query getProducts {
-    products(first: 10) {
+    products(first: 20) { // Fetch more products
       edges {
         node {
           id
           title
           handle
-          descriptionHtml
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
           images(first: 1) {
             edges {
               node {
@@ -23,10 +23,11 @@ const getProductsQuery = `
               }
             }
           }
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
+          variants(first: 1) {
+            edges {
+              node {
+                id
+              }
             }
           }
         }
@@ -35,55 +36,43 @@ const getProductsQuery = `
   }
 `;
 
-type Product = {
+type ShopifyProduct = {
   id: string;
   title: string;
   handle: string;
-  descriptionHtml: string;
-  images: {
-    edges: {
-      node: {
-        url: string;
-        altText: string;
-      };
-    }[];
-  };
   priceRange: {
     minVariantPrice: {
       amount: string;
       currencyCode: string;
     };
   };
-};
-
-type ProductsQueryResponse = {
-  products: {
-    edges: {
-      node: Product;
-    }[];
+  images: {
+    edges: { node: { url: string; altText: string } }[];
+  };
+  variants: {
+    edges: { node: { id: string } }[];
   };
 };
 
+async function getProducts() {
+  const { data } = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
+    query: getProductsQuery,
+    cache: 'no-store', // For now, let's keep it fresh
+  });
 
-export default function ProductListingsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  return data?.products?.edges.map(({ node }) => ({
+    id: node.id,
+    variantId: node.variants.edges[0]?.node.id,
+    href: `/products/${node.handle}`,
+    name: node.title,
+    imageUrl: node.images.edges[0]?.node.url,
+    price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+  })) || [];
+}
 
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setIsLoading(true);
-        const { data } = await shopifyFetch<ProductsQueryResponse>({ query: getProductsQuery });
-        setProducts(data.products.edges.map(edge => edge.node));
-      } catch (error) {
-        console.error("Failed to fetch products:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
 
-    fetchProducts();
-  }, []);
+export default async function ProductListingsPage() {
+  const products = await getProducts();
 
   const header = (
     <header className="text-center mb-12">
@@ -96,36 +85,11 @@ export default function ProductListingsPage() {
     </header>
   );
 
-  if (isLoading) {
-    return (
-      <div className="bg-cream">
-        <main className="container mx-auto py-16 sm:py-24">
-          {header}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
-            {Array.from({ length: 12 }).map((_, index) => (
-              <ProductCardSkeleton key={index} />
-            ))}
-          </div>
-        </main>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-cream">
       <main className="container mx-auto py-16 sm:py-24">
         {header}
-        <div className="grid grid-cols-2 gap-x-4 gap-y-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 sm:gap-6">
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              href={`/product-details?handle=${product.handle}`}
-              imageUrl={product.images.edges[0]?.node.url}
-              name={product.title}
-              price={`$${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}`}
-            />
-          ))}
-        </div>
+        <ProductGrid products={products} />
       </main>
     </div>
   );

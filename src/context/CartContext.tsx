@@ -26,9 +26,10 @@ export type CartItem = {
 
 type CartContextType = {
   cartItems: CartItem[];
-  addToCart: (product: CartProduct) => void;
-  removeFromCart: (productId: string) => void;
-  // We'll add updateQuantity later
+  addToCart: (product: CartProduct, quantity?: number) => void;
+  removeFromCart: (variantId: string) => void;
+  increaseQuantity: (variantId: string) => void;
+  decreaseQuantity: (variantId: string) => void;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -36,28 +37,46 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  const addToCart = (product: CartProduct) => {
+  const addToCart = (product: CartProduct, quantity: number = 1) => {
     setCartItems(prevItems => {
-      // Use variantId to check for existing items, as it's more specific
       const existingItem = prevItems.find(item => item.product.variantId === product.variantId);
       if (existingItem) {
         return prevItems.map(item =>
           item.product.variantId === product.variantId
-            ? { ...item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...prevItems, { product, quantity: 1 }];
+      return [...prevItems, { product, quantity }];
     });
   };
 
-  const removeFromCart = (productId: string) => {
-    // This might need to be changed to use variantId if products can be in the cart with different variants
-    setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
+  const removeFromCart = (variantId: string) => {
+    setCartItems(prevItems => prevItems.filter(item => item.product.variantId !== variantId));
+  };
+
+  const increaseQuantity = (variantId: string) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product.variantId === variantId
+          ? { ...item, quantity: item.quantity + 1 }
+          : item
+      )
+    );
+  };
+
+  const decreaseQuantity = (variantId: string) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.product.variantId === variantId && item.quantity > 1
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      )
+    );
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, increaseQuantity, decreaseQuantity }}>
       {children}
     </CartContext.Provider>
   );
