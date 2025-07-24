@@ -8,6 +8,7 @@ interface ProductCardProps {
   imageUrl: string;
   name: string;
   price: string;
+  priority?: boolean;
   onQuickView?: () => void; // Make onQuickView optional
 }
 
@@ -16,19 +17,21 @@ export default function ProductCard({
   imageUrl,
   name,
   price,
+  priority = false,
   onQuickView,
 }: ProductCardProps) {
   return (
     <div className="group block">
       <div className="overflow-hidden rounded-3xl bg-white shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-1">
-        <div className="relative w-full overflow-hidden">
+        <div className="relative aspect-[4/3] w-full overflow-hidden">
           <Link href={href}>
             <Image
               src={imageUrl}
               alt={name}
-              width={400}
-              height={300}
-              className="aspect-[4/3] w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+              fill
+              sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+              className="object-cover object-center transition-transform duration-300 group-hover:scale-105"
+              priority={priority}
             />
           </Link>
           {onQuickView && (

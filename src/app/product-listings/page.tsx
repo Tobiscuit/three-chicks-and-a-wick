@@ -97,7 +97,7 @@ export default async function ProductListingsPage() {
     <div className="bg-cream">
       <main className="container mx-auto py-16 sm:py-24">
         {header}
-        <ProductGrid products={products} />
+        <ProductGrid products={products.map((p, i) => ({ ...p, priority: i < 4 }))} />
       </main>
     </div>
   );

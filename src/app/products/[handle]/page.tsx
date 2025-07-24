@@ -168,13 +168,14 @@ export default async function ProductPage({ params }: { params: { handle:string 
                     You Might Also Like
                 </h3>
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {relatedProducts.map((related: { id: string; href: string; imageUrl: string; name: string; price: string; }) => (
+                    {relatedProducts.map((related) => (
                         <ProductCard
                             key={related.id}
                             href={related.href}
                             imageUrl={related.imageUrl}
                             name={related.name}
                             price={related.price}
+                            priority
                         />
                     ))}
                 </div>

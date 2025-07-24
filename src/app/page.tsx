@@ -2,6 +2,8 @@ import Link from 'next/link';
 import ProductCarousel from '@/components/ProductCarousel';
 import { getClient } from '@/lib/client';
 import { gql } from '@apollo/client';
+import Image from 'next/image';
+import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.png';
 
 const GET_FEATURED_PRODUCTS_QUERY = gql`
   query getFeaturedProducts {
@@ -113,13 +115,14 @@ export default async function Home() {
               </Link>
             </div>
             <Link href="/product-listings" className="relative h-80 lg:h-96 lg:col-span-3">
-              <div
-                className="absolute left-0 top-0 h-full w-full rounded-3xl bg-cover bg-center transition-transform duration-500 hover:scale-105"
-                style={{
-                  backgroundImage:
-                    "url('/images/products/diy-macrame-plant-hanger-kit.png')",
-                }}
-              ></div>
+              <Image
+                src={heroImage}
+                alt="DIY macrame plant hanger kit"
+                fill
+                className="rounded-3xl object-cover transition-transform duration-500 hover:scale-105"
+                placeholder="blur"
+                priority
+              />
             </Link>
           </div>
         </section>
