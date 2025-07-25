@@ -48,6 +48,34 @@ export const ADD_TO_CART_MUTATION = gql`
   }
 `;
 
+export const REMOVE_FROM_CART_MUTATION = gql`
+  mutation cartLinesRemove($cartId: ID!, $lineIds: [ID!]!) {
+    cartLinesRemove(cartId: $cartId, lineIds: $lineIds) {
+      cart {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
+export const UPDATE_CART_LINE_MUTATION = gql`
+  mutation cartLinesUpdate($cartId: ID!, $lines: [CartLineUpdateInput!]!) {
+    cartLinesUpdate(cartId: $cartId, lines: $lines) {
+      cart {
+        id
+      }
+      userErrors {
+        field
+        message
+      }
+    }
+  }
+`;
+
 export const GET_CART_QUERY = gql`
   query getCart($cartId: ID!) {
     cart(id: $cartId) {

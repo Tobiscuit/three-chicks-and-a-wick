@@ -1,15 +1,19 @@
-// src/context/CartContext.tsx
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useMutation, useLazyQuery } from '@apollo/client';
-import { CREATE_CART_MUTATION, ADD_TO_CART_MUTATION, GET_CART_QUERY } from '@/lib/shopify';
+import {
+  CREATE_CART_MUTATION,
+  ADD_TO_CART_MUTATION,
+  GET_CART_QUERY,
+  REMOVE_FROM_CART_MUTATION,
+  UPDATE_CART_LINE_MUTATION
+} from '@/lib/shopify';
 
-// This is a simplified version of the Product type from the product-listings page.
-// We only need a few fields for the cart.
 export type CartProduct = {
-  id: string; // This is the product's top-level ID
-  variantId: string; // This is the specific variant ID required for checkout
+  id: string;
+  variantId: string;
+  handle: string;
   title: string;
   price: {
     amount: string;
@@ -22,6 +26,7 @@ export type CartProduct = {
 };
 
 export type CartItem = {
+  lineId: string;
   product: CartProduct;
   quantity: number;
 };
@@ -30,9 +35,8 @@ export type CartItem = {
 type CartContextType = {
   cartItems: CartItem[];
   addToCart: (product: CartProduct, quantity?: number) => void;
-  removeFromCart: (variantId: string) => void;
-  increaseQuantity: (variantId: string) => void;
-  decreaseQuantity: (variantId: string) => void;
+  removeFromCart: (lineId: string) => Promise<void>;
+  updateQuantity: (lineId: string, quantity: number) => Promise<void>;
   checkoutUrl: string | null;
   isCartLoading: boolean;
 };
@@ -47,40 +51,51 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [createCart] = useMutation(CREATE_CART_MUTATION);
   const [addToCartMutation] = useMutation(ADD_TO_CART_MUTATION);
-  const [getCart, { data: cartData }] = useLazyQuery(GET_CART_QUERY);
+  const [removeFromCartMutation] = useMutation(REMOVE_FROM_CART_MUTATION);
+  const [updateCartLineMutation] = useMutation(UPDATE_CART_LINE_MUTATION);
+
+  const [getCart, { data: cartData, refetch: refetchCart }] = useLazyQuery(GET_CART_QUERY, {
+    fetchPolicy: 'network-only',
+  });
 
   useEffect(() => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
     if (storedCartId) {
       setCartId(storedCartId);
       getCart({ variables: { cartId: storedCartId } });
+    } else {
+      setIsCartLoading(false);
     }
-    setIsCartLoading(false);
   }, [getCart]);
-  
+
   useEffect(() => {
     if (cartData && cartData.cart) {
       setCheckoutUrl(cartData.cart.checkoutUrl);
-      const items = cartData.cart.lines.edges.map((edge: any) => {
-        const { merchandise, quantity } = edge.node;
+      const items = cartData.cart.lines.edges.map((edge: { node: any }) => {
+        const { node } = edge;
         return {
+          lineId: node.id,
           product: {
-            id: merchandise.product.id,
-            variantId: merchandise.id,
-            title: merchandise.product.title,
+            id: node.merchandise.product.id,
+            variantId: node.merchandise.id,
+            handle: node.merchandise.product.handle,
+            title: node.merchandise.product.title,
             price: {
-              amount: merchandise.price.amount,
-              currencyCode: merchandise.price.currencyCode,
+              amount: node.merchandise.price.amount,
+              currencyCode: node.merchandise.price.currencyCode,
             },
             image: {
-              url: merchandise.image.url,
-              altText: merchandise.image.altText || merchandise.product.title,
+              url: node.merchandise.image.url,
+              altText: node.merchandise.image.altText || node.merchandise.product.title,
             },
           },
-          quantity,
+          quantity: node.quantity,
         };
       });
       setCartItems(items);
+      setIsCartLoading(false);
+    } else if (cartData === null) {
+        setIsCartLoading(false);
     }
   }, [cartData]);
 
@@ -88,19 +103,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const addToCart = async (product: CartProduct, quantity: number = 1) => {
     setIsCartLoading(true);
     let currentCartId = cartId;
-    let newCart = false;
 
     if (!currentCartId) {
       try {
         const { data } = await createCart({
           variables: {
             input: {
-              lines: [
-                {
-                  merchandiseId: product.variantId,
-                  quantity: quantity,
-                },
-              ],
+              lines: [{ merchandiseId: product.variantId, quantity: quantity }],
             },
           },
         });
@@ -109,83 +118,66 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           setCartId(currentCartId);
           setCheckoutUrl(data.cartCreate.cart.checkoutUrl);
           localStorage.setItem('shopify_cart_id', currentCartId);
-          newCart = true;
+          if (refetchCart && currentCartId) {
+            await refetchCart({ cartId: currentCartId });
+          }
         } else {
-          // Handle user errors
           console.error("Error creating cart:", data.cartCreate.userErrors);
-          setIsCartLoading(false);
-          return;
         }
       } catch (error) {
         console.error("Failed to create cart:", error);
-        setIsCartLoading(false);
-        return;
       }
-    }
-
-    if (!newCart && currentCartId) {
+    } else {
       try {
         await addToCartMutation({
           variables: {
             cartId: currentCartId,
-            lines: [
-              {
-                merchandiseId: product.variantId,
-                quantity: quantity,
-              },
-            ],
+            lines: [{ merchandiseId: product.variantId, quantity: quantity }],
           },
         });
+        if (refetchCart && currentCartId) {
+          await refetchCart({ cartId: currentCartId });
+        }
       } catch (error) {
         console.error("Failed to add to cart:", error);
-        setIsCartLoading(false);
-        return;
       }
     }
-
-    // This part still uses local state for immediate UI feedback.
-    // A more robust solution would refetch the cart state from Shopify.
-    setCartItems(prevItems => {
-      const existingItem = prevItems.find(item => item.product.variantId === product.variantId);
-      if (existingItem) {
-        return prevItems.map(item =>
-          item.product.variantId === product.variantId
-            ? { ...item, quantity: item.quantity + quantity }
-            : item
-        );
-      }
-      return [...prevItems, { product, quantity }];
-    });
-    
     setIsCartLoading(false);
   };
 
-  const removeFromCart = (variantId: string) => {
-    setCartItems(prevItems => prevItems.filter(item => item.product.variantId !== variantId));
+  const removeFromCart = async (lineId: string) => {
+    if (!cartId) return;
+    setIsCartLoading(true);
+    try {
+      await removeFromCartMutation({
+        variables: { cartId, lineIds: [lineId] }
+      });
+      if (refetchCart) await refetchCart({ cartId });
+    } catch (error) {
+      console.error("Failed to remove item:", error);
+    }
+    setIsCartLoading(false);
   };
 
-  const increaseQuantity = (variantId: string) => {
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.product.variantId === variantId
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
-      )
-    );
-  };
-
-  const decreaseQuantity = (variantId: string) => {
-    setCartItems(prevItems =>
-      prevItems.map(item =>
-        item.product.variantId === variantId && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
-    );
+  const updateQuantity = async (lineId: string, quantity: number) => {
+    if (!cartId || quantity < 1) return;
+    setIsCartLoading(true);
+    try {
+      await updateCartLineMutation({
+        variables: {
+          cartId,
+          lines: [{ id: lineId, quantity: quantity }],
+        }
+      });
+      if (refetchCart) await refetchCart({ cartId });
+    } catch (error) {
+      console.error("Failed to update quantity:", error);
+    }
+    setIsCartLoading(false);
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, increaseQuantity, decreaseQuantity, checkoutUrl, isCartLoading }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, checkoutUrl, isCartLoading }}>
       {children}
     </CartContext.Provider>
   );

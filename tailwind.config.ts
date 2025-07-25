@@ -19,6 +19,12 @@ const config: Config = {
       },
     },
     extend: {
+      colors: {
+        cream: '#F9F5F0',
+        primary: '#E95276',
+        'primary-dark': '#D94266',
+        'neutral-dark': '#3D3D3D',
+      },
       fontFamily: {
         sans: ['var(--font-nunito)'],
         body: ['var(--font-poppins)'],
