@@ -1,44 +1,34 @@
-import type { Metadata } from 'next';
-// import { Nunito, Poppins } from 'next/font/google';
-import './globals.css';
-import { CartProvider } from '@/context/CartContext';
-import PageWrapper from '@/components/PageWrapper';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import Footer from "@/components/Footer";
+import Header from "@/components/Header";
+import { ApolloProvider } from "./ApolloProvider";
+import { CartProvider } from "@/context/CartContext";
+import PageWrapper from "@/components/PageWrapper";
 
-// const nunito = Nunito({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-nunito',
-//   weight: ['700', '900'],
-// });
-
-// const poppins = Poppins({
-//   subsets: ['latin'],
-//   display: 'swap',
-//   variable: '--font-poppins',
-//   weight: ['400', '500', '700'],
-// });
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Three Chicks and a Wick',
-  description: 'Handcrafted candles and crafts',
+  title: "Three Girls and a Wick",
+  description: "Handcrafted candles, soaps, and more.",
 };
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      <body
-        className={`font-body`}
-        suppressHydrationWarning
-      >
-        <CartProvider>
-          <PageWrapper>
-            {children}
-          </PageWrapper>
-        </CartProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} font-body`}>
+        <ApolloProvider>
+          <CartProvider>
+            <PageWrapper>
+              {children}
+            </PageWrapper>
+          </CartProvider>
+        </ApolloProvider>
       </body>
     </html>
   );

@@ -1,28 +1,101 @@
 import Link from 'next/link';
-import ProductCard from '@/components/ProductCard';
+import ProductCarousel from '@/components/ProductCarousel';
+import { getClient } from '@/lib/client';
+import { gql } from '@apollo/client';
+import Image from 'next/image';
+import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.png';
 
-const featuredProducts = [
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/lavender-bliss-candle.png',
-    name: 'Lavender Bliss Candle',
-    price: '$24.99',
-  },
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/ocean-breeze-candle.png',
-    name: 'Ocean Breeze Candle',
-    price: '$22.00',
-  },
-  {
-    href: '/product-details',
-    imageUrl: '/images/products/enchanted-forest-wax-melts.png',
-    name: 'Enchanted Forest Wax Melts',
-    price: '$12.50',
-  },
-];
+const GET_FEATURED_PRODUCTS_QUERY = gql`
+  query getFeaturedProducts {
+    collection(handle: "featured") {
+      products(first: 10) {
+        edges {
+          node {
+            id
+            title
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
+              }
+            }
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
 
-export default function Home() {
+type ShopifyProductImage = {
+  url: string;
+  altText: string;
+};
+
+type ShopifyVariant = {
+  id: string;
+};
+
+type ShopifyProduct = {
+  id: string;
+  title: string;
+  handle: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+  images: {
+    edges: { node: ShopifyProductImage }[];
+  };
+  variants: {
+    edges: { node: ShopifyVariant }[];
+  };
+};
+
+type FeaturedProductsQueryResponse = {
+  collection: {
+    products: {
+      edges: { node: ShopifyProduct }[];
+    };
+  };
+};
+
+async function getFeaturedProducts() {
+  const { data } = await getClient().query<FeaturedProductsQueryResponse>({
+    query: GET_FEATURED_PRODUCTS_QUERY,
+  });
+
+  return data?.collection?.products?.edges.map(({ node }: { node: ShopifyProduct }) => ({
+    id: node.id,
+    variantId: node.variants.edges[0]?.node.id,
+    href: `/products/${node.handle}`,
+    imageUrl: node.images.edges[0]?.node.url,
+    name: node.title,
+    price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+  })) || [];
+}
+
+
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts();
+
   return (
     <>
       <main className="flex-grow">
@@ -42,13 +115,14 @@ export default function Home() {
               </Link>
             </div>
             <Link href="/product-listings" className="relative h-80 lg:h-96 lg:col-span-3">
-              <div
-                className="absolute left-0 top-0 h-full w-full rounded-3xl bg-cover bg-center transition-transform duration-500 hover:scale-105"
-                style={{
-                  backgroundImage:
-                    "url('/images/products/diy-macrame-plant-hanger-kit.png')",
-                }}
-              ></div>
+              <Image
+                src={heroImage}
+                alt="DIY macrame plant hanger kit"
+                fill
+                className="rounded-3xl object-cover transition-transform duration-500 hover:scale-105"
+                placeholder="blur"
+                priority
+              />
             </Link>
           </div>
         </section>
@@ -69,10 +143,8 @@ export default function Home() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-y-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.name} {...product} />
-              ))}
+            <div className="mt-12">
+              <ProductCarousel products={featuredProducts} />
             </div>
             <div className="mt-16 text-center">
               <Link className="btn-secondary" href="/product-listings">
