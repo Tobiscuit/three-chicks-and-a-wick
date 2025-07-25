@@ -1,38 +1,39 @@
-import Link from 'next/link';
-import ProductCarousel from '@/components/ProductCarousel';
+import ProductCarousel from '@/features/product/components/ProductCarousel';
+import CategoryCards from '@/components/CategoryCards';
+import NewsletterSignup from '@/components/NewsletterSignup';
 import { getClient } from '@/lib/client';
-import { gql } from '@apollo/client';
+import { gql } from '@/gql';
+import { GetFeaturedProductsQuery } from '@/gql/graphql';
+import Link from 'next/link';
 import Image from 'next/image';
 import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.png';
 
-const GET_FEATURED_PRODUCTS_QUERY = gql`
-  query getFeaturedProducts {
-    collection(handle: "featured") {
-      products(first: 10) {
-        edges {
-          node {
-            id
-            title
-            handle
-            priceRange {
-              minVariantPrice {
-                amount
-                currencyCode
+const GetFeaturedProducts = gql(`
+  query GetFeaturedProducts {
+    products(first: 10, query: "tag:featured") {
+      edges {
+        node {
+          id
+          title
+          handle
+          priceRange {
+            minVariantPrice {
+              amount
+              currencyCode
+            }
+          }
+          images(first: 1) {
+            edges {
+              node {
+                url
+                altText
               }
             }
-            images(first: 1) {
-              edges {
-                node {
-                  url
-                  altText
-                }
-              }
-            }
-            variants(first: 1) {
-              edges {
-                node {
-                  id
-                }
+          }
+          variants(first: 1) {
+            edges {
+              node {
+                id
               }
             }
           }
@@ -40,60 +41,32 @@ const GET_FEATURED_PRODUCTS_QUERY = gql`
       }
     }
   }
-`;
-
-type ShopifyProductImage = {
-  url: string;
-  altText: string;
-};
-
-type ShopifyVariant = {
-  id: string;
-};
-
-type ShopifyProduct = {
-  id: string;
-  title: string;
-  handle: string;
-  priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
-  };
-  images: {
-    edges: { node: ShopifyProductImage }[];
-  };
-  variants: {
-    edges: { node: ShopifyVariant }[];
-  };
-};
-
-type FeaturedProductsQueryResponse = {
-  collection: {
-    products: {
-      edges: { node: ShopifyProduct }[];
-    };
-  };
-};
+`);
 
 async function getFeaturedProducts() {
-  const { data } = await getClient().query<FeaturedProductsQueryResponse>({
-    query: GET_FEATURED_PRODUCTS_QUERY,
+  const { data } = await getClient().query<GetFeaturedProductsQuery>({
+    query: GetFeaturedProducts,
+    context: {
+      fetchOptions: {
+        next: { revalidate: 3600 },
+      },
+    },
   });
 
-  return data?.collection?.products?.edges.map(({ node }: { node: ShopifyProduct }) => ({
-    id: node.id,
-    variantId: node.variants.edges[0]?.node.id,
-    href: `/products/${node.handle}`,
-    imageUrl: node.images.edges[0]?.node.url,
-    name: node.title,
-    price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
-  })) || [];
+  const products =
+    data.products.edges.map(({ node }) => ({
+      id: node.id,
+      variantId: node.variants.edges[0]?.node.id,
+      href: `/products/${node.handle}`,
+      name: node.title,
+      imageUrl: node.images.edges[0]?.node.url,
+      price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+    })) || [];
+
+  return products;
 }
 
-
-export default async function Home() {
+export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts();
 
   return (

@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import ProductGallery from '@/components/ProductGallery';
-import ProductCard from '@/components/ProductCard';
+import ProductGallery from '@/features/product/components/ProductGallery';
+import ProductCard from '@/features/product/components/ProductCard';
 import { useCart } from '@/context/CartContext';
 import { useState } from 'react';
 import { Minus, Plus } from 'lucide-react';
@@ -62,6 +62,7 @@ export default function ProductView({
     const cartProduct = {
       id: product.id,
       variantId: product.variants.edges[0].node.id,
+      handle: product.handle,
       title: product.title,
       price: {
         amount: product.priceRange.minVariantPrice.amount,

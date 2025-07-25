@@ -17,7 +17,7 @@ export default function PageWrapper({ children }: { children: React.ReactNode })
         isMobileMenuOpen={isMobileMenuOpen}
         onCartToggle={() => setCartOpen(true)}
       />
-      <Cart open={isCartOpen} setOpen={setCartOpen} />
+      <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
       <main>
         {children}
       </main>

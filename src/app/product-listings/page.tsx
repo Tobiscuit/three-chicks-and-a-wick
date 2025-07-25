@@ -1,8 +1,11 @@
-import ProductGrid from '@/components/ProductGrid';
-import { gql } from '@apollo/client';
+import ProductGrid from '@/features/product/components/ProductGrid';
 import { getClient } from '@/lib/client';
+import { Suspense } from 'react';
+import ProductCardSkeleton from '@/features/product/components/ProductCardSkeleton';
+import { gql } from '@/gql';
+import { GetProductsQuery } from '@/gql/graphql';
 
-const GET_PRODUCTS_QUERY = gql`
+const GetProducts = gql(`
   query getProducts {
     products(first: 20) {
       edges {
@@ -35,53 +38,27 @@ const GET_PRODUCTS_QUERY = gql`
       }
     }
   }
-`;
+`);
 
-type ShopifyProduct = {
-  id: string;
-  title: string;
-  handle: string;
-  priceRange: {
-    minVariantPrice: {
-      amount: string;
-      currencyCode: string;
-    };
-  };
-  images: {
-    edges: { node: { url: string; altText: string } }[];
-  };
-  variants: {
-    edges: { node: { id: string } }[];
-  };
-};
-
-type ProductsQueryResponse = {
-  products: {
-    edges: { node: ShopifyProduct }[];
-  };
-};
-
-async function getProducts() {
-  const { data } = await getClient().query<ProductsQueryResponse>({
-    query: GET_PRODUCTS_QUERY,
+async function ProductData() {
+  const { data } = await getClient().query<GetProductsQuery>({
+    query: GetProducts,
   });
 
-  const products = data?.products?.edges.map(({ node }: { node: ShopifyProduct }) => ({
-    id: node.id,
-    variantId: node.variants.edges[0]?.node.id,
-    href: `/products/${node.handle}`,
-    name: node.title,
-    imageUrl: node.images.edges[0]?.node.url,
-    price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
-  })) || [];
+  const products =
+    data?.products?.edges.map(({ node }) => ({
+      id: node.id,
+      variantId: node.variants.edges[0]?.node.id,
+      href: `/products/${node.handle}`,
+      name: node.title,
+      imageUrl: node.images.edges[0]?.node.url,
+      price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
+    })) || [];
 
-  return products;
+  return <ProductGrid products={products.map((p, i) => ({ ...p, priority: i < 4 }))} />;
 }
 
-
 export default async function ProductListingsPage() {
-  const products = await getProducts();
-
   const header = (
     <header className="text-center mb-12">
       <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">
@@ -91,13 +68,23 @@ export default async function ProductListingsPage() {
         Browse our curated selection of handcrafted goods, made with love and attention to detail.
       </p>
     </header>
-    );
+  );
+
+  const skeleton = (
+    <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <ProductCardSkeleton key={i} />
+      ))}
+    </div>
+  );
 
   return (
     <div className="bg-cream">
       <main className="container mx-auto py-16 sm:py-24">
         {header}
-        <ProductGrid products={products.map((p, i) => ({ ...p, priority: i < 4 }))} />
+        <Suspense fallback={skeleton}>
+          <ProductData />
+        </Suspense>
       </main>
     </div>
   );
