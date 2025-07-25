@@ -73,7 +73,7 @@ async function getProductAndRelated(handle: string) {
     notFound();
   }
 
-  const relatedProducts = data.relatedProducts.edges.map((edge: any) => ({
+  const relatedProducts = data.relatedProducts.edges.map((edge: { node: any }) => ({
     id: edge.node.id,
     variantId: edge.node.variants.edges[0]?.node.id,
     href: `/products/${edge.node.handle}`,
@@ -85,7 +85,7 @@ async function getProductAndRelated(handle: string) {
   return { product: data.product, relatedProducts };
 }
 
-export default async function ProductPage({ params }: { params: { handle: string } }) {
-  const { product, relatedProducts } = await getProductAndRelated(params.handle);
+export default async function ProductPage({ params: { handle } }: { params: { handle: string } }) {
+  const { product, relatedProducts } = await getProductAndRelated(handle);
   return <ProductView product={product} relatedProducts={relatedProducts} />;
 } 

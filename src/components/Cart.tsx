@@ -9,6 +9,10 @@ import Image from 'next/image';
 export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
   const { cartItems, checkoutUrl } = useCart();
 
+  const subtotal = cartItems.reduce((acc, item) => {
+    return acc + parseFloat(item.product.price.amount) * item.quantity;
+  }, 0);
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog as="div" className="relative z-50" onClose={setOpen}>
@@ -58,13 +62,14 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
                           <ul role="list" className="-my-6 divide-y divide-gray-200">
                             {cartItems.map((item) => (
                               <li key={item.product.variantId} className="flex py-6">
-                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                                <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative">
                                   <Image
                                     src={item.product.image.url}
                                     alt={item.product.image.altText || item.product.title}
-                                    width={96}
-                                    height={96}
+                                    fill
+                                    sizes="96px"
                                     className="h-full w-full object-cover object-center"
+                                    priority
                                   />
                                 </div>
 
@@ -72,7 +77,7 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
                                   <div>
                                     <div className="flex justify-between text-base font-medium text-gray-900">
                                       <h3>{item.product.title}</h3>
-                                      <p className="ml-4">{item.product.price.amount}</p>
+                                      <p className="ml-4">${parseFloat(item.product.price.amount).toFixed(2)}</p>
                                     </div>
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">
@@ -94,7 +99,7 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
                     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                       <div className="flex justify-between text-base font-medium text-gray-900">
                         <p>Subtotal</p>
-                        <p>$0.00</p>
+                        <p>${subtotal.toFixed(2)}</p>
                       </div>
                       <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                       <div className="mt-6">

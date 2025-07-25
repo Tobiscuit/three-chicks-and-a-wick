@@ -24,7 +24,7 @@ export default function ProductCard({
     <div className="group block">
       <div className="overflow-hidden rounded-3xl bg-white shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:-translate-y-1">
         <div className="relative aspect-[4/3] w-full overflow-hidden">
-          <Link href={href}>
+          <Link href={href} className="relative block h-full w-full">
             <Image
               src={imageUrl}
               alt={name}

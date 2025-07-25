@@ -25,7 +25,7 @@ const MobileMenu = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 bg-neutral-dark/40 backdrop-blur-sm md:hidden"
+      className="fixed inset-0 z-50 bg-neutral-dark/40 backdrop-blur-sm lg:hidden"
       onClick={onClose}
     >
       <div
@@ -80,9 +80,9 @@ export default function Header({
     <>
       <header className={`py-4 transition-transform duration-300`}>
         <div className="container mx-auto flex items-center justify-between">
-          <div className="flex-1 md:hidden">
+          <div className="flex-1 lg:hidden">
             <button
-              className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
+              className="rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
               onClick={() => onMobileMenuToggle(true)}
             >
               <MenuIcon className="h-6 w-6" />
@@ -90,7 +90,7 @@ export default function Header({
             </button>
           </div>
 
-          <div className="flex-1 flex justify-center md:justify-start">
+          <div className="flex-1 flex justify-center lg:justify-start">
             <Link href="/">
               <Image
                 src="/images/VectorLogoV2-Filled.svg" // Corrected Path
@@ -102,7 +102,7 @@ export default function Header({
             </Link>
           </div>
 
-          <nav className="hidden items-center gap-8 text-lg font-bold text-neutral-dark md:flex flex-1 justify-center">
+          <nav className="hidden items-center gap-8 text-lg font-bold text-neutral-dark lg:flex flex-1 justify-center">
             {navLinks.map((link) => (
               <Link
                 key={link.href}
@@ -115,13 +115,13 @@ export default function Header({
           </nav>
 
           <div className="flex-1 flex justify-end items-center gap-2.5">
-            <button className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white md:block">
+            <button className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100 lg:block">
               <Search className="h-5 w-5" />
               <span className="sr-only">Search</span>
             </button>
             <button
               onClick={onCartToggle}
-              className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-primary-dark hover:text-white"
+              className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
               <ShoppingCart className="h-6 w-6" />
               {hasMounted && totalItems > 0 && (

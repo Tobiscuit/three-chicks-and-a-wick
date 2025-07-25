@@ -58,7 +58,7 @@ export default function ProductView({
     alt: edge.node.altText || product.title,
   }));
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     const cartProduct = {
       id: product.id,
       variantId: product.variants.edges[0].node.id,
@@ -72,7 +72,7 @@ export default function ProductView({
         altText: product.images.edges[0].node.altText,
       },
     };
-    addToCart(cartProduct, quantity);
+    await addToCart(cartProduct, quantity);
     setQuantity(1); // Reset quantity after adding to cart
   };
 
@@ -115,7 +115,7 @@ export default function ProductView({
                 </button>
               </div>
             </div>
-
+            
             <p className="text-lg leading-relaxed">{product.description}</p>
             
             {/* Action block - visible on desktop */}
