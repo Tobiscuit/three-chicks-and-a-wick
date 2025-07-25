@@ -8,14 +8,14 @@ import SlideOutPanel from '@/components/ui/SlideOutPanel';
 
 function QuantitySelector({ item, updateQuantity, isCartLoading }: {
     item: CartItem;
-    updateQuantity: (lineId: string, quantity: number) => Promise<void>;
+    updateQuantity: (lineId: string, quantity: number) => void;
     isCartLoading: boolean;
 }) {
     return (
-        <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
+        <div className="flex items-center gap-2 rounded-full border border-neutral-dark/20 p-1">
             <button
                 onClick={() => updateQuantity(item.lineId, item.quantity - 1)}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="p-1 rounded-full hover:bg-neutral-dark/10 transition-colors disabled:opacity-50"
                 disabled={item.quantity <= 1 || isCartLoading}
             >
                 <Minus size={16} />
@@ -23,7 +23,7 @@ function QuantitySelector({ item, updateQuantity, isCartLoading }: {
             <p className="font-bold w-6 text-center text-md">{item.quantity}</p>
             <button
                 onClick={() => updateQuantity(item.lineId, item.quantity + 1)}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50"
+                className="p-1 rounded-full hover:bg-neutral-dark/10 transition-colors disabled:opacity-50"
                 disabled={isCartLoading}
             >
                 <Plus size={16} />
@@ -33,7 +33,7 @@ function QuantitySelector({ item, updateQuantity, isCartLoading }: {
 }
 
 export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open: boolean) => void }) {
-  const { cartItems, checkoutUrl, removeFromCart, updateQuantity, isCartLoading } = useCart();
+  const { cartItems, checkoutUrl, removeFromCart, updateQuantity, isCartLoading, proceedToCheckout } = useCart();
 
   const subtotal = cartItems.reduce((acc, item) => {
     return acc + parseFloat(item.product.price.amount) * item.quantity;
@@ -46,10 +46,10 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
           <div className="mt-8">
             <div className="flow-root">
               {cartItems.length > 0 ? (
-                <ul role="list" className="-my-6 divide-y divide-gray-200">
+                <ul role="list" className="-my-6 divide-y divide-neutral-dark/20">
                   {cartItems.map((item) => (
                     <li key={item.lineId} className="flex py-6">
-                      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 relative">
+                      <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-neutral-dark/20 relative">
                         <Image
                           src={item.product.image.url}
                           alt={item.product.image.altText || item.product.title}
@@ -70,12 +70,12 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
                           </div>
                         </div>
                         <div className="flex flex-1 items-end justify-between text-sm mt-4">
-                          <QuantitySelector item={item} updateQuantity={updateQuantity} isCartLoading={isCartLoading} />
+                          <QuantitySelector item={item} updateQuantity={(lineId, quantity) => updateQuantity(lineId, quantity)} isCartLoading={isCartLoading} />
                           <div className="flex">
                             <button 
                               onClick={() => removeFromCart(item.lineId)} 
                               type="button" 
-                              className="font-medium text-gray-500 hover:text-primary-dark disabled:opacity-50"
+                              className="font-medium text-neutral-dark/50 hover:text-primary-dark disabled:opacity-50"
                               disabled={isCartLoading}
                             >
                               <Trash2 size={20} />
@@ -99,16 +99,16 @@ export default function Cart({ open, setOpen }: { open: boolean, setOpen: (open:
         </div>
 
         {cartItems.length > 0 && (
-          <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
+          <div className="border-t border-neutral-dark/20 px-4 py-6 sm:px-6">
             <div className="flex justify-between text-base font-medium text-neutral-dark">
               <p>Subtotal</p>
               <p>${subtotal.toFixed(2)}</p>
             </div>
-            <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
+            <p className="mt-0.5 text-sm text-neutral-dark/60">Shipping and taxes calculated at checkout.</p>
             <div className="mt-6">
-              <a href={checkoutUrl || '#'} className="btn-primary">
-                Checkout
-              </a>
+              <button onClick={proceedToCheckout} className="btn-primary" disabled={isCartLoading}>
+                {isCartLoading ? 'Processing...' : 'Checkout'}
+              </button>
             </div>
           </div>
         )}

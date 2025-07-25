@@ -41,14 +41,14 @@ const SlideOutPanel: React.FC<SlideOutPanelProps> = ({ isOpen, onClose, children
       {/* Slide-out Panel */}
       <div
         ref={panelRef}
-        className={`fixed top-0 right-0 w-full max-w-md h-full bg-[var(--candlelight-cream)] shadow-lg z-50 transform transition-transform duration-300 ease-in-out
+        className={`fixed top-0 right-0 w-full max-w-md h-full bg-cream shadow-lg z-50 transform transition-transform duration-300 ease-in-out
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}`}
       >
-        <div className="flex justify-between items-center p-4 border-b border-[var(--subtle-border)]">
-          <h2 className="text-xl font-bold text-[var(--charcoal-tin)] font-headings">{title || 'Panel'}</h2>
+        <div className="flex justify-between items-center p-4 border-b border-neutral-dark/20">
+          <h2 className="text-xl font-bold text-neutral-dark font-headings">{title || 'Panel'}</h2>
           <button
             onClick={onClose}
-            className="text-[var(--charcoal-tin)] hover:text-[var(--playful-pink)] transition-colors duration-200"
+            className="text-neutral-dark hover:text-primary transition-colors duration-200"
             aria-label="Close panel"
           >
             <svg

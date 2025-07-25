@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useMutation, useLazyQuery } from '@apollo/client';
 import {
   CREATE_CART_MUTATION,
@@ -9,6 +9,39 @@ import {
   REMOVE_FROM_CART_MUTATION,
   UPDATE_CART_LINE_MUTATION
 } from '@/lib/shopify';
+import { debounce } from 'lodash';
+
+type ShopifyCart = {
+  cart: {
+    id: string;
+    checkoutUrl: string;
+    lines: {
+      edges: {
+        node: {
+          id: string;
+          quantity: number;
+          merchandise: {
+            id: string;
+            title: string;
+            price: {
+              amount: string;
+              currencyCode: string;
+            };
+            image: {
+              url: string;
+              altText: string;
+            };
+            product: {
+              id: string;
+              title: string;
+              handle: string;
+            };
+          };
+        };
+      }[];
+    };
+  };
+};
 
 export type CartProduct = {
   id: string;
@@ -36,9 +69,10 @@ type CartContextType = {
   cartItems: CartItem[];
   addToCart: (product: CartProduct, quantity?: number) => void;
   removeFromCart: (lineId: string) => Promise<void>;
-  updateQuantity: (lineId: string, quantity: number) => Promise<void>;
+  updateQuantity: (lineId: string, quantity: number) => void;
   checkoutUrl: string | null;
   isCartLoading: boolean;
+  proceedToCheckout: () => Promise<void>;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -54,10 +88,36 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [removeFromCartMutation] = useMutation(REMOVE_FROM_CART_MUTATION);
   const [updateCartLineMutation] = useMutation(UPDATE_CART_LINE_MUTATION);
 
-  const [getCart, { data: cartData, refetch: refetchCart }] = useLazyQuery(GET_CART_QUERY, {
+  const [getCart, { data: cartData, refetch: refetchCart }] = useLazyQuery<ShopifyCart>(GET_CART_QUERY, {
     fetchPolicy: 'network-only',
   });
 
+  const debouncedUpdate = useCallback(
+    debounce(async (cartId: string, lineId: string, quantity: number) => {
+      try {
+        setIsCartLoading(true);
+        await updateCartLineMutation({
+          variables: {
+            cartId,
+            lines: [{ id: lineId, quantity: quantity }],
+          },
+        });
+        if (refetchCart) {
+          return refetchCart({ cartId });
+        }
+      } catch (error) {
+        console.error("Failed to update quantity:", error);
+        // Optionally, trigger a refetch or show an error to the user
+        if (refetchCart) {
+          await refetchCart({ cartId });
+        }
+      } finally {
+        setIsCartLoading(false);
+      }
+    }, 500),
+    [updateCartLineMutation, refetchCart]
+  );
+  
   useEffect(() => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
     if (storedCartId) {
@@ -71,7 +131,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (cartData && cartData.cart) {
       setCheckoutUrl(cartData.cart.checkoutUrl);
-      const items = cartData.cart.lines.edges.map((edge: { node: any }) => {
+      const items = cartData.cart.lines.edges.map((edge) => {
         const { node } = edge;
         return {
           lineId: node.id,
@@ -117,7 +177,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           currentCartId = data.cartCreate.cart.id;
           setCartId(currentCartId);
           setCheckoutUrl(data.cartCreate.cart.checkoutUrl);
-          localStorage.setItem('shopify_cart_id', currentCartId);
+          if (currentCartId) {
+            localStorage.setItem('shopify_cart_id', currentCartId);
+          }
           if (refetchCart && currentCartId) {
             await refetchCart({ cartId: currentCartId });
           }
@@ -159,25 +221,52 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setIsCartLoading(false);
   };
 
-  const updateQuantity = async (lineId: string, quantity: number) => {
+  const updateQuantity = (lineId: string, quantity: number) => {
     if (!cartId || quantity < 1) return;
+
+    // Create a new array with the updated quantity for the specific item.
+    const newCartItems = cartItems.map((item) => {
+      if (item.lineId === lineId) {
+        return { ...item, quantity };
+      }
+      return item;
+    });
+
+    // Set the new cart items for an optimistic UI update.
+    setCartItems(newCartItems);
+
+    // Call the debounced function to update the cart on the server.
+    debouncedUpdate(cartId, lineId, quantity);
+  };
+
+  const proceedToCheckout = async () => {
     setIsCartLoading(true);
     try {
-      await updateCartLineMutation({
-        variables: {
-          cartId,
-          lines: [{ id: lineId, quantity: quantity }],
+      if (debouncedUpdate && 'flush' in debouncedUpdate) {
+        await (debouncedUpdate.flush as () => Promise<void>)();
+      }
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
+      } else if (cartId) {
+        const { data: freshCartData } = await getCart({ variables: { cartId } });
+        if (freshCartData && freshCartData.cart.checkoutUrl) {
+          window.location.href = freshCartData.cart.checkoutUrl;
+        } else {
+          console.error("Could not retrieve checkout URL.");
         }
-      });
-      if (refetchCart) await refetchCart({ cartId });
+      } else {
+        console.error("Checkout URL is not available and there is no cart.");
+      }
     } catch (error) {
-      console.error("Failed to update quantity:", error);
+      console.error("Error during checkout:", error);
+    } finally {
+      setIsCartLoading(false);
     }
-    setIsCartLoading(false);
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, checkoutUrl, isCartLoading }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, checkoutUrl, isCartLoading, proceedToCheckout }}>
       {children}
     </CartContext.Provider>
   );
