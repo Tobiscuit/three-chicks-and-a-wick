@@ -105,6 +105,7 @@ type ProductPageProps = {
   params: {
     handle: string;
   };
+  searchParams: { [key: string]: string | string[] | undefined };
 };
 
 export default async function ProductPage({ params }: ProductPageProps) {
