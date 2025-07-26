@@ -9,7 +9,6 @@ const schema = a.schema({
       image: a.url(),
       isFeatured: a.boolean().default(false),
     })
-    .authorization((allow) => [allow.guest().to(['read'])]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
