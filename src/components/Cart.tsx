@@ -45,7 +45,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
       onClick={onClose}
     >
       <div 
-        className="w-full max-w-md h-full bg-[var(--neutral-light)] shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl" 
+        className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl" 
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex justify-between items-center p-6 border-b border-neutral-dark/10">
