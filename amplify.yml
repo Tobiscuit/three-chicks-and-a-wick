@@ -1,3 +1,4 @@
+# Amplify Gen 2 Next.js build settings
 version: 1
 frontend:
   phases:
