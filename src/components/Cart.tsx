@@ -13,13 +13,15 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity } = useCart();
+  const { cartItems, removeFromCart, updateQuantity } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((sum, item) => {
-    return sum + parseFloat(item.product.price.amount) * item.quantity;
+    // Ensure price is treated as a number
+    const price = parseFloat(item.product.price.amount);
+    return sum + price * item.quantity;
   }, 0);
 
   const handleCheckout = async () => {
@@ -31,10 +33,8 @@ export default function Cart({ isOpen, onClose }: CartProps) {
 
     try {
       await createCheckout(lineItems);
-      // The createCheckout action will handle the redirect on success.
     } catch (error) {
       console.error("Checkout failed:", error);
-      // Optionally, show an error message to the user
       setIsCheckingOut(false);
     }
   };
@@ -71,7 +71,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
             <div className="flex-grow p-6 overflow-y-auto">
               <ul>
                 {cartItems.map(item => (
-                  <li key={item.product.id} className="flex items-center gap-4 mb-6">
+                  <li key={item.lineId} className="flex items-center gap-4 mb-6">
                     <div className="relative h-24 w-24 rounded-lg overflow-hidden border border-neutral-dark/10">
                         <Image
                             src={item.product.image.url}
@@ -85,15 +85,18 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                       <p className="text-sm text-neutral-dark/80">${item.product.price.amount}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <button onClick={() => decreaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                        {/* Call updateQuantity with the correct parameters */}
+                        <button onClick={() => updateQuantity(item.lineId, item.quantity - 1)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
                             <Minus size={16} />
                         </button>
                         <p className="font-bold w-6 text-center">{item.quantity}</p>
-                        <button onClick={() => increaseQuantity(item.product.variantId)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+                        {/* Call updateQuantity with the correct parameters */}
+                        <button onClick={() => updateQuantity(item.lineId, item.quantity + 1)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
                             <Plus size={16} />
                         </button>
                     </div>
-                    <button onClick={() => removeFromCart(item.product.variantId)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
+                    {/* The variantId is not the lineId, use the lineId for removal */}
+                    <button onClick={() => removeFromCart(item.lineId)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
                       <X size={20} />
                     </button>
                   </li>
