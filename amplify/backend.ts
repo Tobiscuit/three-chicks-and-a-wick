@@ -1,8 +1,6 @@
 import { defineBackend } from '@aws-amplify/backend';
-import { auth } from './auth/resource';
-import { data } from './data/resource';
-// Hello
+
 defineBackend({
-  auth,
-  data,
+  // This backend is now only used for hosting the Next.js app.
+  // All data and auth is handled by Shopify.
 }); 
