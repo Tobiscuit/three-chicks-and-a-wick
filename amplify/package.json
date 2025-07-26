@@ -7,11 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@aws-amplify/backend": "^1.0.0",
-    "@aws-amplify/backend-cli": "^1.0.0",
-    "aws-cdk-lib": "^2.189.1",
+    "@aws-amplify/backend": "1.16.1",
+    "@aws-amplify/backend-cli": "1.8.0",
+    "aws-cdk-lib": "2.207.0",
     "constructs": "^10.4.2",
-    "typescript": "^5.4.5",
+    "typescript": "^5.5.4",
     "esbuild": "^0.20.2"
   }
 } 
