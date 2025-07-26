@@ -101,11 +101,15 @@ async function getProductAndRelated(handle: string) {
   return { product, relatedProducts };
 }
 
+// The type for params is now a Promise
 export default async function ProductPage({
   params,
 }: {
-  params: { handle: string };
+  params: Promise<{ handle: string }>;
 }) {
-  const { product, relatedProducts } = await getProductAndRelated(params.handle);
+  // You must await params to get the value
+  const { handle } = await params;
+  const { product, relatedProducts } = await getProductAndRelated(handle);
+
   return <ProductView product={product} relatedProducts={relatedProducts} />;
 } 
