@@ -117,7 +117,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }, 500),
     [updateCartLineMutation, refetchCart]
   );
-  
+
   useEffect(() => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
     if (storedCartId) {
@@ -178,7 +178,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
           setCartId(currentCartId);
           setCheckoutUrl(data.cartCreate.cart.checkoutUrl);
           if (currentCartId) {
-            localStorage.setItem('shopify_cart_id', currentCartId);
+          localStorage.setItem('shopify_cart_id', currentCartId);
           }
           if (refetchCart && currentCartId) {
             await refetchCart({ cartId: currentCartId });

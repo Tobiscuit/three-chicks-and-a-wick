@@ -1,4 +1,4 @@
-import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
+import { a, defineData, type ClientSchema } from '@aws-amplify/backend';
 
 const schema = a.schema({
   Product: a
@@ -9,6 +9,7 @@ const schema = a.schema({
       image: a.url(),
       isFeatured: a.boolean().default(false),
     })
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
