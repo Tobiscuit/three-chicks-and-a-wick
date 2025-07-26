@@ -67,7 +67,14 @@ export default function Header({
   isMobileMenuOpen: boolean;
   onCartToggle: () => void;
 }) {
-  const { cartItems } = useCart();
+  const {
+    cartItems,
+    addToCart,
+    removeFromCart,
+    updateQuantity,
+    checkoutUrl,
+    isCartLoading,
+  } = useCart();
   const [hasMounted, setHasMounted] = useState(false);
 
   useEffect(() => {
