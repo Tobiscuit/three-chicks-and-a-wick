@@ -9,7 +9,7 @@ const schema = a.schema({
       image: a.url(),
       isFeatured: a.boolean().default(false),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    // .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = ClientSchema<typeof schema>;
