@@ -4,7 +4,7 @@ import { gql } from '@/gql';
 import { GetFeaturedProductsQuery } from '@/gql/graphql';
 import Link from 'next/link';
 import Image from 'next/image';
-import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.png';
+import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.webp';
 
 const GetFeaturedProducts = gql(`
   query GetFeaturedProducts {

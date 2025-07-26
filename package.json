@@ -45,6 +45,7 @@
     "graphql": "^16.11.0",
     "graphql-ws": "^6.0.6",
     "postcss": "^8",
+    "sharp": "^0.34.3",
     "tailwindcss": "^4.1.1",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3"
