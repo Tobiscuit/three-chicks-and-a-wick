@@ -1,15 +1,5 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-
-const newsletterSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address." }),
-});
-
-type NewsletterFormInputs = z.infer<typeof newsletterSchema>;
-
 export default function NewsletterSignup() {
   return (
     <section className="py-8 sm:py-16">

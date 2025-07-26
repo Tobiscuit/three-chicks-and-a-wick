@@ -1,38 +1,48 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&family=Poppins:wght@400;500;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-cream: #F9F5F0;
+  --color-primary: #E95276;
+  --color-primary-dark: #D94266;
+  --color-neutral-dark: #3D3D3D;
+  --color-secondary: #F9D423;
+  --color-accent: #00A19D;
+  --color-white: #ffffff;
+  --color-destructive: #E63946;
+  --color-subtle-border: #E5E7EB;
+
+  --font-sans: 'Nunito', sans-serif;
+  --font-body: 'Poppins', sans-serif;
+
+  --ease-out-back: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  --container-padding-DEFAULT: 1rem;
+  --container-padding-sm: 2rem;
+  --container-padding-lg: 4rem;
+  --container-padding-xl: 5rem;
+  --container-padding-2xl: 6rem;
+}
 
 @layer base {
   .container {
-    @apply px-4 sm:px-6;
+    @apply mx-auto px-4 sm:px-6;
   }
-}
-
-:root {
-  --primary: #F25287;
-  --secondary: #F9D423;
-  --accent: #00A19D;
-  --neutral-light: #FEF9E7;
-  --neutral-dark: #343A40;
-  --white: #ffffff;
-  --destructive: #E63946;
-  --subtle-border: #E5E7EB;
+  
+  body {
+    color: var(--color-neutral-dark);
+    background-color: var(--color-cream);
+  }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-[var(--primary)] text-[var(--white)] rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
+    @apply bg-primary text-white rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
   }
   .btn-secondary {
-    @apply bg-[var(--secondary)] text-[var(--neutral-dark)] rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
+    @apply bg-secondary text-neutral-dark rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
   }
-}
-
-body {
-  color: var(--neutral-dark);
-  background-color: var(--neutral-light);
 }
 
 @media (min-width: 768px) {

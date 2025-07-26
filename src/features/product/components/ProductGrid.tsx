@@ -19,38 +19,30 @@ interface ProductGridProps {
   onProductClick?: (product: Product) => void;
 }
 
-export default function ProductGrid({
-  products,
-  onProductClick = () => {},
-}: ProductGridProps) {
-  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+export default function ProductGrid({ products }: { products: any[] }) {
+  const [selectedProduct, setSelectedProduct] = useState(null);
 
-  const handleProductClick = (product: Product) => {
+  const onProductClick = (product: any) => {
     setSelectedProduct(product);
-    onProductClick(product);
-  };
-
-  const handleCloseModal = () => {
-    setSelectedProduct(null);
   };
 
   return (
-    <div>
-      <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+    <>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((product) => (
           <ProductCard
             key={product.id}
-            {...product}
-            onQuickView={() => setSelectedProduct(product)}
+            product={product}
+            onProductClick={() => onProductClick(product)}
           />
         ))}
       </div>
-
-      <QuickViewModal
-        isOpen={!!selectedProduct}
-        onClose={() => setSelectedProduct(null)}
-        productHandle={selectedProduct?.href?.split('/').pop() || null}
-      />
-    </div>
+      {selectedProduct && (
+        <QuickViewModal
+          product={selectedProduct}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
+    </>
   );
 } 

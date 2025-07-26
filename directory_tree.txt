@@ -1,0 +1,134 @@
+ .
+|--amplify
+|  |--auth
+|  |--data
+|  |--backend.ts
+|  |--package-lock.json
+|  |--package.json
+|  +--tsconfig.json
+|--public
+|  |--images
+|  |  |--placeholders
+|  |  |  |--product-1.png
+|  |  |  |--product-2.png
+|  |  |  +--product-3.png
+|  |  |--products
+|  |  |  |--citrus-grove-soap-bar.png
+|  |  |  |--diy-macrame-plant-hanger-kit.png
+|  |  |  |--enchanted-forest-wax-melts.png
+|  |  |  |--lavender-bliss-candle.png
+|  |  |  |--ocean-breeze-candle.png
+|  |  |  +--vanilla-bean-dream-candle.png
+|  |  |--3-chicks-and-a-wick.png
+|  |  |--3C&AW.png
+|  |  |--3C&AW.svg
+|  |  |--Correct-Name-2.svg
+|  |  |--Correct-Name.svg
+|  |  |--Gemini_Generated_Image_5x7jqr5x7jqr5x7j.png
+|  |  |--Gemini_Generated_Image_pnbqvpnbqvpnbqvp.png
+|  |  |--Lavender-Bliss-Candle.png
+|  |  |--Official-Logo.svg
+|  |  |--Vector-Horizontal-Logo-No-BG-Cropped.svg
+|  |  |--Vector-Horizontal-Logo-No-BG.svg
+|  |  |--Vector-Horizontal-Logo.svg
+|  |  |--VectorLogoV2-Filled-NewFont.svg
+|  |  |--VectorLogoV2-Filled.svg
+|  |  +--VectorLogoV2.svg
+|  |--file.svg
+|  |--globe.svg
+|  |--next.svg
+|  |--vercel.svg
+|  +--window.svg
+|--scripts
+|  |--codegen.mjs
+|  |--create-product.mjs
+|  |--delete-all-products.mjs
+|  +--seed-products.mjs
+|--src
+|  |--app
+|  |  |--about-us
+|  |  |  +--page.tsx
+|  |  |--checkout
+|  |  |  +--actions.ts
+|  |  |--contact-us
+|  |  |  +--page.tsx
+|  |  |--product-listings
+|  |  |  +--page.tsx
+|  |  |--products
+|  |  |  +--[handle]
+|  |  |--ApolloProvider.tsx
+|  |  |--favicon.ico
+|  |  |--globals.css
+|  |  |--layout.tsx
+|  |  +--page.tsx
+|  |--components
+|  |  |--ui
+|  |  |  |--input.tsx
+|  |  |  |--Modal.tsx
+|  |  |  +--SlideOutPanel.tsx
+|  |  |--Cart.tsx
+|  |  |--CategoryCards.tsx
+|  |  |--Footer.tsx
+|  |  |--Header.tsx
+|  |  |--NewsletterSignup.tsx
+|  |  +--PageWrapper.tsx
+|  |--context
+|  |  +--CartContext.tsx
+|  |--features
+|  |  |--cart
+|  |  |  +--components
+|  |  |--home
+|  |  |  +--components
+|  |  +--product
+|  |     +--components
+|  |        |--ProductCard.tsx
+|  |        |--ProductCardSkeleton.tsx
+|  |        |--ProductCarousel.tsx
+|  |        |--ProductGallery.tsx
+|  |        |--ProductGrid.tsx
+|  |        |--ProductView.tsx
+|  |        +--QuickViewModal.tsx
+|  |--gql
+|  |  |--fragment-masking.ts
+|  |  |--gql.ts
+|  |  |--graphql.ts
+|  |  +--index.ts
+|  +--lib
+|     |--client.ts
+|     |--constants.ts
+|     |--shopify.ts
+|     +--utils.ts
+|--stitch
+|  |--about-us.html
+|  |--checkout.html
+|  |--contact-us.html
+|  |--faq.html
+|  |--home.html
+|  |--order-confirmation.html
+|  |--product-details.html
+|  |--product-listings.html
+|  |--search-results.html
+|  |--shopping-cart.html
+|  |--user-account-profile.html
+|  +--wishlist-favorites.html
+|--.env.local
+|--.gitignore
+|--.npmrc
+|--amplify_outputs.json
+|--amplify.yml
+|--architectural-diagram.mmd
+|--codegen.ts
+|--components.json
+|--design-system.json
+|--directory_tree.txt
+|--eslint.config.mjs
+|--initial-folder-structure.txt
+|--next-env.d.ts
+|--next.config.mjs
+|--next.config.ts
+|--package-lock.json
+|--package.json
+|--postcss.config.mjs
+|--README.md
+|--tailwind.config.ts
++--tsconfig.json
