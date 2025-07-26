@@ -22,4 +22,6 @@ export const data = defineData({
       expiresInDays: 30,
     },
   },
-}); 
+});
+
+// Force full rebuild 
