@@ -75,6 +75,20 @@ async function getProductAndRelated(handle: string) {
     notFound();
   }
 
+  const product = {
+    ...data.product,
+    images: {
+      ...data.product.images,
+      edges: data.product.images.edges.map(edge => ({
+        ...edge,
+        node: {
+          ...edge.node,
+          altText: edge.node.altText ?? '',
+        },
+      })),
+    },
+  };
+
   const relatedProducts = data.relatedProducts.edges.map(({ node }) => ({
     id: node.id,
     variantId: node.variants.edges[0]?.node.id,
@@ -84,10 +98,16 @@ async function getProductAndRelated(handle: string) {
     price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
   }));
 
-  return { product: data.product, relatedProducts };
+  return { product, relatedProducts };
 }
 
-export default async function ProductPage({ params: { handle } }: { params: { handle: string } }) {
-  const { product, relatedProducts } = await getProductAndRelated(handle);
+type ProductPageProps = {
+  params: {
+    handle: string;
+  };
+};
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const { product, relatedProducts } = await getProductAndRelated(params.handle);
   return <ProductView product={product} relatedProducts={relatedProducts} />;
 } 
