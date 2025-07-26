@@ -101,14 +101,11 @@ async function getProductAndRelated(handle: string) {
   return { product, relatedProducts };
 }
 
-type ProductPageProps = {
-  params: {
-    handle: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
-};
-
-export default async function ProductPage({ params }: ProductPageProps) {
+export default async function ProductPage({
+  params,
+}: {
+  params: { handle: string };
+}) {
   const { product, relatedProducts } = await getProductAndRelated(params.handle);
   return <ProductView product={product} relatedProducts={relatedProducts} />;
 } 
