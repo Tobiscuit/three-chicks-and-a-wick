@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import Footer from "@/components/Footer";
-import Header from "@/components/Header";
-import { ApolloProvider } from "./ApolloProvider";
+import { ApolloProvider } from './ApolloProvider';
 import { CartProvider } from "@/context/CartContext";
 import PageWrapper from "@/components/PageWrapper";
 

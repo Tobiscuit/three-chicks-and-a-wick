@@ -71,7 +71,27 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (cartData && cartData.cart) {
       setCheckoutUrl(cartData.cart.checkoutUrl);
-      const items = cartData.cart.lines.edges.map((edge: { node: any }) => {
+      type CartLineNode = {
+        id: string;
+        quantity: number;
+        merchandise: {
+          id: string;
+          product: {
+            id: string;
+            handle: string;
+            title: string;
+          };
+          price: {
+            amount: string;
+            currencyCode: string;
+          };
+          image: {
+            url: string;
+            altText: string;
+          };
+        };
+      };
+      const items = cartData.cart.lines.edges.map((edge: { node: CartLineNode }) => {
         const { node } = edge;
         return {
           lineId: node.id,
@@ -113,16 +133,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             },
           },
         });
-        if (data.cartCreate.cart) {
-          currentCartId = data.cartCreate.cart.id;
+        const newCart = data?.cartCreate?.cart;
+        if (newCart) {
+          currentCartId = newCart.id;
           setCartId(currentCartId);
-          setCheckoutUrl(data.cartCreate.cart.checkoutUrl);
-          localStorage.setItem('shopify_cart_id', currentCartId);
-          if (refetchCart && currentCartId) {
-            await refetchCart({ cartId: currentCartId });
-          }
+          setCheckoutUrl(newCart.checkoutUrl);
+          localStorage.setItem('shopify_cart_id', newCart.id);
+          await refetchCart({ cartId: newCart.id });
         } else {
-          console.error("Error creating cart:", data.cartCreate.userErrors);
+          console.error("Error creating cart:", data?.cartCreate?.userErrors);
         }
       } catch (error) {
         console.error("Failed to create cart:", error);
@@ -135,7 +154,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             lines: [{ merchandiseId: product.variantId, quantity: quantity }],
           },
         });
-        if (refetchCart && currentCartId) {
+        if (currentCartId) {
           await refetchCart({ cartId: currentCartId });
         }
       } catch (error) {

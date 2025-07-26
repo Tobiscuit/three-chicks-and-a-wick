@@ -1,13 +1,10 @@
 import ProductCarousel from '@/features/product/components/ProductCarousel';
-import CategoryCards from '@/components/CategoryCards';
-import NewsletterSignup from '@/components/NewsletterSignup';
 import { getClient } from '@/lib/client';
 import { gql } from '@/gql';
 import { GetFeaturedProductsQuery } from '@/gql/graphql';
 import Link from 'next/link';
 import Image from 'next/image';
 import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.png';
-import { useEffect } from 'react';
 
 const GetFeaturedProducts = gql(`
   query GetFeaturedProducts {

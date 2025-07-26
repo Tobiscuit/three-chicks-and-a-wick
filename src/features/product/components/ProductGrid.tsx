@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import ProductCard from '@/features/product/components/ProductCard';
-import ProductCardSkeleton from '@/features/product/components/ProductCardSkeleton';
 import QuickViewModal from '@/features/product/components/QuickViewModal';
 
 // This defines the shape of a single product that this component expects
@@ -29,6 +28,10 @@ export default function ProductGrid({
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
     onProductClick(product);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProduct(null);
   };
 
   return (
