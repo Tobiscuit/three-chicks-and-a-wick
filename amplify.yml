@@ -3,10 +3,8 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm cache clean --force
-        - nvm install 22
-        - nvm use 22
-        - npm ci
+        - rm -rf node_modules && rm -f package-lock.json
+        - npm install
     build:
       commands:
         - npm run build
@@ -16,8 +14,8 @@ frontend:
       - '**/*'
   cache:
     paths:
-      - .npm/**/*
       - .next/cache/**/*
+      - node_modules/**/*
 backend:
   phases:
     preBuild:
