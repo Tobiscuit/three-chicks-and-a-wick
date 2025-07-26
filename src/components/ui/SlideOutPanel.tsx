@@ -21,7 +21,10 @@ export default function SlideOutPanel({
     };
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (panelRef.current && !panelRef.current.contains(event.target as Node)) {
+      if (
+        panelRef.current &&
+        !panelRef.current.contains(event.target as Node)
+      ) {
         onClose();
       }
     };
@@ -41,12 +44,14 @@ export default function SlideOutPanel({
 
   return (
     <div
-      className={`fixed inset-0 z-50 transition-opacity duration-500 ${
-        isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
-      }`}
+      className={`fixed inset-0 z-50 ${isOpen ? '' : 'pointer-events-none'}`}
     >
       <div
-        className="fixed inset-0 bg-black/30 backdrop-blur-sm"
+        className={`fixed inset-0 bg-black/30 transition-all duration-500 ease-in-out ${
+          isOpen
+            ? 'opacity-100 backdrop-blur-sm'
+            : 'opacity-0 backdrop-blur-none'
+        }`}
         onClick={onClose}
       />
       <div
@@ -55,7 +60,7 @@ export default function SlideOutPanel({
           isOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="w-screen max-w-md">{children}</div>
+        <div className="w-screen max-w-md h-full">{children}</div>
       </div>
     </div>
   );
