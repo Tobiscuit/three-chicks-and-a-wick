@@ -1,6 +1,7 @@
 // src/lib/shopify.ts
 
-import { SHOPIFY_STOREFRONT_API_TOKEN, SHOPIFY_STORE_DOMAIN } from './constants';
+// Changed to import SHOPIFY_PUBLIC_TOKEN
+import { SHOPIFY_PUBLIC_TOKEN, SHOPIFY_STORE_DOMAIN } from './constants';
 import { gql } from '@apollo/client';
 
 export const CREATE_CART_MUTATION = gql`
@@ -133,7 +134,8 @@ export async function shopifyFetch<T>({
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<GraphQLResponse<T>> {
-  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_STOREFRONT_API_TOKEN) {
+  // This check now uses the correct variable name
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_PUBLIC_TOKEN) {
     throw new Error(
       'Missing Shopify environment variables. Please check your .env.local file.'
     );
@@ -145,7 +147,8 @@ export async function shopifyFetch<T>({
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'X-Shopify-Storefront-Access-Token': SHOPIFY_STOREFRONT_API_TOKEN,
+        // This now sends the correct public token
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_PUBLIC_TOKEN,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),
@@ -160,8 +163,6 @@ export async function shopifyFetch<T>({
 
     if (result.errors) {
       console.error('Shopify GraphQL Errors:', result.errors);
-      // Depending on the use case, you might want to throw an error here
-      // or handle it differently.
     }
 
     return result;

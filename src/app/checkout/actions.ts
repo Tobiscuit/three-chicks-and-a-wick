@@ -42,21 +42,6 @@ type LineItem = {
   quantity: number;
 };
 
-type CheckoutCreatePayload = {
-  checkoutCreate: {
-    checkout: {
-      id: string;
-      webUrl: string;
-    };
-    checkoutUserErrors: {
-      code: string;
-      field: string[];
-      message: string;
-    }[];
-  };
-};
-
-
 export async function createCheckout(lineItems: LineItem[]) {
   const { data, errors } = await shopifyAdminFetch({
     query: CREATE_CHECKOUT_MUTATION,
