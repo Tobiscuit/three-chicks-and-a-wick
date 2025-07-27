@@ -103,7 +103,7 @@ export default function ProductView({
             <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: product.description }} />
             
             {/* Action block for desktop */}
-            <div className="hidden md:block">
+            <div>
               <p className="text-3xl font-bold text-gray-900">
                 ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
               </p>
