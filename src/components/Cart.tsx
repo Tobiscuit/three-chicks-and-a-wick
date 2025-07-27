@@ -43,7 +43,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
         className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col" 
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-center px-4 py-5 border-b border-neutral-dark/10">
+        <div className="flex justify-between items-center px-3 py-5 border-b border-neutral-dark/10">
           <h2 className="text-3xl font-extrabold text-neutral-dark">Your Cart</h2>
           <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
             <X size={28} />
@@ -51,7 +51,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
         </div>
         
         {cartItems.length === 0 ? (
-          <div className="flex-grow flex flex-col items-center justify-center text-center p-4">
+          <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
             <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
             <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
             <button onClick={onClose} className="btn-primary">
@@ -60,10 +60,10 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           </div>
         ) : (
           <>
-            <div className="flex-grow p-4 overflow-y-auto">
+            <div className="flex-grow py-4 px-3 overflow-y-auto">
               <ul>
                 {cartItems.map(item => (
-                  <li key={item.lineId} className="flex items-center gap-4 mb-4">
+                  <li key={item.lineId} className="flex items-center gap-3 mb-4">
                     <div className="relative h-28 w-28 rounded-lg overflow-hidden border border-neutral-dark/10">
                         <Image
                             src={item.product.image.url}
@@ -93,7 +93,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
               </ul>
             </div>
 
-            <div className="p-4 border-t border-neutral-dark/10">
+            <div className="py-4 px-3 border-t border-neutral-dark/10">
                 <div className="flex justify-between items-center mb-4">
                     <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
                     <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
