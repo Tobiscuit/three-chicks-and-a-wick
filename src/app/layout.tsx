@@ -3,7 +3,8 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ApolloProvider } from './ApolloProvider';
 import { CartProvider } from "@/context/CartContext";
-import PageWrapper from "@/components/PageWrapper";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,9 +23,11 @@ export default function RootLayout({
       <body className={`${inter.className} font-body`} suppressHydrationWarning>
         <ApolloProvider>
           <CartProvider>
-            <PageWrapper>
+            <Header />
+            <main>
               {children}
-            </PageWrapper>
+            </main>
+            <Footer />
           </CartProvider>
         </ApolloProvider>
       </body>

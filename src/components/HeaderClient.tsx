@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { ShoppingCart, Search, Menu as MenuIcon, X, User } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import Cart from './Cart'; // Import Cart here
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -82,7 +83,7 @@ const MobileMenu = ({
 
 export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isCartOpen, setCartOpen] = useState(false);
+  const [isCartOpen, setCartOpen] = useState(false); // State for cart visibility
   const { cartItems } = useCart();
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
@@ -131,7 +132,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               <span className="sr-only">{isLoggedIn ? "Account" : "Login"}</span>
             </Link>
             <button
-              onClick={() => setCartOpen(true)}
+              onClick={() => setCartOpen(true)} // Toggle cart state
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
               <ShoppingCart className="h-6 w-6" />
@@ -150,6 +151,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         onClose={() => setMobileMenuOpen(false)}
         isLoggedIn={isLoggedIn}
       />
+      <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} /> {/* Render Cart here */}
     </>
   );
 } 
