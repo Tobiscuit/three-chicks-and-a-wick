@@ -4,9 +4,6 @@
 import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { createCheckout } from '@/app/checkout/actions';
 
 interface CartProps {
   isOpen: boolean;
@@ -14,33 +11,20 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  const router = useRouter();
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
+  // Get the checkoutUrl directly from the cart context
+  const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
 
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((sum, item) => {
-    // Ensure price is treated as a number
-    const price = parseFloat(item.product.price.amount);
-    return sum + price * item.quantity;
+    return sum + parseFloat(item.product.price.amount) * item.quantity;
   }, 0);
 
-  const handleStartShopping = () => {
-    onClose();
-    router.push('/product-listings');
-  };
-
-  const handleCheckout = async () => {
-    setIsCheckingOut(true);
-    const lineItems = cartItems.map(item => ({
-      variantId: item.product.variantId,
-      quantity: item.quantity,
-    }));
-
-    await createCheckout(lineItems);
-    // The createCheckout action will handle the redirect on its own.
-    // If it fails, the error will appear in your server terminal.
+  // The new checkout handler is much simpler
+  const handleCheckout = () => {
+    if (checkoutUrl) {
+      window.location.href = checkoutUrl;
+    }
   };
 
   return (
@@ -63,10 +47,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           <div className="flex-grow flex flex-col items-center justify-center text-center p-6">
             <h3 className="text-[28px] font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
             <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
-            <button
-                 onClick={handleStartShopping}
-                className="btn-primary"
-            >
+            <button onClick={onClose} className="btn-primary">
                 Start Shopping
             </button>
           </div>
@@ -89,17 +70,14 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                       <p className="text-sm text-neutral-dark/80">${item.product.price.amount}</p>
                     </div>
                     <div className="flex items-center gap-2">
-                        {/* Call updateQuantity with the correct parameters */}
                         <button onClick={() => updateQuantity(item.lineId, item.quantity - 1)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
                             <Minus size={16} />
                         </button>
                         <p className="font-bold w-6 text-center">{item.quantity}</p>
-                        {/* Call updateQuantity with the correct parameters */}
                         <button onClick={() => updateQuantity(item.lineId, item.quantity + 1)} className="p-1 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
                             <Plus size={16} />
                         </button>
                     </div>
-                    {/* The variantId is not the lineId, use the lineId for removal */}
                     <button onClick={() => removeFromCart(item.lineId)} className="text-neutral-dark/50 hover:text-[var(--destructive)] transition-colors">
                       <X size={20} />
                     </button>
@@ -116,9 +94,9 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                 <button 
                   className="w-full btn-primary"
                   onClick={handleCheckout}
-                  disabled={isCheckingOut}
+                  disabled={!checkoutUrl}
                 >
-                  {isCheckingOut ? 'Redirecting...' : 'Proceed to Checkout'}
+                  Proceed to Checkout
                 </button>
                  <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
                     or Continue Shopping
