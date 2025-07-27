@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createCheckout } from '@/app/checkout/actions';
 
 interface CartProps {
@@ -13,6 +14,7 @@ interface CartProps {
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
+  const router = useRouter();
   const { cartItems, removeFromCart, updateQuantity } = useCart();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -23,6 +25,11 @@ export default function Cart({ isOpen, onClose }: CartProps) {
     const price = parseFloat(item.product.price.amount);
     return sum + price * item.quantity;
   }, 0);
+
+  const handleStartShopping = () => {
+    onClose();
+    router.push('/product-listings');
+  };
 
   const handleCheckout = async () => {
     setIsCheckingOut(true);
@@ -57,7 +64,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
             <h3 className="text-[28px] font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
             <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
             <button
-                 onClick={onClose}
+                 onClick={handleStartShopping}
                 className="btn-primary"
             >
                 Start Shopping
