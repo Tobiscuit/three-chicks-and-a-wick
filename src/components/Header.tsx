@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Search, Menu as MenuIcon, X } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -21,40 +22,49 @@ const MobileMenu = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 bg-neutral-dark/40 backdrop-blur-sm lg:hidden"
-      onClick={onClose}
-    >
-      <div
-        className="fixed inset-y-0 left-0 w-full bg-cream p-6 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-end">
-          <button
-            onClick={onClose}
-            className="rounded-full p-2 text-neutral-dark transition-colors hover:bg-neutral-dark/10"
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-neutral-dark/60 backdrop-blur-sm lg:hidden"
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-cream p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
           >
-            <X className="h-6 w-6" />
-            <span className="sr-only">Close menu</span>
-          </button>
-        </div>
-        <nav className="mt-16 flex flex-col items-center gap-8 text-center">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary"
-              onClick={onClose}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-    </div>
+            <div className="flex justify-end">
+              <button
+                onClick={onClose}
+                className="rounded-full p-2 text-neutral-dark transition-colors hover:bg-neutral-dark/10"
+              >
+                <X className="h-6 w-6" />
+                <span className="sr-only">Close menu</span>
+              </button>
+            </div>
+            <nav className="mt-16 flex flex-col items-center gap-8 text-center">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary"
+                  onClick={onClose}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 };
 
@@ -68,11 +78,6 @@ export default function Header({
   onCartToggle: () => void;
 }) {
   const { cartItems } = useCart();
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -124,7 +129,7 @@ export default function Header({
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
               <ShoppingCart className="h-6 w-6" />
-              {hasMounted && totalItems > 0 && (
+              {totalItems > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs text-white">
                   {totalItems}
                 </span>
