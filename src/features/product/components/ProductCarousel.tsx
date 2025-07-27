@@ -5,6 +5,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import ProductCard from '@/features/product/components/ProductCard';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import QuickViewModal from '@/features/product/components/QuickViewModal';
+import Link from 'next/link';
 
 interface Product {
   id: string;
@@ -37,10 +38,15 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
         <div className="flex">
           {products.map((product) => (
             <div className="flex-[0_0_100%] sm:flex-[0_0_50%] md:flex-[0_0_33.33%] lg:flex-[0_0_25%] p-4" key={product.id}>
-              <ProductCard 
-                {...product} 
-                onQuickView={() => setSelectedProduct(product)}
-              />
+              <Link href={product.href} className="block h-full">
+                <ProductCard 
+                  {...product} 
+                  onQuickView={(e) => {
+                    e.preventDefault();
+                    setSelectedProduct(product);
+                  }}
+                />
+              </Link>
             </div>
           ))}
         </div>
