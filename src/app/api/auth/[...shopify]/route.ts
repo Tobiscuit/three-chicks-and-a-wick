@@ -40,9 +40,12 @@ async function exchangeCodeForToken(code: string) {
 }
 
 // Corrected the function signature below
-export async function GET(request: NextRequest, context: { params: { shopify: string[] } }) {
-  const { params } = context;
-  const action = params.shopify[0];
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ shopify: string[] }> }
+) {
+  const shopifyParams = await params;
+  const action = shopifyParams.shopify[0];
   const searchParams = request.nextUrl.searchParams;
 
   switch (action) {
