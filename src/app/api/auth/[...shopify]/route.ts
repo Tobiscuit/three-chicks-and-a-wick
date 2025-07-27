@@ -6,6 +6,14 @@ const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIE
 const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET;
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
+// Temporary diagnostic logging to debug Amplify environment variables
+console.log('--- Amplify Environment Variable Check ---');
+console.log('NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN:', !!SHOPIFY_STORE_DOMAIN, 'Length:', SHOPIFY_STORE_DOMAIN?.length ?? 0);
+console.log('NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID:', !!SHOPIFY_CUSTOMER_CLIENT_ID, 'Length:', SHOPIFY_CUSTOMER_CLIENT_ID?.length ?? 0);
+console.log('SHOPIFY_CUSTOMER_CLIENT_SECRET:', !!SHOPIFY_CUSTOMER_CLIENT_SECRET, 'Length:', SHOPIFY_CUSTOMER_CLIENT_SECRET?.length ?? 0);
+console.log('NEXT_PUBLIC_BASE_URL:', !!NEXT_PUBLIC_BASE_URL, 'Length:', NEXT_PUBLIC_BASE_URL?.length ?? 0);
+console.log('-----------------------------------------');
+
 if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !SHOPIFY_CUSTOMER_CLIENT_SECRET || !NEXT_PUBLIC_BASE_URL) {
   throw new Error('Missing Shopify Customer API credentials or base URL. Please check your .env.local file.');
 }
