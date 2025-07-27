@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import ProductCard from '@/features/product/components/ProductCard';
 import QuickViewModal from '@/features/product/components/QuickViewModal';
+import Link from 'next/link';
 
 // This defines the shape of a single product that this component expects
 interface Product {
@@ -35,11 +36,17 @@ export default function ProductGrid({ products }: ProductGridProps) {
     <>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
         {products.map((product) => (
-          <ProductCard
-            key={product.id}
-            {...product}
-            onQuickView={() => onProductClick(product)}
-          />
+          // WRAP the ProductCard with a Link component
+          <Link key={product.id} href={product.href}>
+            <ProductCard
+              {...product}
+              onQuickView={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                onProductClick(product);
+              }}
+            />
+          </Link>
         ))}
       </div>
       {selectedProduct && (

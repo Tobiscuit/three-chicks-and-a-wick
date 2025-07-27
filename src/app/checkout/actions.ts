@@ -3,21 +3,28 @@
 import { redirect } from 'next/navigation';
 import { SHOPIFY_PRIVATE_TOKEN, SHOPIFY_STORE_DOMAIN } from '@/lib/constants';
 
-async function shopifyAdminFetch<T>({ query, variables }: { query: string; variables: T }) {
+// This is a new, local fetcher that ONLY uses the private token
+async function shopifyAdminFetch<T>({
+  query,
+  variables,
+}: {
+  query: string;
+  variables: Record<string, unknown>;
+}): Promise<{ data: T; errors?: { message: string }[] }> {
   const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-07/graphql.json`;
   try {
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
         'X-Shopify-Storefront-Access-Token': SHOPIFY_PRIVATE_TOKEN,
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({ query, variables }),
     });
-    return response.json();
+    return await response.json();
   } catch (error) {
-    console.error("Error in Shopify Admin fetch:", error);
-    throw new Error('Could not fetch from Shopify Admin API.');
+    console.error('Error in shopifyAdminFetch:', error);
+    throw error;
   }
 }
 
@@ -42,15 +49,25 @@ type LineItem = {
   quantity: number;
 };
 
+type CheckoutCreatePayload = {
+  checkoutCreate: {
+    checkout: {
+      id: string;
+      webUrl: string;
+    };
+    checkoutUserErrors: { message: string }[];
+  };
+};
+
 export async function createCheckout(lineItems: LineItem[]) {
-  const { data, errors } = await shopifyAdminFetch({
+  // Use the new, secure fetcher
+  const { data, errors } = await shopifyAdminFetch<CheckoutCreatePayload>({
     query: CREATE_CHECKOUT_MUTATION,
     variables: { lineItems },
   });
 
   if (errors || data?.checkoutCreate?.checkoutUserErrors?.length > 0) {
     console.error("Error creating checkout:", errors || data.checkoutCreate.checkoutUserErrors);
-    // Handle errors appropriately, e.g., show a message to the user
     return;
   }
 
@@ -60,6 +77,5 @@ export async function createCheckout(lineItems: LineItem[]) {
     redirect(checkoutUrl);
   } else {
     console.error("Checkout URL not found");
-    // Handle the case where the URL is not returned
   }
 } 
