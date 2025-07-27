@@ -72,7 +72,7 @@ export default async function HomePage() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative py-16 sm:py-24">
+        <section className="relative py-8 sm:py-12">
           <div className="container mx-auto grid grid-cols-1 items-center gap-8 lg:gap-16 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
               <h1 className="text-4xl font-sans font-black leading-tight tracking-tighter md:text-7xl">

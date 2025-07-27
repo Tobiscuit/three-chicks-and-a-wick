@@ -1,5 +1,3 @@
-// src/app/api/auth/[...shopify]/route.ts
-
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
@@ -17,7 +15,6 @@ const SHOPIFY_AUTH_BASE_URL = `${SHOPIFY_STORE_URL}/auth/oauth/authorize`;
 const SHOPIFY_TOKEN_URL = `${SHOPIFY_STORE_URL}/auth/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
-// Helper function to handle Shopify token exchange
 async function exchangeCodeForToken(code: string) {
   const response = await fetch(SHOPIFY_TOKEN_URL, {
     method: 'POST',
@@ -42,19 +39,15 @@ async function exchangeCodeForToken(code: string) {
   return response.json();
 }
 
-// The main handler for all /api/auth/* routes
-// UPDATED the function signature here to fix the type error
+// Corrected the function signature below
 export async function GET(request: NextRequest, context: { params: { shopify: string[] } }) {
-  const { params } = context; // Get params from the context object
+  const { params } = context;
   const action = params.shopify[0];
   const searchParams = request.nextUrl.searchParams;
 
   switch (action) {
     case 'login': {
-      // Generate a unique state for security
       const state = crypto.randomUUID();
-      cookies().set('shopify_auth_state', state, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 5 }); // 5 minutes
-
       const scopes = 'openid email https://api.shopify.com/auth/shop.customers.read';
       
       const authUrl = new URL(SHOPIFY_AUTH_BASE_URL);
@@ -64,7 +57,9 @@ export async function GET(request: NextRequest, context: { params: { shopify: st
       authUrl.searchParams.set('scope', scopes);
       authUrl.searchParams.set('state', state);
 
-      return NextResponse.redirect(authUrl);
+      const response = NextResponse.redirect(authUrl);
+      response.cookies.set('shopify_auth_state', state, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 5 });
+      return response;
     }
 
     case 'callback': {
@@ -72,38 +67,38 @@ export async function GET(request: NextRequest, context: { params: { shopify: st
       const state = searchParams.get('state');
       const storedState = cookies().get('shopify_auth_state')?.value;
 
-      // Clear the state cookie after checking it
-      cookies().delete('shopify_auth_state');
-
       if (!code || !state || state !== storedState) {
-        return NextResponse.redirect(new URL('/?error=invalid_state', request.url));
+        const response = NextResponse.redirect(new URL('/?error=invalid_state', request.url));
+        response.cookies.delete('shopify_auth_state');
+        return response;
       }
       
       try {
         const tokenData = await exchangeCodeForToken(code);
         
-        // Securely store the access token in an HTTP-only cookie
-        cookies().set('shopify_customer_token', tokenData.access_token, {
+        const response = NextResponse.redirect(new URL('/account', request.url));
+        response.cookies.delete('shopify_auth_state');
+        response.cookies.set('shopify_customer_token', tokenData.access_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
           maxAge: tokenData.expires_in,
         });
 
-        // Redirect to a protected account page
-        return NextResponse.redirect(new URL('/account', request.url));
+        return response;
 
       } catch (error) {
         console.error(error);
-        return NextResponse.redirect(new URL('/?error=auth_failed', request.url));
+        const response = NextResponse.redirect(new URL('/?error=auth_failed', request.url));
+        response.cookies.delete('shopify_auth_state');
+        return response;
       }
     }
 
     case 'logout': {
-      // Clear the session cookie
-      cookies().delete('shopify_customer_token');
-      // Redirect to the homepage
-      return NextResponse.redirect(new URL('/', request.url));
+      const response = NextResponse.redirect(new URL('/', request.url));
+      response.cookies.delete('shopify_customer_token');
+      return response;
     }
 
     default:
