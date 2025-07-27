@@ -4,7 +4,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Search, Menu as MenuIcon, X, User } from 'lucide-react';
+import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cart from './Cart'; // Import Cart here

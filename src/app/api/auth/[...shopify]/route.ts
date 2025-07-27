@@ -43,7 +43,9 @@ async function exchangeCodeForToken(code: string) {
 }
 
 // The main handler for all /api/auth/* routes
-export async function GET(request: NextRequest, { params }: { params: { shopify: string[] } }) {
+// UPDATED the function signature here to fix the type error
+export async function GET(request: NextRequest, context: { params: { shopify: string[] } }) {
+  const { params } = context; // Get params from the context object
   const action = params.shopify[0];
   const searchParams = request.nextUrl.searchParams;
 
@@ -51,7 +53,7 @@ export async function GET(request: NextRequest, { params }: { params: { shopify:
     case 'login': {
       // Generate a unique state for security
       const state = crypto.randomUUID();
-      await cookies().set('shopify_auth_state', state, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 5 }); // 5 minutes
+      cookies().set('shopify_auth_state', state, { httpOnly: true, secure: process.env.NODE_ENV === 'production', maxAge: 60 * 5 }); // 5 minutes
 
       const scopes = 'openid email https://api.shopify.com/auth/shop.customers.read';
       
@@ -68,10 +70,10 @@ export async function GET(request: NextRequest, { params }: { params: { shopify:
     case 'callback': {
       const code = searchParams.get('code');
       const state = searchParams.get('state');
-      const storedState = (await cookies().get('shopify_auth_state'))?.value;
+      const storedState = cookies().get('shopify_auth_state')?.value;
 
       // Clear the state cookie after checking it
-      await cookies().delete('shopify_auth_state');
+      cookies().delete('shopify_auth_state');
 
       if (!code || !state || state !== storedState) {
         return NextResponse.redirect(new URL('/?error=invalid_state', request.url));
@@ -81,7 +83,7 @@ export async function GET(request: NextRequest, { params }: { params: { shopify:
         const tokenData = await exchangeCodeForToken(code);
         
         // Securely store the access token in an HTTP-only cookie
-        await cookies().set('shopify_customer_token', tokenData.access_token, {
+        cookies().set('shopify_customer_token', tokenData.access_token, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax',
@@ -99,7 +101,7 @@ export async function GET(request: NextRequest, { params }: { params: { shopify:
 
     case 'logout': {
       // Clear the session cookie
-      await cookies().delete('shopify_customer_token');
+      cookies().delete('shopify_customer_token');
       // Redirect to the homepage
       return NextResponse.redirect(new URL('/', request.url));
     }
