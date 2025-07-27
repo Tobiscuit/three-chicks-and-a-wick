@@ -4,10 +4,28 @@
 import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus } from 'lucide-react';
 import Image from 'next/image';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface CartProps {
   isOpen: boolean;
   onClose: () => void;
+}
+
+const backdropVariants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1 },
+};
+
+const cartVariants = {
+  hidden: { x: '100%', opacity: 0 },
+  visible: { x: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 300, damping: 30 } },
+  exit: { x: '100%', opacity: 0 },
+};
+
+const desktopCartVariants = {
+  hidden: { scale: 0.95, opacity: 0 },
+  visible: { scale: 1, opacity: 1, transition: { duration: 0.2 } },
+  exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2 } },
 }
 
 function formatCurrency(amount: number, currencyCode: string = 'USD') {
@@ -34,84 +52,99 @@ export default function Cart({ isOpen, onClose }: CartProps) {
     }
   };
 
-  return (
-    <div 
-      className="fixed inset-0 bg-neutral-dark/60 backdrop-blur-sm z-50 flex justify-end" 
-      onClick={onClose}
-    >
-      <div 
-        className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col" 
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex justify-between items-center px-3 py-5 border-b border-neutral-dark/10">
-          <h2 className="text-3xl font-extrabold text-neutral-dark">Your Cart</h2>
-          <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
-            <X size={28} />
-          </button>
-        </div>
-        
-        {cartItems.length === 0 ? (
-          <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
-            <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
-            <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
-            <button onClick={onClose} className="btn-primary">
-                Start Shopping
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex-grow py-4 px-3 overflow-y-auto">
-              <ul>
-                {cartItems.map(item => (
-                  <li key={item.lineId} className="flex items-center gap-3 mb-4">
-                    <div className="relative h-28 w-28 rounded-lg overflow-hidden border border-neutral-dark/10">
-                        <Image
-                            src={item.product.image.url}
-                            alt={item.product.image.altText}
-                            layout="fill"
-                            objectFit="cover"
-                        />
-                    </div>
-                    <div className="flex-grow">
-                      <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
-                      <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
-                    </div>
-                    <div className="flex flex-col items-center gap-2">
-                        <button onClick={() => updateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
-                            <Plus size={18} />
-                        </button>
-                        <p className="font-bold w-8 text-center">{item.quantity}</p>
-                        <button onClick={() => updateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
-                            <Minus size={18} />
-                        </button>
-                    </div>
-                    <button onClick={() => removeFromCart(item.lineId)} className="text-neutral-dark/50 hover:text-destructive transition-colors self-start p-1">
-                      <X size={20} />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
+  // Use a simple check for window object to avoid SSR errors
+  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
 
-            <div className="py-4 px-3 border-t border-neutral-dark/10">
-                <div className="flex justify-between items-center mb-4">
-                    <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
-                    <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
-                </div>
-                <button 
-                  className="w-full btn-primary"
-                  onClick={handleCheckout}
-                  disabled={!checkoutUrl}
-                >
-                  Proceed to Checkout
-                </button>
-                 <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
-                    or Continue Shopping
-                </button>
+  return (
+    <AnimatePresence>
+      {isOpen && (
+        <motion.div
+          variants={backdropVariants}
+          initial="hidden"
+          animate="visible"
+          exit="hidden"
+          className="fixed inset-0 bg-neutral-dark/60 backdrop-blur-sm z-50 flex justify-end md:justify-center md:items-center"
+          onClick={onClose}
+        >
+          <motion.div
+            variants={isDesktop ? desktopCartVariants : cartVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex justify-between items-center px-3 py-5 border-b border-neutral-dark/10">
+              <h2 className="text-3xl font-extrabold text-neutral-dark">Your Cart</h2>
+              <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
+                <X size={28} />
+              </button>
             </div>
-          </>
-        )}
-      </div>
-    </div>
+            
+            {cartItems.length === 0 ? (
+              <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
+                <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
+                <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
+                <button onClick={onClose} className="btn-primary">
+                    Start Shopping
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex-grow py-4 px-3 overflow-y-auto">
+                  <ul>
+                    {cartItems.map(item => (
+                      <li key={item.lineId} className="flex items-center gap-3 mb-4">
+                        <div className="relative h-28 w-28 rounded-lg overflow-hidden border border-neutral-dark/10">
+                            <Image
+                                src={item.product.image.url}
+                                alt={item.product.image.altText}
+                                layout="fill"
+                                objectFit="cover"
+                            />
+                        </div>
+                        <div className="flex-grow">
+                          <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
+                          <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
+                        </div>
+                        <div className="flex flex-col items-center gap-2">
+                            <button onClick={() => updateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+                                <Plus size={18} />
+                            </button>
+                            <p className="font-bold w-8 text-center">{item.quantity}</p>
+                            <button onClick={() => updateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                                <Minus size={18} />
+                            </button>
+                        </div>
+                        <button onClick={() => removeFromCart(item.lineId)} className="text-neutral-dark/50 hover:text-destructive transition-colors self-start p-1">
+                          <X size={20} />
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="py-4 px-3 border-t border-neutral-dark/10">
+                    <div className="flex justify-between items-center mb-4">
+                        <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
+                        <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
+                    </div>
+                    <button 
+                      className="w-full btn-primary"
+                      onClick={handleCheckout}
+                      disabled={!checkoutUrl}
+                    >
+                      Proceed to Checkout
+                    </button>
+                     <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
+                        or Continue Shopping
+                    </button>
+                </div>
+              </>
+            )}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 } 
