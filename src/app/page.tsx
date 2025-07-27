@@ -8,30 +8,32 @@ import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit
 
 const GetFeaturedProducts = gql(`
   query GetFeaturedProducts {
-    products(first: 10, query: "tag:featured") {
-      edges {
-        node {
-          id
-          title
-          handle
-          priceRange {
-            minVariantPrice {
-              amount
-              currencyCode
-            }
-          }
-          images(first: 1) {
-            edges {
-              node {
-                url
-                altText
+    collection(handle: "featured") {
+      products(first: 10) {
+        edges {
+          node {
+            id
+            title
+            handle
+            priceRange {
+              minVariantPrice {
+                amount
+                currencyCode
               }
             }
-          }
-          variants(first: 1) {
-            edges {
-              node {
-                id
+            images(first: 1) {
+              edges {
+                node {
+                  url
+                  altText
+                }
+              }
+            }
+            variants(first: 1) {
+              edges {
+                node {
+                  id
+                }
               }
             }
           }
@@ -52,7 +54,7 @@ async function getFeaturedProducts() {
   });
 
   const products =
-    data.products.edges.map(({ node }) => ({
+    data.collection?.products.edges.map(({ node }) => ({
       id: node.id,
       variantId: node.variants.edges[0]?.node.id,
       href: `/products/${node.handle}`,
