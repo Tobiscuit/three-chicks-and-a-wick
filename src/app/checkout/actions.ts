@@ -1,7 +1,25 @@
 'use server';
 
-import { shopifyFetch } from '@/lib/shopify';
 import { redirect } from 'next/navigation';
+import { SHOPIFY_PRIVATE_TOKEN, SHOPIFY_STORE_DOMAIN } from '@/lib/constants';
+
+async function shopifyAdminFetch<T>({ query, variables }: { query: string; variables: T }) {
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-07/graphql.json`;
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_PRIVATE_TOKEN,
+      },
+      body: JSON.stringify({ query, variables }),
+    });
+    return response.json();
+  } catch (error) {
+    console.error("Error in Shopify Admin fetch:", error);
+    throw new Error('Could not fetch from Shopify Admin API.');
+  }
+}
 
 const CREATE_CHECKOUT_MUTATION = `
   mutation checkoutCreate($lineItems: [CheckoutLineItemInput!]!) {
@@ -40,7 +58,7 @@ type CheckoutCreatePayload = {
 
 
 export async function createCheckout(lineItems: LineItem[]) {
-  const { data, errors } = await shopifyFetch<CheckoutCreatePayload>({
+  const { data, errors } = await shopifyAdminFetch({
     query: CREATE_CHECKOUT_MUTATION,
     variables: { lineItems },
   });
