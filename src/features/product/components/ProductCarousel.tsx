@@ -42,6 +42,7 @@ export default function ProductCarousel({ products }: ProductCarouselProps) {
                 <ProductCard 
                   {...product} 
                   onQuickView={(e) => {
+                    e.stopPropagation();
                     e.preventDefault();
                     setSelectedProduct(product);
                   }}
