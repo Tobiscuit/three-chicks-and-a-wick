@@ -65,7 +65,8 @@ export async function GET(request: NextRequest, context: { params: { shopify: st
     case 'callback': {
       const code = searchParams.get('code');
       const state = searchParams.get('state');
-      const storedState = cookies().get('shopify_auth_state')?.value;
+      const cookieStore = await cookies();
+      const storedState = cookieStore.get('shopify_auth_state')?.value;
 
       if (!code || !state || state !== storedState) {
         const response = NextResponse.redirect(new URL('/?error=invalid_state', request.url));
