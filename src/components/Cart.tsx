@@ -31,12 +31,9 @@ export default function Cart({ isOpen, onClose }: CartProps) {
       quantity: item.quantity,
     }));
 
-    try {
-      await createCheckout(lineItems);
-    } catch (error) {
-      console.error("Checkout failed:", error);
-      setIsCheckingOut(false);
-    }
+    await createCheckout(lineItems);
+    // The createCheckout action will handle the redirect on its own.
+    // If it fails, the error will appear in your server terminal.
   };
 
   return (
