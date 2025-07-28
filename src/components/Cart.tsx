@@ -129,6 +129,18 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    // Cleanup function to restore scroll when the component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((sum, item) => {
