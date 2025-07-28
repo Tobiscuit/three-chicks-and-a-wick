@@ -2,9 +2,11 @@
 'use client';
 
 import { useCart } from '@/context/CartContext';
-import { X, Plus, Minus } from 'lucide-react';
+import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
 
 interface CartProps {
   isOpen: boolean;
@@ -28,6 +30,23 @@ const desktopCartVariants = {
   exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2 } },
 }
 
+// Define a type for the cart item
+type CartItemType = {
+  lineId: string;
+  quantity: number;
+  product: {
+    title: string;
+    image: {
+      url: string;
+      altText: string;
+    };
+    price: {
+      amount: string;
+      currencyCode: string;
+    };
+  };
+};
+
 function formatCurrency(amount: number, currencyCode: string = 'USD') {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -35,9 +54,80 @@ function formatCurrency(amount: number, currencyCode: string = 'USD') {
   }).format(amount);
 }
 
+function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number) => void, isFirstItem: boolean }) {
+  const isMobile = useMediaQuery('(max-width: 767px)');
+  const controls = useAnimation();
+
+  useEffect(() => {
+    // Only run the hint animation on mobile for the first item
+    if (isMobile && isFirstItem) {
+      const hintAnimation = async () => {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        await controls.start({ x: -60, transition: { type: 'spring', stiffness: 300, damping: 25 } });
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
+      };
+      hintAnimation();
+    }
+  }, [isMobile, isFirstItem, controls]);
+
+  return (
+    <li className="relative mb-4 overflow-hidden">
+        {/* Delete button that sits underneath */}
+        <div className="absolute inset-y-0 right-0 flex items-center justify-center bg-destructive text-white w-20">
+            <button onClick={onRemove} className="w-full h-full flex items-center justify-center">
+                <Trash2 size={24} />
+            </button>
+        </div>
+        {/* The draggable content */}
+        <motion.div
+            className="relative flex items-center gap-4 bg-cream"
+            drag={isMobile ? "x" : false}
+            dragConstraints={{ left: 0, right: 0 }}
+            dragElastic={{ left: 0.2, right: 0 }}
+            onDragEnd={(event, info) => {
+                if (info.offset.x < -80) {
+                    onRemove();
+                }
+            }}
+            animate={controls}
+        >
+            <div className="relative h-24 w-24 flex-shrink-0 rounded-lg overflow-hidden border border-neutral-dark/10 aspect-square">
+                <Image
+                    src={item.product.image.url}
+                    alt={item.product.image.altText}
+                    layout="fill"
+                    objectFit="cover"
+                />
+            </div>
+            <div className="flex-grow">
+                <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
+                <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
+            </div>
+            <div className="flex flex-col items-center gap-2 pr-4">
+                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+                    <Plus size={18} />
+                </button>
+                <span className="font-bold w-8 text-center">{item.quantity}</span>
+                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                    <Minus size={18} />
+                </button>
+            </div>
+            {/* Desktop-only remove button */}
+            <div className="hidden md:block pr-2">
+                <button onClick={onRemove} className="text-neutral-dark/50 hover:text-destructive transition-colors">
+                    <X size={20} />
+                </button>
+            </div>
+        </motion.div>
+    </li>
+  );
+}
+
 export default function Cart({ isOpen, onClose }: CartProps) {
   // Get the checkoutUrl directly from the cart context
   const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
+  const isDesktop = useMediaQuery('(min-width: 768px)');
 
   if (!isOpen) return null;
 
@@ -51,9 +141,6 @@ export default function Cart({ isOpen, onClose }: CartProps) {
       window.location.href = checkoutUrl;
     }
   };
-
-  // Use a simple check for window object to avoid SSR errors
-  const isDesktop = typeof window !== 'undefined' && window.innerWidth >= 768;
 
   return (
     <AnimatePresence>
@@ -93,34 +180,17 @@ export default function Cart({ isOpen, onClose }: CartProps) {
               <>
                 <div className="flex-grow py-4 px-3 overflow-y-auto">
                   <ul>
-                    {cartItems.map(item => (
-                      <li key={item.lineId} className="flex items-center gap-3 mb-4">
-                        <div className="relative h-28 w-28 rounded-lg overflow-hidden border border-neutral-dark/10">
-                            <Image
-                                src={item.product.image.url}
-                                alt={item.product.image.altText}
-                                layout="fill"
-                                objectFit="cover"
-                            />
-                        </div>
-                        <div className="flex-grow">
-                          <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
-                          <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
-                        </div>
-                        <div className="flex flex-col items-center gap-2">
-                            <button onClick={() => updateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
-                                <Plus size={18} />
-                            </button>
-                            <p className="font-bold w-8 text-center">{item.quantity}</p>
-                            <button onClick={() => updateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
-                                <Minus size={18} />
-                            </button>
-                        </div>
-                        <button onClick={() => removeFromCart(item.lineId)} className="text-neutral-dark/50 hover:text-destructive transition-colors self-start p-1">
-                          <X size={20} />
-                        </button>
-                      </li>
-                    ))}
+                    <AnimatePresence>
+                      {cartItems.map((item, index) => (
+                        <CartItem 
+                          key={item.lineId} 
+                          item={item as CartItemType}
+                          onRemove={() => removeFromCart(item.lineId)}
+                          onUpdateQuantity={updateQuantity}
+                          isFirstItem={index === 0 && cartItems.length > 0}
+                        />
+                      ))}
+                    </AnimatePresence>
                   </ul>
                 </div>
 
