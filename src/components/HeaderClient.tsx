@@ -7,7 +7,8 @@ import Image from 'next/image';
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
-import Cart from './Cart'; // Import Cart here
+import Cart from './Cart';
+import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -28,54 +29,56 @@ const MobileMenu = ({
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-neutral-dark/60 backdrop-blur-sm lg:hidden"
-          onClick={onClose}
-        >
+        <RemoveScroll>
           <motion.div
-            initial={{ x: '-100%' }}
-            animate={{ x: 0 }}
-            exit={{ x: '-100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-            className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-cream p-6 shadow-lg"
-            onClick={(e) => e.stopPropagation()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-neutral-dark/60 backdrop-blur-sm lg:hidden"
+            onClick={onClose}
           >
-            <div className="flex justify-end">
-              <button
-                onClick={onClose}
-                className="rounded-full p-2 text-neutral-dark transition-colors hover:bg-neutral-dark/10"
-              >
-                <X className="h-6 w-6" />
-                <span className="sr-only">Close menu</span>
-              </button>
-            </div>
-            <nav className="mt-16 flex flex-col items-center gap-8 text-center">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary"
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+              className="fixed inset-y-0 left-0 w-[85%] max-w-sm bg-cream p-6 shadow-lg"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-end">
+                <button
                   onClick={onClose}
+                  className="rounded-full p-2 text-neutral-dark transition-colors hover:bg-neutral-dark/10"
                 >
-                  {link.label}
-                </Link>
-              ))}
-               <div className="mt-8 border-t border-neutral-dark/10 pt-8 w-full flex flex-col items-center gap-8">
-                {isLoggedIn ? (
-                  <>
-                    <Link href="/account" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Account</Link>
-                    <Link href="/api/auth/logout" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Logout</Link>
-                  </>
-                ) : (
-                  <Link href="/api/auth/login" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Login</Link>
-                )}
+                  <X className="h-6 w-6" />
+                  <span className="sr-only">Close menu</span>
+                </button>
               </div>
-            </nav>
+              <nav className="mt-16 flex flex-col items-center gap-8 text-center">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary"
+                    onClick={onClose}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                 <div className="mt-8 border-t border-neutral-dark/10 pt-8 w-full flex flex-col items-center gap-8">
+                  {isLoggedIn ? (
+                    <>
+                      <Link href="/account" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Account</Link>
+                      <Link href="/api/auth/logout" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Logout</Link>
+                    </>
+                  ) : (
+                    <Link href="/api/auth/login" className="text-2xl font-bold text-neutral-dark transition-colors hover:text-primary" onClick={onClose}>Login</Link>
+                  )}
+                </div>
+              </nav>
+            </motion.div>
           </motion.div>
-        </motion.div>
+        </RemoveScroll>
       )}
     </AnimatePresence>
   );
@@ -86,17 +89,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isCartOpen, setCartOpen] = useState(false); // State for cart visibility
   const { cartItems } = useCart();
 
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    // Cleanup function to restore scroll when the component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMobileMenuOpen]);
+  // The old useEffect for scroll-locking is no longer needed here
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 

@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
+import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
 
 interface CartProps {
   isOpen: boolean;
@@ -129,18 +130,6 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'unset';
-    }
-    // Cleanup function to restore scroll when the component unmounts
-    return () => {
-      document.body.style.overflow = 'unset';
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   const subtotal = cartItems.reduce((sum, item) => {
@@ -165,66 +154,68 @@ export default function Cart({ isOpen, onClose }: CartProps) {
           className="fixed inset-0 bg-neutral-dark/60 backdrop-blur-sm z-50 flex justify-end md:justify-center md:items-center"
           onClick={onClose}
         >
-          <motion.div
-            variants={isDesktop ? desktopCartVariants : cartVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex justify-between items-center px-3 py-5 border-b border-neutral-dark/10">
-              <h2 className="text-3xl font-extrabold text-neutral-dark">Your Cart</h2>
-              <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
-                <X size={28} />
-              </button>
-            </div>
-            
-            {cartItems.length === 0 ? (
-              <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
-                <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
-                <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
-                <button onClick={onClose} className="btn-primary">
-                    Start Shopping
+          <RemoveScroll>
+            <motion.div
+              variants={isDesktop ? desktopCartVariants : cartVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              className="w-full max-w-md h-full bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center px-3 py-5 border-b border-neutral-dark/10">
+                <h2 className="text-3xl font-extrabold text-neutral-dark">Your Cart</h2>
+                <button onClick={onClose} className="text-neutral-dark hover:text-primary transition-colors">
+                  <X size={28} />
                 </button>
               </div>
-            ) : (
-              <>
-                <div className="flex-grow py-4 px-3 overflow-y-auto">
-                  <ul>
-                    <AnimatePresence>
-                      {cartItems.map((item, index) => (
-                        <CartItem 
-                          key={item.lineId} 
-                          item={item as CartItemType}
-                          onRemove={() => removeFromCart(item.lineId)}
-                          onUpdateQuantity={updateQuantity}
-                          isFirstItem={index === 0 && cartItems.length > 0}
-                        />
-                      ))}
-                    </AnimatePresence>
-                  </ul>
+              
+              {cartItems.length === 0 ? (
+                <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
+                  <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
+                  <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
+                  <button onClick={onClose} className="btn-primary">
+                      Start Shopping
+                  </button>
                 </div>
+              ) : (
+                <>
+                  <div className="flex-grow py-4 px-3 overflow-y-auto">
+                    <ul>
+                      <AnimatePresence>
+                        {cartItems.map((item, index) => (
+                          <CartItem 
+                            key={item.lineId} 
+                            item={item as CartItemType}
+                            onRemove={() => removeFromCart(item.lineId)}
+                            onUpdateQuantity={updateQuantity}
+                            isFirstItem={index === 0 && cartItems.length > 0}
+                          />
+                        ))}
+                      </AnimatePresence>
+                    </ul>
+                  </div>
 
-                <div className="py-4 px-3 border-t border-neutral-dark/10">
-                    <div className="flex justify-between items-center mb-4">
-                        <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
-                        <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
-                    </div>
-                    <button 
-                      className="w-full btn-primary"
-                      onClick={handleCheckout}
-                      disabled={!checkoutUrl}
-                    >
-                      Proceed to Checkout
-                    </button>
-                     <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
-                        or Continue Shopping
-                    </button>
-                </div>
-              </>
-            )}
-          </motion.div>
+                  <div className="py-4 px-3 border-t border-neutral-dark/10">
+                      <div className="flex justify-between items-center mb-4">
+                          <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
+                          <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
+                      </div>
+                      <button 
+                        className="w-full btn-primary"
+                        onClick={handleCheckout}
+                        disabled={!checkoutUrl}
+                      >
+                        Proceed to Checkout
+                      </button>
+                       <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
+                          or Continue Shopping
+                      </button>
+                  </div>
+                </>
+              )}
+            </motion.div>
+          </RemoveScroll>
         </motion.div>
       )}
     </AnimatePresence>

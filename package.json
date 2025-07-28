@@ -22,6 +22,7 @@
     "next": "15.4.1",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-remove-scroll": "^2.7.1",
     "tailwind-merge": "^2.4.0",
     "tw-animate-css": "^1.0.1",
     "yet-another-react-lightbox": "^3.24.0"
