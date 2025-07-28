@@ -1,7 +1,7 @@
 // src/components/HeaderClient.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
@@ -85,6 +85,18 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCartOpen, setCartOpen] = useState(false); // State for cart visibility
   const { cartItems } = useCart();
+
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    // Cleanup function to restore scroll when the component unmounts
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMobileMenuOpen]);
 
   const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
