@@ -60,12 +60,13 @@ async function ProductData() {
 
 export default async function ProductListingsPage() {
   const header = (
-    <header className="text-center mb-12">
-      <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">
+    <header className="text-center mb-10">
+      <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark">
         Our Collection
       </h1>
-      <p className="max-w-2xl mx-auto text-lg text-neutral-dark/80">
-        Browse our curated selection of handcrafted goods, made with love and attention to detail.
+      <p className="mt-3 max-w-2xl mx-auto text-lg text-neutral-dark/80">
+        Browse our curated selection of handcrafted goods, made with love and
+        attention to detail.
       </p>
     </header>
   );
@@ -79,13 +80,11 @@ export default async function ProductListingsPage() {
   );
 
   return (
-    <div className="bg-cream">
-      <main className="container mx-auto py-8 sm:py-12">
-        {header}
-        <Suspense fallback={skeleton}>
-          <ProductData />
-        </Suspense>
-      </main>
-    </div>
+    <main className="container mx-auto py-8 sm:py-12">
+      {header}
+      <Suspense fallback={skeleton}>
+        <ProductData />
+      </Suspense>
+    </main>
   );
 } 

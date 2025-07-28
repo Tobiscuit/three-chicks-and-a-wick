@@ -126,7 +126,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        <section className="bg-white py-8 sm:py-12">
+        <section className="bg-white py-16 sm:py-24">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
