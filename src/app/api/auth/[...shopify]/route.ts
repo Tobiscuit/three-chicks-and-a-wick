@@ -5,12 +5,8 @@ export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
 
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID;
-const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET;
+// The secret will be accessed only at runtime inside the exchangeCodeForToken function
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-
-if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !SHOPIFY_CUSTOMER_CLIENT_SECRET || !NEXT_PUBLIC_BASE_URL) {
-  throw new Error('Missing Shopify Customer API credentials or base URL. Please check your .env.local file.');
-}
 
 const SHOPIFY_STORE_URL = `https://${SHOPIFY_STORE_DOMAIN}`;
 const SHOPIFY_AUTH_BASE_URL = `${SHOPIFY_STORE_URL}/auth/oauth/authorize`;
@@ -18,6 +14,12 @@ const SHOPIFY_TOKEN_URL = `${SHOPIFY_STORE_URL}/auth/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 async function exchangeCodeForToken(code: string) {
+  const clientSecret = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET;
+  
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
+    throw new Error('Missing Shopify Customer API credentials or base URL on the server.');
+  }
+
   const response = await fetch(SHOPIFY_TOKEN_URL, {
     method: 'POST',
     headers: {
@@ -26,7 +28,7 @@ async function exchangeCodeForToken(code: string) {
     body: JSON.stringify({
       grant_type: 'authorization_code',
       client_id: SHOPIFY_CUSTOMER_CLIENT_ID,
-      client_secret: SHOPIFY_CUSTOMER_CLIENT_SECRET,
+      client_secret: clientSecret,
       redirect_uri: REDIRECT_URI,
       code,
     }),
@@ -46,6 +48,12 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ shopify: string[] }> }
 ) {
+  // Runtime check for variables that should be public
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
+    console.error('Missing public Shopify credentials or base URL');
+    return new NextResponse('Server configuration error.', { status: 500 });
+  }
+
   const shopifyParams = await params;
   const action = shopifyParams.shopify[0];
   const searchParams = request.nextUrl.searchParams;
