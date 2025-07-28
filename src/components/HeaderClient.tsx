@@ -105,10 +105,10 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
           <div className="flex-1 flex justify-center lg:justify-start">
             <Link href="/">
               <Image
-                src="/images/VectorLogoV2-Filled.svg"
+                src="/images/Correct-Name-2.svg"
                 alt="Three Chicks and a Wick Logo"
-                width={100}
-                height={50}
+                width={150}
+                height={48}
                 className="h-12 w-auto"
               />
             </Link>
