@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
 
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
 const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID;
-const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIY_CUSTOMER_SECRET_KEY; // Using a new, clean variable to bypass platform cache
+const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET;
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !SHOPIFY_CUSTOMER_CLIENT_SECRET || !NEXT_PUBLIC_BASE_URL) {
