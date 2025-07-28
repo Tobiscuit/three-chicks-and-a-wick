@@ -24,9 +24,9 @@ export default function AboutUsPage() {
   return (
     <div className="bg-cream">
       {/* Hero Section */}
-      <section className="text-center py-16 sm:py-24">
+      <section className="text-center py-8 sm:py-12">
         <div className="container mx-auto">
-          <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">
+          <h1 className="text-4xl font-bold tracking-tight text-neutral-dark sm:text-6xl">
             Our Story
           </h1>
           <p className="max-w-3xl mx-auto text-lg leading-relaxed text-neutral-dark/80">
@@ -36,7 +36,7 @@ export default function AboutUsPage() {
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto py-16">
+      <div className="container mx-auto py-8">
         <div className="bg-white rounded-3xl shadow-lg p-6 sm:p-12">
           {/* Story Section */}
           <section className="mb-12">

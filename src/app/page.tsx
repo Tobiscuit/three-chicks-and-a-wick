@@ -106,7 +106,7 @@ export default async function HomePage() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-16 sm:py-24">
+        <section className="overflow-hidden py-8 sm:py-12">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
@@ -126,7 +126,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        <section className="bg-white py-16 sm:py-24">
+        <section className="bg-white py-8 sm:py-12">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">

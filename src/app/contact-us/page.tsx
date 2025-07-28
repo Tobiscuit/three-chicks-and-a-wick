@@ -11,7 +11,7 @@ import Link from 'next/link';
 export default function ContactUsPage() {
   return (
     <div className="bg-cream text-neutral-dark min-h-screen">
-      <main className="container mx-auto py-16 sm:py-24">
+      <main className="container mx-auto py-8 sm:py-12">
         {/* Centered Header */}
         <div className="text-center mb-16">
           <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark mb-6">

@@ -80,7 +80,7 @@ export default async function ProductListingsPage() {
 
   return (
     <div className="bg-cream">
-      <main className="container mx-auto py-16 sm:py-24">
+      <main className="container mx-auto py-8 sm:py-12">
         {header}
         <Suspense fallback={skeleton}>
           <ProductData />
