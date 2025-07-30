@@ -81,9 +81,9 @@ export default function ProductView({
 
   return (
     <div className="bg-cream">
-      <main className="container mx-auto pt-8 pb-16 sm:pb-24">
+      <main className="container mx-auto pt-4 pb-8 sm:pb-12">
         {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="mb-8">
+        <nav aria-label="Breadcrumb" className="mb-4">
           <ol className="flex items-center gap-2 text-sm">
             <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
             <li><span className="font-medium text-gray-500">/</span></li>
@@ -94,7 +94,7 @@ export default function ProductView({
         </nav>
         
         {/* Main Product Display */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
           <div>
             <ProductGallery images={productImages} />
           </div>

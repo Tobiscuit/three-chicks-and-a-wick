@@ -7,7 +7,7 @@ export default function Footer() {
   return (
     <>
       <NewsletterSignup />
-      <footer className="border-t border-[var(--neutral-dark)]/10 bg-[var(--neutral-light)] py-12">
+      <footer className="border-t border-[var(--neutral-dark)]/10 bg-[var(--neutral-light)] py-8">
         <div className="container mx-auto px-6">
           <div className="flex flex-col justify-between gap-10 md:flex-row">
             <div className="flex flex-col gap-10 sm:flex-row sm:gap-16">
@@ -122,7 +122,7 @@ export default function Footer() {
               </div>
             </div>
           </div>
-          <div className="mt-12 border-t border-[var(--neutral-dark)]/10 pt-8 text-center text-sm text-[var(--neutral-dark)]/70">
+          <div className="mt-8 border-t border-[var(--neutral-dark)]/10 pt-6 text-center text-sm text-[var(--neutral-dark)]/70">
             <p>© 2025 Three Chicks and a Wick. All Rights Reserved.</p>
           </div>
         </div>

@@ -72,10 +72,10 @@ export default async function HomePage() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative py-8 sm:py-12">
-          <div className="container mx-auto grid grid-cols-1 items-center gap-8 lg:gap-16 lg:grid-cols-5">
+        <section className="relative py-2 sm:py-6">
+          <div className="container mx-auto grid grid-cols-1 items-center gap-4 lg:gap-16 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
-              <h1 className="text-4xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
+              <h1 className="text-5xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
               <p className="mt-4 max-w-lg text-lg text-[var(--neutral-dark)]/80 lg:mx-0">
@@ -83,7 +83,7 @@ export default async function HomePage() {
                 designed to brighten your day and add a touch of whimsy to your
                 home.
               </p>
-              <Link className="btn-primary mt-8 inline-block" href="/product-listings">
+              <Link className="btn-primary mt-4 inline-block" href="/product-listings">
                 Explore Our Collection
               </Link>
             </div>
@@ -106,7 +106,7 @@ export default async function HomePage() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-8 sm:py-12">
+        <section className="overflow-hidden py-4 sm:py-8">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
@@ -116,10 +116,10 @@ export default async function HomePage() {
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-12">
+            <div className="mt-2">
               <ProductCarousel products={featuredProducts} />
             </div>
-            <div className="mt-16 text-center">
+            <div className="mt-8 text-center">
               <Link className="btn-secondary" href="/product-listings">
                 View All Products
               </Link>
