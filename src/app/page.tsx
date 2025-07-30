@@ -72,13 +72,13 @@ export default async function HomePage() {
   return (
     <>
       <main className="flex-grow">
-        <section className="relative py-2 sm:py-6">
+        <section className="relative pb-1 sm:pb-2">
           <div className="container mx-auto grid grid-cols-1 items-center gap-4 lg:gap-16 lg:grid-cols-5">
             <div className="z-10 text-center lg:col-span-2 lg:text-left">
               <h1 className="text-5xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
-              <p className="mt-4 max-w-lg text-lg text-[var(--neutral-dark)]/80 lg:mx-0">
+              <p className="mx-auto mt-4 max-w-lg text-center text-lg text-[var(--neutral-dark)]/80 lg:mx-0 lg:text-left">
                 Discover our unique collection of handmade candles and crafts,
                 designed to brighten your day and add a touch of whimsy to your
                 home.
@@ -106,17 +106,17 @@ export default async function HomePage() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-4 sm:py-8">
+        <section className="overflow-hidden py-1 sm:py-2">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 Featured Products
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
+              <p className="mx-auto mt-2 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-2">
+            <div className="mt-1">
               <ProductCarousel products={featuredProducts} />
             </div>
             <div className="mt-8 text-center">

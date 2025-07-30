@@ -8,6 +8,7 @@ import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
 import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
+import Link from 'next/link';
 
 interface CartProps {
   isOpen: boolean;
@@ -174,9 +175,9 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                 <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
                   <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
                   <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
-                  <button onClick={onClose} className="btn-primary">
-                      Start Shopping
-                  </button>
+                  <Link href="/product-listings" onClick={onClose} className="btn-primary">
+                    Start Shopping
+                  </Link>
                 </div>
               ) : (
                 <>

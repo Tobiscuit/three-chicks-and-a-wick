@@ -60,7 +60,7 @@ async function ProductData() {
 
 export default async function ProductListingsPage() {
   const header = (
-    <header className="text-center mb-10">
+    <header className="text-center mb-4">
       <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark">
         Our Collection
       </h1>
@@ -80,7 +80,7 @@ export default async function ProductListingsPage() {
   );
 
   return (
-    <main className="container mx-auto py-8 sm:py-12">
+    <main className="container mx-auto sm:pt-2">
       {header}
       <Suspense fallback={skeleton}>
         <ProductData />

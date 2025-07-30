@@ -95,7 +95,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
 
   return (
     <>
-      <header className={`py-2 transition-transform duration-300`}>
+      <header className={`relative z-20 bg-transparent py-2 transition-transform duration-300`}>
         <div className="container mx-auto flex items-center justify-between">
           <div className="flex-1 lg:hidden">
             <button
