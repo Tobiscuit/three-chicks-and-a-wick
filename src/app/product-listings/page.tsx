@@ -72,7 +72,8 @@ async function ProductData({ first, after }: { first: number, after?: string }) 
 }
 
 export default async function ProductListingsPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
-  const first = 12; // Number of products per page
+  // TODO: Change this back to 12 for production
+  const first = 4; // Number of products per page
   const after = typeof searchParams?.after === 'string' ? searchParams.after : undefined;
   
   const header = (

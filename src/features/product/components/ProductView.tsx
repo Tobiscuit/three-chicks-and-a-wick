@@ -6,8 +6,9 @@ import { useCart } from '@/context/CartContext';
 import ProductGallery from '@/features/product/components/ProductGallery';
 import ProductCard from '@/features/product/components/ProductCard';
 import { Minus, Plus } from 'lucide-react';
+import QuickViewModal from './QuickViewModal';
+import { AnimatePresence } from 'framer-motion';
 
-// Define the types right in the component file for clarity and to avoid import errors
 type ShopifyProductImage = {
   url: string;
   altText: string;
@@ -53,6 +54,7 @@ export default function ProductView({
 }) {
   const { addToCart, isCartLoading } = useCart();
   const [quantity, setQuantity] = useState(1);
+  const [selectedProduct, setSelectedProduct] = useState<RelatedProduct | null>(null);
 
   const productImages = product.images.edges.map((edge) => ({
     id: edge.node.url,
@@ -78,75 +80,89 @@ export default function ProductView({
     await addToCart(cartProduct, quantity);
     setQuantity(1); // Reset quantity after adding to cart
   };
+  
+  const productHandle = selectedProduct ? new URL(selectedProduct.href, 'http://localhost').pathname.split('/').pop() || null : null;
 
   return (
-    <div className="bg-cream">
-      <main className="container mx-auto pt-4 pb-8 sm:pb-12">
-        {/* Breadcrumb Navigation */}
-        <nav aria-label="Breadcrumb" className="mb-4">
-          <ol className="flex items-center gap-2 text-sm">
-            <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
-            <li><span className="font-medium text-gray-500">/</span></li>
-            <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/product-listings">Products</Link></li>
-            <li><span className="font-medium text-gray-500">/</span></li>
-            <li><span className="font-medium text-gray-900">{product.title}</span></li>
-          </ol>
-        </nav>
-        
-        {/* Main Product Display */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
-          <div>
-            <ProductGallery images={productImages} />
-          </div>
-          <div className="flex flex-col gap-8">
-            <h1 className="text-4xl font-bold tracking-tight">{product.title}</h1>
-            <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: product.description }} />
-            
-            {/* Action block for desktop */}
+    <>
+      <div className="bg-cream">
+        <main className="container mx-auto pb-8 sm:pb-12">
+          <nav aria-label="Breadcrumb" className="my-2">
+            <ol className="flex items-center gap-2 text-sm">
+              <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
+              <li><span className="font-medium text-gray-500">/</span></li>
+              <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/product-listings">Products</Link></li>
+              <li><span className="font-medium text-gray-500">/</span></li>
+              <li><span className="font-medium text-gray-900">{product.title}</span></li>
+            </ol>
+          </nav>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
             <div>
-              <p className="text-3xl font-bold text-gray-900">
-                ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
-              </p>
-              <div className="flex items-center gap-4 mt-4">
-                <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
-                    <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
-                        <Minus size={16} />
-                    </button>
-                    <p className="font-bold w-8 text-center text-lg">{quantity}</p>
-                    <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                        <Plus size={16} />
-                    </button>
+              <ProductGallery images={productImages} />
+            </div>
+            <div className="flex flex-col gap-2">
+              <h1 className="text-4xl font-bold tracking-tight">{product.title}</h1>
+              <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: product.description }} />
+              
+              <div>
+                <p className="text-3xl font-bold text-gray-900">
+                  ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
+                </p>
+                <div className="flex items-center gap-4 mt-2">
+                  <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
+                      <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
+                          <Minus size={16} />
+                      </button>
+                      <p className="font-bold w-8 text-center text-lg">{quantity}</p>
+                      <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
+                          <Plus size={16} />
+                      </button>
+                  </div>
+                  <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
+                    {isCartLoading ? 'Adding...' : 'Add to Cart'}
+                  </button>
                 </div>
-                <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
-                  {isCartLoading ? 'Adding...' : 'Add to Cart'}
-                </button>
               </div>
             </div>
           </div>
-        </div>
-        
-        {/* Related Products Section */}
-        <div className="mt-16 sm:mt-24">
-            <div className="border-t border-gray-200 pt-12">
-                <h3 className="text-3xl font-bold tracking-tight mb-8">
-                    You Might Also Like
-                </h3>
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                    {relatedProducts.map((related) => (
-                        <Link key={related.id} href={related.href}>
-                            <ProductCard
-                                href={related.href}
-                                imageUrl={related.imageUrl}
-                                name={related.name}
-                                price={related.price}
-                                priority
-                            />
-                        </Link>
-                    ))}
-                </div>
-            </div>
-        </div>
-      </main>
-    </div>
+          
+          <div className="mt-16 sm:mt-24">
+              <div className="border-t border-gray-200 pt-12">
+                  <h3 className="text-3xl font-bold tracking-tight mb-8">
+                      You Might Also Like
+                  </h3>
+                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                      {relatedProducts.map((related) => (
+                          <ProductCard
+                              key={related.id}
+                              href={related.href}
+                              imageUrl={related.imageUrl}
+                              name={related.name}
+                              price={related.price}
+                              priority
+                              onQuickView={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                setSelectedProduct(related);
+                              }}
+                          />
+                      ))}
+                  </div>
+              </div>
+          </div>
+        </main>
+      </div>
+
+      <AnimatePresence>
+        {selectedProduct && (
+          <QuickViewModal
+            isOpen={!!selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            productHandle={productHandle}
+          />
+        )}
+      </AnimatePresence>
+    </>
   );
 } 
