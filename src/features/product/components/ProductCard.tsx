@@ -34,7 +34,7 @@ export default function ProductCard({
             <div className="absolute bottom-4 left-1/2 hidden -translate-x-1/2 transform md:block">
               <button
                 onClick={onQuickView}
-                className="translate-y-4 rounded-full bg-white/80 px-6 py-2 text-sm font-semibold text-black opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
+                className="cursor-pointer translate-y-4 rounded-full bg-white/80 px-6 py-2 text-sm font-semibold text-black opacity-0 backdrop-blur-sm transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100"
               >
                 Quick View
               </button>

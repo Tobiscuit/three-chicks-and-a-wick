@@ -4,6 +4,7 @@ import { useState } from 'react';
 import ProductCard from '@/features/product/components/ProductCard';
 import QuickViewModal from '@/features/product/components/QuickViewModal';
 import Link from 'next/link';
+import { AnimatePresence } from 'framer-motion';
 
 // This defines the shape of a single product that this component expects
 interface Product {
@@ -49,13 +50,15 @@ export default function ProductGrid({ products }: ProductGridProps) {
           </Link>
         ))}
       </div>
-      {selectedProduct && (
-        <QuickViewModal
-          isOpen={!!selectedProduct}
-          onClose={() => setSelectedProduct(null)}
-          productHandle={productHandle}
-        />
-      )}
+      <AnimatePresence>
+        {selectedProduct && (
+          <QuickViewModal
+            isOpen={!!selectedProduct}
+            onClose={() => setSelectedProduct(null)}
+            productHandle={productHandle}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 } 

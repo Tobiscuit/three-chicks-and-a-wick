@@ -4,10 +4,15 @@ import { Suspense } from 'react';
 import ProductCardSkeleton from '@/features/product/components/ProductCardSkeleton';
 import { gql } from '@/gql';
 import { GetProductsQuery } from '@/gql/graphql';
+import Pagination from '@/components/ui/Pagination';
 
 const GetProducts = gql(`
-  query getProducts {
-    products(first: 20) {
+  query getProducts($first: Int!, $after: String) {
+    products(first: $first, after: $after) {
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
       edges {
         node {
           id
@@ -40,9 +45,10 @@ const GetProducts = gql(`
   }
 `);
 
-async function ProductData() {
+async function ProductData({ first, after }: { first: number, after?: string }) {
   const { data } = await getClient().query<GetProductsQuery>({
     query: GetProducts,
+    variables: { first, after },
   });
 
   const products =
@@ -54,11 +60,21 @@ async function ProductData() {
       imageUrl: node.images.edges[0]?.node.url,
       price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
     })) || [];
+  
+  const pageInfo = data?.products?.pageInfo;
 
-  return <ProductGrid products={products.map((p, i) => ({ ...p, priority: i < 4 }))} />;
+  return (
+    <>
+      <ProductGrid products={products.map((p, i) => ({ ...p, priority: i < 4 }))} />
+      <Pagination hasNextPage={!!pageInfo?.hasNextPage} endCursor={pageInfo?.endCursor} />
+    </>
+  );
 }
 
-export default async function ProductListingsPage() {
+export default async function ProductListingsPage({ searchParams }: { searchParams?: { [key: string]: string | string[] | undefined } }) {
+  const first = 12; // Number of products per page
+  const after = typeof searchParams?.after === 'string' ? searchParams.after : undefined;
+  
   const header = (
     <header className="text-center mb-4">
       <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark">
@@ -80,10 +96,10 @@ export default async function ProductListingsPage() {
   );
 
   return (
-    <main className="container mx-auto sm:pt-2">
+    <main className="container mx-auto">
       {header}
       <Suspense fallback={skeleton}>
-        <ProductData />
+        <ProductData first={first} after={after} />
       </Suspense>
     </main>
   );

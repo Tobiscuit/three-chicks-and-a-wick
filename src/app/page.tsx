@@ -5,6 +5,7 @@ import { GetFeaturedProductsQuery } from '@/gql/graphql';
 import Link from 'next/link';
 import Image from 'next/image';
 import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.webp';
+import EducationSection from '@/features/home/components/EducationSection';
 
 const GetFeaturedProducts = gql(`
   query GetFeaturedProducts {
@@ -78,7 +79,7 @@ export default async function HomePage() {
               <h1 className="text-5xl font-sans font-black leading-tight tracking-tighter md:text-7xl">
                 Spark Some Joy
               </h1>
-              <p className="mx-auto mt-4 max-w-lg text-center text-lg text-[var(--neutral-dark)]/80 lg:mx-0 lg:text-left">
+              <p className="mx-auto mt-2 max-w-lg text-center text-lg text-[var(--neutral-dark)]/80 lg:mx-0 lg:text-left">
                 Discover our unique collection of handmade candles and crafts,
                 designed to brighten your day and add a touch of whimsy to your
                 home.
@@ -87,12 +88,12 @@ export default async function HomePage() {
                 Explore Our Collection
               </Link>
             </div>
-            <Link href="/product-listings" className="relative h-80 lg:h-96 lg:col-span-3">
+            <Link href="/product-listings" className="relative h-[19rem] lg:h-[23rem] lg:col-span-3">
               <Image
                 src={heroImage}
                 alt="DIY macrame plant hanger kit"
                 fill
-                className="rounded-3xl object-cover transition-transform duration-500 hover:scale-105"
+                className="rounded-3xl object-cover transition-transform duration-300 hover:scale-[1.02]"
                 placeholder="blur"
                 priority
               />
@@ -106,17 +107,17 @@ export default async function HomePage() {
           It can be re-added here if needed.
         */}
 
-        <section className="overflow-hidden py-1 sm:py-2">
+        <section className="overflow-hidden sm:py-1 pb-12 sm:pb-16">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 Featured Products
               </h2>
-              <p className="mx-auto mt-2 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
+              <p className="mx-auto mt-1 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
                 Handpicked just for you. Get them while they&apos;re hot!
               </p>
             </div>
-            <div className="mt-1">
+            <div>
               <ProductCarousel products={featuredProducts} />
             </div>
             <div className="mt-8 text-center">
@@ -126,42 +127,40 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-        <section className="bg-white py-16 sm:py-24">
+        <EducationSection />
+        <section className="bg-white pt-12 sm:pt-16 pb-12 sm:pb-16">
           <div className="container mx-auto">
             <div className="text-center">
               <h2 className="text-4xl font-sans font-black tracking-tight md:text-5xl">
                 What Our Customers Say
               </h2>
-              <p className="mx-auto mt-4 max-w-2xl text-lg text-[var(--neutral-dark)]/80">
-                &quot;We love our customers, and they love us back.&quot;
+              <p className="mx-auto mt-2 max-w-2xl text-lg text-neutral-dark/80">
+                Real stories from our amazing community.
               </p>
             </div>
-            <div className="mt-12 grid grid-cols-1 gap-8 lg:grid-cols-3">
-              <div className="rounded-3xl bg-[var(--neutral-light)] p-8">
-                <p className="text-lg text-[var(--neutral-dark)]/90">
-                  &quot;Absolutely in love with my new candle! It smells amazing and
-                  looks beautiful on my coffee table.&quot;
+            <div className="mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 sm:gap-10">
+              <div className="rounded-3xl bg-neutral-light p-8 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                <p className="text-lg text-neutral-dark/90">
+                  &quot;I&apos;m so impressed with the coconut wax candle. It burns so cleanly and for so much longer than my old paraffin candles. My living room feels healthier already!&quot;
                 </p>
-                <p className="mt-6 font-bold text-[var(--neutral-dark)]">
-                  - Sarah L.
-                </p>
-              </div>
-              <div className="rounded-3xl bg-[var(--neutral-light)] p-8">
-                <p className="text-lg text-[var(--neutral-dark)]/90">
-                  &quot;The crafts are so unique and well-made. I bought a gift for
-                  my friend and she was thrilled!&quot;
-                </p>
-                <p className="mt-6 font-bold text-[var(--neutral-dark)]">
-                  - Jessica M.
+                <p className="mt-6 font-bold text-neutral-dark">
+                  - Mia K.
                 </p>
               </div>
-              <div className="rounded-3xl bg-[var(--neutral-light)] p-8">
-                <p className="text-lg text-[var(--neutral-dark)]/90">
-                  &quot;Fast shipping and excellent customer service. I&apos;ll
-                  definitely be a repeat customer.&quot;
+              <div className="rounded-3xl bg-neutral-light p-8 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                <p className="text-lg text-neutral-dark/90">
+                  &quot;The &apos;Enchanted Forest&apos; scent is pure magic. After a stressful day, lighting it instantly calms my mind and makes my apartment feel like a serene escape. It&apos;s my daily ritual now.&quot;
                 </p>
-                <p className="mt-6 font-bold text-[var(--neutral-dark)]">
-                  - Emily R.
+                <p className="mt-6 font-bold text-neutral-dark">
+                  - David L.
+                </p>
+              </div>
+              <div className="rounded-3xl bg-neutral-light p-8 transition-all duration-300 hover:bg-white hover:shadow-xl hover:-translate-y-1">
+                <p className="text-lg text-neutral-dark/90">
+                  &quot;I never knew a wick could make such a difference! The gentle crackle of the wooden wick is so incredibly cozy and relaxing. It&apos;s like having a miniature fireplace. I&apos;m obsessed!&quot;
+                </p>
+                <p className="mt-6 font-bold text-neutral-dark">
+                  - Chloe R.
                 </p>
               </div>
             </div>

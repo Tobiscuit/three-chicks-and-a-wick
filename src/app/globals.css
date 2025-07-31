@@ -38,7 +38,7 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-white rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
+    @apply bg-primary text-white rounded-full px-7 py-3 text-base font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
   }
   .btn-secondary {
     @apply bg-secondary text-neutral-dark rounded-full px-8 py-3 font-bold uppercase tracking-wider transition-transform duration-300 ease-in-out hover:scale-105;
