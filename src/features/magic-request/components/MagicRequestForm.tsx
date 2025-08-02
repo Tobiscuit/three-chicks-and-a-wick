@@ -2,6 +2,9 @@
 'use client';
 
 import { useState } from 'react';
+import { post } from 'aws-amplify/api';
+import outputs from '@root/amplify_outputs.json';
+
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
@@ -17,26 +20,20 @@ export default function MagicRequestForm() {
     setResult(null);
 
     try {
-      // This is the only endpoint the form needs to know about.
-      const res = await fetch('/api/magic-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const restOperation = post({
+        apiName: outputs.custom.magicRequestApiName,
+        path: '/magic-request',
+        options: {
+          body: {
+            prompt,
+            size,
+          },
         },
-        body: JSON.stringify({
-          prompt,
-          size
-        }),
       });
 
-      if (!res.ok) {
-        // Get more detailed error from the API route if available
-        const errorData = await res.json();
-        throw new Error(errorData.error || `Request failed with status ${res.status}`);
-      }
-
-      const data = await res.json();
-      setResult(data);
+      const { body } = await restOperation.response;
+      const response = await body.json();
+      setResult(response);
 
     } catch (err: unknown) {
       if (err instanceof Error) {
