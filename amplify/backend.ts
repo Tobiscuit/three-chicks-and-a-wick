@@ -2,7 +2,7 @@
 
 import { defineBackend } from '@aws-amplify/backend';
 import { magicRequest } from './functions/magic-request/resource';
-import { RestApi, Cors } from 'aws-cdk-lib/aws-apigateway';
+import { RestApi, Cors, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import { Stack } from 'aws-cdk-lib';
 
 export const backend = defineBackend({
@@ -25,7 +25,7 @@ const magicRequestApi = new RestApi(api, 'magicRequestApi', {
 });
 
 const magicRequestResource = magicRequestApi.root.addResource('magic-request');
-magicRequestResource.addMethod('POST', backend.magicRequest.resources.lambda);
+magicRequestResource.addMethod('POST', new LambdaIntegration(backend.magicRequest.resources.lambda));
 
 backend.addOutput({
   custom: {
