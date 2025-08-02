@@ -6,9 +6,10 @@ import outputs from '@root/amplify_outputs.json';
 const functionName = outputs.custom.magicRequestFunctionName;
 const region = outputs.custom.aws_region; // Corrected from aws_project_region
 
-const lambdaClient = new LambdaClient({ region });
-
 export async function POST(request: NextRequest) {
+  // Move client instantiation inside the handler to ensure it's created at runtime
+  const lambdaClient = new LambdaClient({ region });
+
   try {
     const requestBody = await request.json();
 
