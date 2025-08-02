@@ -21,7 +21,7 @@ export default function MagicRequestForm() {
 
     try {
       const restOperation = post({
-        apiName: outputs.custom.magicRequestApiName,
+        apiName: 'magicRequestApi', // Use the correct API name directly
         path: '/magic-request',
         options: {
           body: {
@@ -32,9 +32,23 @@ export default function MagicRequestForm() {
       });
 
       const { body } = await restOperation.response;
-      const response = await body.json();
-      setResult(response);
+      const responseBody = await body.text(); // Get the response body as a string
+      const parsedBody = JSON.parse(responseBody); // Parse the string
 
+      // The actual result is in the 'body' property of the parsed response
+      const resultString = parsedBody.body;
+      const resultData = JSON.parse(resultString); // Parse the nested JSON string
+
+      // Type guard to ensure the result has the expected shape
+      if (
+        resultData &&
+        typeof resultData.candleName === 'string' &&
+        typeof resultData.description === 'string'
+      ) {
+        setResult(resultData);
+      } else {
+        setError('Invalid response format from the server.');
+      }
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
