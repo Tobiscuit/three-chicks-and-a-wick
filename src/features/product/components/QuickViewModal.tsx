@@ -118,16 +118,16 @@ export default function QuickViewModal({
           animate="visible"
           exit="exit"
           variants={backdropVariants}
-          className="fixed inset-0 bg-neutral-dark/60 backdrop-blur-sm z-50 flex justify-center items-center"
+          className="fixed inset-0 bg-neutral-dark/60 backdrop-blur-sm z-50 flex justify-center items-center p-4"
           onClick={onClose}
         >
           <motion.div
             variants={modalPanelVariants}
-            className="w-full max-w-4xl h-full bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl overflow-hidden"
+            className="w-full max-w-2xl lg:max-w-5xl bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* All modal content is inside this scaling div */}
-            <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8 p-8">
+            <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8 p-6 md:p-8">
               <div className="sm:col-span-4 lg:col-span-5">
                 <ProductGallery images={productImages} />
               </div>
@@ -140,9 +140,9 @@ export default function QuickViewModal({
                 <div className="mt-6 flex-grow overflow-y-auto pr-4">
                   <div className="prose" dangerouslySetInnerHTML={{ __html: product.description }} />
                 </div>
-                <section aria-labelledby="options-heading" className="mt-6 pt-6 border-t border-neutral-dark/10">
+                <section aria-labelledby="options-heading" className="mt-4 pt-4 border-t border-neutral-dark/10">
                   <h3 id="options-heading" className="sr-only">Product options</h3>
-                  <div className="flex items-center gap-4 mt-6">
+                  <div className="flex items-center gap-4 mt-4">
                     <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
                       <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
                         <Minus size={16} />
@@ -167,7 +167,7 @@ export default function QuickViewModal({
             animate={{ opacity: 1, transition: { delay: 0.1 } }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute top-4 right-4 text-white hover:text-primary transition-colors"
+            className="absolute top-4 right-4 text-white hover:text-primary transition-colors cursor-pointer"
             aria-label="Close"
           >
             <X size={32} />

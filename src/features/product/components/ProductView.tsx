@@ -38,11 +38,11 @@ type ShopifyProduct = {
 };
 
 type RelatedProduct = {
-    id: string;
-    href: string;
-    imageUrl: string;
-    name: string;
-    price: string;
+  id: string;
+  href: string;
+  imageUrl: string;
+  name: string;
+  price: string;
 };
 
 export default function ProductView({
@@ -80,76 +80,126 @@ export default function ProductView({
     await addToCart(cartProduct, quantity);
     setQuantity(1); // Reset quantity after adding to cart
   };
-  
-  const productHandle = selectedProduct ? new URL(selectedProduct.href, 'http://localhost').pathname.split('/').pop() || null : null;
+
+  const productHandle = selectedProduct
+    ? new URL(selectedProduct.href, 'http://localhost').pathname.split('/').pop() || null
+    : null;
 
   return (
     <>
       <div className="bg-cream">
-        <main className="container mx-auto pb-8 sm:pb-12">
+        <main className="container mx-auto pb-2 sm:pb-4">
           <nav aria-label="Breadcrumb" className="my-2">
             <ol className="flex items-center gap-2 text-sm">
-              <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/">Home</Link></li>
-              <li><span className="font-medium text-gray-500">/</span></li>
-              <li><Link className="font-medium text-gray-600 hover:text-gray-900" href="/product-listings">Products</Link></li>
-              <li><span className="font-medium text-gray-500">/</span></li>
-              <li><span className="font-medium text-gray-900">{product.title}</span></li>
+              <li>
+                <Link
+                  className="font-medium text-gray-600 hover:text-gray-900"
+                  href="/"
+                >
+                  Home
+                </Link>
+              </li>
+              <li>
+                <span className="font-medium text-gray-500">/</span>
+              </li>
+              <li>
+                <Link
+                  className="font-medium text-gray-600 hover:text-gray-900"
+                  href="/product-listings"
+                >
+                  Products
+                </Link>
+              </li>
+              <li>
+                <span className="font-medium text-gray-500">/</span>
+              </li>
+              <li>
+                <span className="font-medium text-gray-900">
+                  {product.title}
+                </span>
+              </li>
             </ol>
           </nav>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-start">
+
+          <div className="grid grid-cols-1 items-start gap-8 md:grid-cols-2 lg:gap-12">
             <div>
               <ProductGallery images={productImages} />
             </div>
             <div className="flex flex-col gap-2">
-              <h1 className="text-4xl font-bold tracking-tight">{product.title}</h1>
-              <p className="text-lg leading-relaxed" dangerouslySetInnerHTML={{ __html: product.description }} />
-              
+              <h1 className="text-4xl font-bold tracking-tight">
+                {product.title}
+              </h1>
+              <p
+                className="text-lg leading-relaxed"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
+
               <div>
                 <p className="text-3xl font-bold text-gray-900">
-                  ${parseFloat(product.priceRange.minVariantPrice.amount).toFixed(2)}
+                  $
+                  {parseFloat(
+                    product.priceRange.minVariantPrice.amount,
+                  ).toFixed(2)}
                 </p>
-                <div className="flex items-center gap-4 mt-2">
+                <div className="mt-2 flex items-center gap-4">
                   <div className="flex items-center gap-2 rounded-full border border-gray-300 p-1">
-                      <button onClick={() => setQuantity(q => Math.max(1, q - 1))} className="p-2 rounded-full hover:bg-gray-100 transition-colors disabled:opacity-50" disabled={quantity <= 1}>
-                          <Minus size={16} />
-                      </button>
-                      <p className="font-bold w-8 text-center text-lg">{quantity}</p>
-                      <button onClick={() => setQuantity(q => q + 1)} className="p-2 rounded-full hover:bg-gray-100 transition-colors">
-                          <Plus size={16} />
-                      </button>
+                    <button
+                      onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                      className="rounded-full p-2 transition-colors hover:bg-gray-100 disabled:opacity-50"
+                      disabled={quantity <= 1}
+                    >
+                      <Minus size={16} />
+                    </button>
+                    <p className="w-8 text-center text-lg font-bold">
+                      {quantity}
+                    </p>
+                    <button
+                      onClick={() => setQuantity((q) => q + 1)}
+                      className="rounded-full p-2 transition-colors hover:bg-gray-100"
+                    >
+                      <Plus size={16} />
+                    </button>
                   </div>
-                  <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1 max-w-xs">
+                  <button
+                    onClick={handleAddToCart}
+                    disabled={isCartLoading}
+                    className="btn-primary flex-1 max-w-xs"
+                  >
                     {isCartLoading ? 'Adding...' : 'Add to Cart'}
                   </button>
                 </div>
               </div>
             </div>
           </div>
-          
-          <div className="mt-16 sm:mt-24">
-              <div className="border-t border-gray-200 pt-12">
-                  <h3 className="text-3xl font-bold tracking-tight mb-8">
-                      You Might Also Like
-                  </h3>
-                  <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-                      {relatedProducts.map((related) => (
-                          <ProductCard
-                              key={related.id}
-                              href={related.href}
-                              imageUrl={related.imageUrl}
-                              name={related.name}
-                              price={related.price}
-                              priority
-                              onQuickView={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                setSelectedProduct(related);
-                              }}
-                          />
-                      ))}
-                  </div>
+
+          <div className="mt-8 sm:mt-10">
+            <div className="border-t border-gray-200 pt-4">
+              <h3 className="mb-6 text-3xl font-bold tracking-tight">
+                You Might Also Like
+              </h3>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+                {relatedProducts.map((related) => (
+                  <Link
+                    key={related.id}
+                    href={related.href}
+                    className="block"
+                  >
+                    <ProductCard
+                      href={related.href}
+                      imageUrl={related.imageUrl}
+                      name={related.name}
+                      price={related.price}
+                      priority
+                      onQuickView={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setSelectedProduct(related);
+                      }}
+                    />
+                  </Link>
+                ))}
               </div>
+            </div>
           </div>
         </main>
       </div>

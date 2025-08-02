@@ -36,3 +36,6 @@ build-log.txt
 
 # vercel
 .vercel/
+
+# amplify
+.amplify/

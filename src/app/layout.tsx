@@ -5,6 +5,7 @@ import { ApolloProvider } from './ApolloProvider';
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ConfigureAmplifyClientSide from "@/components/ConfigureAmplify";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,13 +21,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} font-body`} suppressHydrationWarning>
+      <body className={inter.className}>
+        <ConfigureAmplifyClientSide />
         <ApolloProvider>
           <CartProvider>
             <Header />
-            <main>
-              {children}
-            </main>
+            <main className="flex-grow">{children}</main>
             <Footer />
           </CartProvider>
         </ApolloProvider>
