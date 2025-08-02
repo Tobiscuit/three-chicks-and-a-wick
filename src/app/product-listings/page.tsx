@@ -17,6 +17,7 @@ type Product = {
   name: string;
   imageUrl: string | undefined;
   price: string;
+  priority?: boolean;
 };
 
 const GetProducts = gql(`
