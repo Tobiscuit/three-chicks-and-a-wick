@@ -176,7 +176,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
                   <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
                   <Link href="/product-listings" onClick={onClose} className="btn-primary">
-                    Start Shopping
+                      Start Shopping
                   </Link>
                 </div>
               ) : (

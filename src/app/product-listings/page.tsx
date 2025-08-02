@@ -70,23 +70,23 @@ function ProductListings() {
   useEffect(() => {
     const fetchProducts = async () => {
       setLoading(true);
-      const { data } = await getClient().query<GetProductsQuery>({
-        query: GetProducts,
+  const { data } = await getClient().query<GetProductsQuery>({
+    query: GetProducts,
         variables: { first: 4, after: after || null },
-      });
+  });
 
       const loadedProducts =
-        data?.products?.edges.map(({ node }) => ({
-          id: node.id,
+    data?.products?.edges.map(({ node }) => ({
+      id: node.id,
           variantId: node.variants.edges[0]?.node.id ?? '',
-          href: `/products/${node.handle}`,
-          name: node.title,
+      href: `/products/${node.handle}`,
+      name: node.title,
           imageUrl: node.images.edges[0]?.node.url ?? '',
           price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(
             2
           )}`,
-        })) || [];
-      
+    })) || [];
+
       setProducts(loadedProducts);
       setPageInfo(data?.products?.pageInfo as PageInfo);
       setLoading(false);

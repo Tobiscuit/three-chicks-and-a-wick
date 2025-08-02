@@ -1,37 +1,43 @@
 'use client';
 
-import { Amplify } from 'aws-amplify';
+import { Amplify, ResourcesConfig } from 'aws-amplify';
 import outputs from '@root/amplify_outputs.json';
 
-// Define a type for the expected custom outputs
-type CustomOutputs = {
-  magicRequestApiEndpoint?: string;
-  magicRequestApiName?: string;
-  magicRequestApiRegion?: string;
-  magicRequestFunctionName?: string;
-  aws_region?: string;
+// Define a comprehensive type that extends the base Amplify configuration to include all
+// possible shapes of our custom output, making the properties optional to handle
+// different states of the amplify_outputs.json file during deployment.
+type AppAmplifyOutputs = ResourcesConfig & {
+  custom?: {
+    magicRequestFunctionName?: string;
+    aws_region?: string;
+    API?: Record<
+      string,
+      {
+        endpoint: string;
+        region: string;
+        apiName: string;
+      }
+    >;
+  };
 };
 
-const customOutputs = outputs.custom as CustomOutputs;
+const typedOutputs: AppAmplifyOutputs = outputs;
 
-// We only need to configure the REST API part if it's defined in the outputs
-if (customOutputs.magicRequestApiEndpoint && customOutputs.magicRequestApiName && customOutputs.magicRequestApiRegion) {
-  Amplify.configure({
-    ...outputs,
-    API: {
-      REST: {
-        [customOutputs.magicRequestApiName]: {
-          endpoint: customOutputs.magicRequestApiEndpoint,
-          region: customOutputs.magicRequestApiRegion,
-        }
-      }
-    }
-  }, { ssr: true });
-} else {
-  // If there's no custom API, just configure with the base outputs
-  Amplify.configure(outputs, { ssr: true });
+// Start with the typed outputs as the base configuration
+const config: ResourcesConfig = { ...typedOutputs };
+
+// If a custom API configuration exists, merge it into the main API config
+if (typedOutputs.custom?.API) {
+  config.API = {
+    ...typedOutputs.API,
+    REST: {
+      ...typedOutputs.API?.REST,
+      ...typedOutputs.custom.API,
+    },
+  };
 }
 
+Amplify.configure(config, { ssr: true });
 
 export default function ConfigureAmplifyClientSide() {
   return null;

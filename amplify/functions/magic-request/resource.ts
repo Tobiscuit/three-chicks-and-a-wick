@@ -12,3 +12,4 @@ export const magicRequest = defineFunction({
     SHOPIFY_STORE_DOMAIN: secret('SHOPIFY_STORE_DOMAIN'),
   }
 });
+ 

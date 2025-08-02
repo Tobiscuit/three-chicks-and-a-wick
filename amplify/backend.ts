@@ -29,10 +29,12 @@ magicRequestResource.addMethod('POST', new LambdaIntegration(backend.magicReques
 
 backend.addOutput({
   custom: {
-    magicRequestApi: {
-      endpoint: magicRequestApi.url,
-      region: Stack.of(magicRequestApi).region,
-      apiName: magicRequestApi.restApiName,
+    API: {
+      [magicRequestApi.restApiName]: {
+        endpoint: magicRequestApi.url,
+        region: Stack.of(magicRequestApi).region,
+        apiName: magicRequestApi.restApiName,
+      },
     },
   },
 });
