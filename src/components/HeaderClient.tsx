@@ -1,7 +1,7 @@
 // src/components/HeaderClient.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';

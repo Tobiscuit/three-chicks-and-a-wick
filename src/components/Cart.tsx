@@ -5,7 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
 import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
 import Link from 'next/link';

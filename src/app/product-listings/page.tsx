@@ -1,10 +1,23 @@
+// src/app/product-listings/page.tsx
+'use client';
+
 import ProductGrid from '@/features/product/components/ProductGrid';
 import { getClient } from '@/lib/client';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import ProductCardSkeleton from '@/features/product/components/ProductCardSkeleton';
 import { gql } from '@/gql';
-import { GetProductsQuery } from '@/gql/graphql';
+import { GetProductsQuery, PageInfo } from '@/gql/graphql';
 import Pagination from '@/components/ui/Pagination';
+import { useSearchParams } from 'next/navigation';
+
+type Product = {
+  id: string;
+  variantId: string | undefined;
+  href: string;
+  name: string;
+  imageUrl: string | undefined;
+  price: string;
+};
 
 const GetProducts = gql(`
   query getProducts($first: Int!, $after: String) {
@@ -45,23 +58,51 @@ const GetProducts = gql(`
   }
 `);
 
-async function ProductData({ first, after }: { first: number, after?: string }) {
-  const { data } = await getClient().query<GetProductsQuery>({
-    query: GetProducts,
-    variables: { first, after },
-  });
+function ProductListings() {
+  const searchParams = useSearchParams();
+  const [products, setProducts] = useState<Product[]>([]);
+  const [pageInfo, setPageInfo] = useState<PageInfo | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const products =
-    data?.products?.edges.map(({ node }) => ({
-      id: node.id,
-      variantId: node.variants.edges[0]?.node.id,
-      href: `/products/${node.handle}`,
-      name: node.title,
-      imageUrl: node.images.edges[0]?.node.url,
-      price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(2)}`,
-    })) || [];
-  
-  const pageInfo = data?.products?.pageInfo;
+  const after = searchParams.get('after');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      setLoading(true);
+      const { data } = await getClient().query<GetProductsQuery>({
+        query: GetProducts,
+        variables: { first: 4, after: after || null },
+      });
+
+      const loadedProducts =
+        data?.products?.edges.map(({ node }) => ({
+          id: node.id,
+          variantId: node.variants.edges[0]?.node.id,
+          href: `/products/${node.handle}`,
+          name: node.title,
+          imageUrl: node.images.edges[0]?.node.url,
+          price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(
+            2
+          )}`,
+        })) || [];
+      
+      setProducts(loadedProducts);
+      setPageInfo(data?.products?.pageInfo as PageInfo);
+      setLoading(false);
+    };
+
+    fetchProducts();
+  }, [after]);
+
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <ProductCardSkeleton key={i} />
+        ))}
+      </div>
+    );
+  }
 
   return (
     <>
@@ -71,15 +112,7 @@ async function ProductData({ first, after }: { first: number, after?: string }) 
   );
 }
 
-type PageProps = {
-  searchParams?: { [key: string]: string | string[] | undefined };
-};
-
-export default async function ProductListingsPage({ searchParams }: PageProps) {
-  // TODO: Change this back to 12 for production
-  const first = 4; // Number of products per page
-  const after = typeof searchParams?.after === 'string' ? searchParams.after : undefined;
-  
+export default function ProductListingsPage() {
   const header = (
     <header className="text-center mb-4">
       <h1 className="text-5xl font-sans font-black tracking-tight text-neutral-dark">
@@ -92,19 +125,11 @@ export default async function ProductListingsPage({ searchParams }: PageProps) {
     </header>
   );
 
-  const skeleton = (
-    <div className="grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <ProductCardSkeleton key={i} />
-      ))}
-    </div>
-  );
-
   return (
     <main className="container mx-auto">
       {header}
-      <Suspense fallback={skeleton}>
-        <ProductData first={first} after={after} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <ProductListings />
       </Suspense>
     </main>
   );
