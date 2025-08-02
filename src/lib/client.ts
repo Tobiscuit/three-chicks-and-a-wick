@@ -1,16 +1,23 @@
 // src/lib/client.ts
+import { ApolloClient, HttpLink, InMemoryCache, NormalizedCacheObject } from "@apollo/client";
 
-import { ApolloClient, HttpLink, InMemoryCache } from "@apollo/client";
-import { registerApolloClient } from "@apollo/experimental-nextjs-app-support/rsc";
+let client: ApolloClient<NormalizedCacheObject> | null = null;
 
-export const { getClient } = registerApolloClient(() => {
-  return new ApolloClient({
-    cache: new InMemoryCache(),
-    link: new HttpLink({
-      uri: "https://three-girls-and-a-wick.myshopify.com/api/2024-07/graphql.json",
-      headers: {
-        "X-Shopify-Storefront-Access-Token": process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_API_TOKEN || "",
-      },
-    }),
-  });
-}); 
+export const getClient = () => {
+  // Create a new client if there's no existing one
+  // or if we are on the server-side.
+  if (!client || typeof window === 'undefined') {
+    client = new ApolloClient({
+      cache: new InMemoryCache(),
+      link: new HttpLink({
+        uri: `https://${process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN}/api/2024-07/graphql.json`,
+        headers: {
+          "X-Shopify-Storefront-Access-Token":
+            process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_API_TOKEN || "",
+        },
+      }),
+    });
+  }
+
+  return client;
+}; 
