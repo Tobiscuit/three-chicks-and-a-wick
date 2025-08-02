@@ -1,36 +1,38 @@
 // amplify/backend.ts
 
 import { defineBackend } from '@aws-amplify/backend';
-import { Stack } from 'aws-cdk-lib';
-import { RestApi, LambdaIntegration } from 'aws-cdk-lib/aws-apigateway';
 import { magicRequest } from './functions/magic-request/resource';
+import { RestApi, Cors } from 'aws-cdk-lib/aws-apigateway';
+import { Stack } from 'aws-cdk-lib';
 
 export const backend = defineBackend({
   magicRequest,
 });
 
-// Create a new REST API
-const api = new RestApi(Stack.of(backend.magicRequest.resources.lambda), 'magicRequestApi', {
+const api = backend.createStack('api-stack');
+
+const magicRequestApi = new RestApi(api, 'magicRequestApi', {
   restApiName: 'magicRequestApi',
   deploy: true,
   deployOptions: {
     stageName: 'dev',
   },
   defaultCorsPreflightOptions: {
-    allowOrigins: ['*'],
-    allowMethods: ['POST'],
-    allowHeaders: ['*'],
+    allowOrigins: Cors.ALL_ORIGINS,
+    allowMethods: Cors.ALL_METHODS,
+    allowHeaders: Cors.DEFAULT_HEADERS,
   },
 });
 
-// Add a /magic-request resource and a POST method
-api.root.addResource('magic-request').addMethod('POST', new LambdaIntegration(backend.magicRequest.resources.lambda));
+const magicRequestResource = magicRequestApi.root.addResource('magic-request');
+magicRequestResource.addMethod('POST', backend.magicRequest.resources.lambda);
 
-// Add the API endpoint to the outputs
 backend.addOutput({
   custom: {
-    magicRequestApiEndpoint: api.url,
-    magicRequestApiName: api.restApiName,
-    magicRequestApiRegion: Stack.of(backend.magicRequest.resources.lambda).region,
+    magicRequestApi: {
+      endpoint: magicRequestApi.url,
+      region: Stack.of(magicRequestApi).region,
+      apiName: magicRequestApi.restApiName,
+    },
   },
 });

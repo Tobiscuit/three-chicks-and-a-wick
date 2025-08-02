@@ -21,7 +21,7 @@ export default function MagicRequestForm() {
 
     try {
       const restOperation = post({
-        apiName: 'magicRequestApi', // Use the correct API name directly
+        apiName: outputs.custom.magicRequestApi.apiName,
         path: '/magic-request',
         options: {
           body: {
