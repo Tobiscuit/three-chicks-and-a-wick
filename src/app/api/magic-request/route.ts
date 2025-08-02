@@ -4,7 +4,7 @@ import { LambdaClient, InvokeCommand } from "@aws-sdk/client-lambda";
 import outputs from '@root/amplify_outputs.json';
 
 const functionName = outputs.custom.magicRequestFunctionName;
-const region = outputs.aws_region;
+const region = outputs.custom.aws_region; // Corrected from aws_project_region
 
 const lambdaClient = new LambdaClient({ region });
 
