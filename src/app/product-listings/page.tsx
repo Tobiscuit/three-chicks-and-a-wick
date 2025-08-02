@@ -12,10 +12,10 @@ import { useSearchParams } from 'next/navigation';
 
 type Product = {
   id: string;
-  variantId: string | undefined;
+  variantId: string;
   href: string;
   name: string;
-  imageUrl: string | undefined;
+  imageUrl: string;
   price: string;
   priority?: boolean;
 };
@@ -78,10 +78,10 @@ function ProductListings() {
       const loadedProducts =
         data?.products?.edges.map(({ node }) => ({
           id: node.id,
-          variantId: node.variants.edges[0]?.node.id,
+          variantId: node.variants.edges[0]?.node.id ?? '',
           href: `/products/${node.handle}`,
           name: node.title,
-          imageUrl: node.images.edges[0]?.node.url,
+          imageUrl: node.images.edges[0]?.node.url ?? '',
           price: `$${parseFloat(node.priceRange.minVariantPrice.amount).toFixed(
             2
           )}`,
