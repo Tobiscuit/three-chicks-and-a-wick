@@ -10,16 +10,16 @@ const schema = a.schema({
     status: a.enum(['NEW', 'PROCESSING', 'COMPLETED']),
   }).authorization((allow) => [allow.publicApiKey()]),
 
-  // This is the custom query that invokes the function
-  magicRequest: a
-    .query()
-    .arguments({
-      prompt: a.string().required(),
-      size: a.string().required(),
-    })
-    .returns(a.string())
-    .handler(a.handler.function('magicRequest'))
-    .authorization((allow) => [allow.publicApiKey()]),
+  // Temporarily removing the custom query for diagnosis
+  // magicRequest: a
+  //   .query()
+  //   .arguments({
+  //     prompt: a.string().required(),
+  //     size: a.string().required(),
+  //   })
+  //   .returns(a.string())
+  //   .handler(a.handler.function('magicRequest'))
+  //   .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = typeof schema;

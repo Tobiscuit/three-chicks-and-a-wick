@@ -1,10 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
+// import { generateClient } from 'aws-amplify/data';
+// import type { Schema } from '@/amplify/data/resource';
 
-const client = generateClient<Schema>();
+// const client = generateClient<Schema>();
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
@@ -16,34 +16,34 @@ export default function MagicRequestForm() {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
-    setError(null);
-    setResult(null);
+    setError('Form submission is temporarily disabled for a backend diagnostic test.');
+    setLoading(false);
 
-    try {
-      const { data, errors } = await client.queries.magicRequest({
-        prompt,
-        size,
-      });
+    // try {
+    //   const { data, errors } = await client.queries.magicRequest({
+    //     prompt,
+    //     size,
+    //   });
 
-      if (errors) {
-        throw new Error(errors.map((e: { message: string }) => e.message).join('\n'));
-      }
+    //   if (errors) {
+    //     throw new Error(errors.map((e: { message: string }) => e.message).join('\n'));
+    //   }
       
-      if (data) {
-        // The response from the function is a stringified JSON, so we need to parse it.
-        const parsedData = JSON.parse(data as string);
-        setResult(parsedData);
-      }
+    //   if (data) {
+    //     // The response from the function is a stringified JSON, so we need to parse it.
+    //     const parsedData = JSON.parse(data as string);
+    //     setResult(parsedData);
+    //   }
 
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred.');
-      }
-    } finally {
-      setLoading(false);
-    }
+    // } catch (err: unknown) {
+    //   if (err instanceof Error) {
+    //     setError(err.message);
+    //   } else {
+    //     setError('An unknown error occurred.');
+    //   }
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   return (
@@ -95,7 +95,7 @@ export default function MagicRequestForm() {
             disabled={loading}
             className="w-full btn-primary"
           >
-            {loading ? 'Generating...' : 'Generate Candle'}
+            {loading ? 'Diagnosing...' : 'Generate Candle [Disabled]'}
           </button>
         </div>
       </form>
