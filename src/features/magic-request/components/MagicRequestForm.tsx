@@ -3,10 +3,11 @@
 
 import { useState } from 'react';
 import { post } from 'aws-amplify/api';
-import outputs from '@root/amplify_outputs.json';
+import { useAmplify } from '@/context/AmplifyContext'; // Import the new hook
 
 
 export default function MagicRequestForm() {
+  const { isConfigured } = useAmplify(); // Use the hook to get the configured state
   const [prompt, setPrompt] = useState('');
   const [size, setSize] = useState('Medium 8oz');
   const [loading, setLoading] = useState(false);
@@ -101,10 +102,10 @@ export default function MagicRequestForm() {
         <div>
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !isConfigured} // Disable the button if loading or not configured
             className="w-full btn-primary py-3 text-lg font-semibold rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-150 ease-in-out"
           >
-            {loading ? 'Creating Magic...' : 'Generate My Candle'}
+            {loading ? 'Creating Magic...' : !isConfigured ? 'Initializing...' : 'Generate My Candle'}
           </button>
         </div>
       </form>
