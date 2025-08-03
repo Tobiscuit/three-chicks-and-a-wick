@@ -2,12 +2,12 @@
 'use client';
 
 import { useState } from 'react';
-import { post } from 'aws-amplify/api';
-import { useAmplify } from '@/context/AmplifyContext'; // Import the new hook
+import { generateClient } from 'aws-amplify/data';
+import type { Schema } from '@/amplify/data/resource';
 
+const client = generateClient<Schema>();
 
 export default function MagicRequestForm() {
-  const { isConfigured } = useAmplify(); // Use the hook to get the configured state
   const [prompt, setPrompt] = useState('');
   const [size, setSize] = useState('Medium 8oz');
   const [loading, setLoading] = useState(false);
@@ -21,40 +21,26 @@ export default function MagicRequestForm() {
     setResult(null);
 
     try {
-      const restOperation = post({
-        apiName: 'magicRequestApi',
-        path: '/magic-request',
-        options: {
-          body: {
-            prompt,
-            size,
-          },
-        },
+      const { data, errors } = await client.custom.magicRequest({
+        prompt,
+        size,
       });
 
-      const { body } = await restOperation.response;
-      const responseBody = await body.text(); // Get the response body as a string
-      const parsedBody = JSON.parse(responseBody); // Parse the string
-
-      // The actual result is in the 'body' property of the parsed response
-      const resultString = parsedBody.body;
-      const resultData = JSON.parse(resultString); // Parse the nested JSON string
-
-      // Type guard to ensure the result has the expected shape
-      if (
-        resultData &&
-        typeof resultData.candleName === 'string' &&
-        typeof resultData.description === 'string'
-      ) {
-        setResult(resultData);
-      } else {
-        setError('Invalid response format from the server.');
+      if (errors) {
+        throw new Error(errors.map((e: { message: string }) => e.message).join('\n'));
       }
+      
+      if (data) {
+        // The response from the function is a stringified JSON, so we need to parse it.
+        const parsedData = JSON.parse(data as string);
+        setResult(parsedData);
+      }
+
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
       } else {
-        setError('An unknown error occurred');
+        setError('An unknown error occurred.');
       }
     } finally {
       setLoading(false);
@@ -62,36 +48,41 @@ export default function MagicRequestForm() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-8 bg-white rounded-lg shadow-lg">
-      <h2 className="text-3xl font-bold text-gray-800 mb-2 text-center">Create Your Magic Candle</h2>
-      <p className="text-gray-600 mb-8 text-center">
-        Describe a feeling, a memory, or a vibe. We&apos;ll translate your vision into a unique candle scent.
-      </p>
-
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div>
-          <label htmlFor="prompt" className="block text-sm font-medium text-gray-700 mb-1">
-            Your Inspiration
+    <div className="w-full max-w-md mx-auto">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+      >
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="prompt"
+          >
+            What kind of candle are you imagining?
           </label>
           <textarea
             id="prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="e.g., 'a quiet library on a rainy afternoon' or 'a vibrant sunset over a tropical beach'"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            rows={4}
+            placeholder="e.g., A cozy cabin in the woods during a thunderstorm"
             required
-            className="w-full h-32 px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
           />
         </div>
 
-        <div>
-          <label htmlFor="size" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="mb-6">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="size"
+          >
             Candle Size
           </label>
           <select
             id="size"
             value={size}
             onChange={(e) => setSize(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           >
             <option>Small 4oz</option>
             <option>Medium 8oz</option>
@@ -102,29 +93,26 @@ export default function MagicRequestForm() {
         <div>
           <button
             type="submit"
-            disabled={loading || !isConfigured} // Disable the button if loading or not configured
-            className="w-full btn-primary py-3 text-lg font-semibold rounded-md disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-150 ease-in-out"
+            disabled={loading}
+            className="w-full btn-primary"
           >
-            {loading ? 'Creating Magic...' : !isConfigured ? 'Initializing...' : 'Generate My Candle'}
+            {loading ? 'Generating...' : 'Generate Candle'}
           </button>
         </div>
       </form>
-
       {error && (
-        <div className="mt-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
-          <p className="font-bold">An Error Occurred</p>
-          <p>{error}</p>
+        <div
+          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          role="alert"
+        >
+          <strong className="font-bold">An Error Occurred</strong>
+          <span className="block sm:inline ml-2">{error}</span>
         </div>
       )}
-
       {result && (
-        <div className="mt-8 p-6 border-t border-gray-200">
-          <h3 className="text-2xl font-bold text-gray-800 mb-4 text-center">{result.candleName}</h3>
-          <div className="prose prose-lg max-w-none text-gray-600">
-            {result.description.split('\n').map((paragraph, index) => (
-              <p key={index}>{paragraph}</p>
-            ))}
-          </div>
+        <div className="mt-6 p-4 border rounded shadow-lg">
+          <h3 className="text-xl font-bold mb-2">{result.candleName}</h3>
+          <p>{result.description}</p>
         </div>
       )}
     </div>
