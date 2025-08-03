@@ -21,7 +21,7 @@ export default function MagicRequestForm() {
     setResult(null);
 
     try {
-      const { data, errors } = await client.custom.magicRequest({
+      const { data, errors } = await client.queries.magicRequest({
         prompt,
         size,
       });
