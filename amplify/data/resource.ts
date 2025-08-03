@@ -9,7 +9,7 @@ const schema = a.schema({
     })
     .returns(a.string())
     .handler(a.handler.function('magicRequest'))
-    .authorization((allow) => [allow.guest()]),
+    .authorization((allow) => [allow.publicApiKey()]),
 });
 
 export type Schema = typeof schema;
@@ -17,6 +17,9 @@ export type Schema = typeof schema;
 export const data = defineData({
   schema,
   authorizationModes: {
-    defaultAuthorizationMode: 'iam',
+    defaultAuthorizationMode: 'apiKey',
+    apiKeyAuthorizationMode: {
+      expiresInDays: 30,
+    },
   },
 }); 
