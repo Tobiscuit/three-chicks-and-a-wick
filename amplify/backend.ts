@@ -9,9 +9,10 @@ export const backend = defineBackend({
   magicRequest,
 });
 
-const api = backend.createStack('api-stack');
+// Get the stack that the magicRequest function is defined in
+const apiStack = Stack.of(backend.magicRequest.resources.lambda);
 
-const magicRequestApi = new RestApi(api, 'magicRequestApi', {
+const magicRequestApi = new RestApi(apiStack, 'magicRequestApi', {
   restApiName: 'magicRequestApi',
   defaultCorsPreflightOptions: {
     allowOrigins: Cors.ALL_ORIGINS,
