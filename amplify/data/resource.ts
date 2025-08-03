@@ -11,6 +11,7 @@ const schema = a.schema({
   }).authorization((allow) => [allow.publicApiKey()]),
 
   // This is the custom query that invokes the function
+  /*
   magicRequest: a
     .query()
     .arguments({
@@ -20,6 +21,7 @@ const schema = a.schema({
     .returns(a.string())
     .handler(a.handler.function('magicRequest'))
     .authorization((allow) => [allow.publicApiKey()]),
+  */
 });
 
 export type Schema = typeof schema;
