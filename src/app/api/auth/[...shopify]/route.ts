@@ -23,9 +23,9 @@ async function exchangeCodeForToken(code: string) {
   const response = await fetch(SHOPIFY_TOKEN_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: JSON.stringify({
+    body: new URLSearchParams({
       grant_type: 'authorization_code',
       client_id: SHOPIFY_CUSTOMER_CLIENT_ID,
       client_secret: clientSecret,
