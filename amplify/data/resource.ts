@@ -8,7 +8,8 @@ const schema = a.schema({
     size: a.string().required(),
     response: a.string(),
     status: a.enum(['NEW', 'PROCESSING', 'COMPLETED']),
-  }).authorization((allow) => [allow.publicApiKey()]),
+  }),
+  // .authorization((allow) => [allow.publicApiKey()]), // Temporarily removing for diagnosis based on user feedback
 
   // Temporarily removing the custom query for diagnosis
   // magicRequest: a
