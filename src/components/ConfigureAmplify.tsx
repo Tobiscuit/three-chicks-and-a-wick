@@ -3,6 +3,8 @@
 import { Amplify, ResourcesConfig } from 'aws-amplify';
 import outputs from '@root/amplify_outputs.json';
 
+console.log('Raw amplify_outputs.json:', outputs);
+
 // Define a comprehensive type that extends the base Amplify configuration to include all
 // possible shapes of our custom output, making the properties optional to handle
 // different states of the amplify_outputs.json file during deployment.
@@ -37,6 +39,7 @@ if (typedOutputs.custom?.API) {
   };
 }
 
+console.log('Final Amplify config object:', config);
 Amplify.configure(config, { ssr: true });
 
 export default function ConfigureAmplifyClientSide() {
