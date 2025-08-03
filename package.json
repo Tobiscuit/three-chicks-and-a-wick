@@ -16,6 +16,7 @@
     "@apollo/experimental-nextjs-app-support": "^0.12.2",
     "@aws-amplify/adapter-nextjs": "^1.6.7",
     "@aws-sdk/client-lambda": "^3.859.0",
+    "@aws-sdk/client-secrets-manager": "^3.859.0",
     "aws-amplify": "^6.15.4",
     "clsx": "^2.1.1",
     "embla-carousel-react": "^8.6.0",

@@ -1,10 +1,11 @@
-// amplify/backend.ts
-
 import { defineBackend } from '@aws-amplify/backend';
-import { magicRequest } from './functions/magic-request/resource';
+import { MagicRequestFunction } from './functions/magic-request/resource';
+import { Stack } from 'aws-cdk-lib';
 import { data } from './data/resource';
 
-export const backend = defineBackend({
-  magicRequest,
+const backend = defineBackend({
   data,
 });
+
+const magicRequestStack = backend.createStack('MagicRequestStack');
+new MagicRequestFunction(magicRequestStack, 'MagicRequestFunction');
