@@ -8,7 +8,8 @@ const schema = a.schema({
       size: a.string().required(),
     })
     .returns(a.string())
-    .handler(a.handler.function('magicRequest')),
+    .handler(a.handler.function('magicRequest'))
+    .authorization((allow) => [allow.guest()]),
 });
 
 export type Schema = typeof schema;
