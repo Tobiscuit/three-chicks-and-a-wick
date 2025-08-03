@@ -14,6 +14,11 @@ const apiStack = Stack.of(backend.magicRequest.resources.lambda);
 
 const magicRequestApi = new RestApi(apiStack, 'magicRequestApi', {
   restApiName: 'magicRequestApi',
+  defaultCorsPreflightOptions: {
+    allowOrigins: Cors.ALL_ORIGINS,
+    allowMethods: Cors.ALL_METHODS,
+    allowHeaders: Cors.DEFAULT_HEADERS,
+  },
 });
 
 const magicRequestResource = magicRequestApi.root.addResource('magic-request');
