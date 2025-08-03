@@ -13,10 +13,6 @@ const api = backend.createStack('api-stack');
 
 const magicRequestApi = new RestApi(api, 'magicRequestApi', {
   restApiName: 'magicRequestApi',
-  deploy: true,
-  deployOptions: {
-    stageName: 'dev',
-  },
   defaultCorsPreflightOptions: {
     allowOrigins: Cors.ALL_ORIGINS,
     allowMethods: Cors.ALL_METHODS,
