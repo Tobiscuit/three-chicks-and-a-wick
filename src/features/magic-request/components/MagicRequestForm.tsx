@@ -9,10 +9,9 @@ const client = generateClient<Schema>();
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
-  const [size, setSize] = useState('Medium 8oz');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{ candleName: string; description: string } | null>(null);
+  const [result, setResult] = useState<string | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -23,7 +22,6 @@ export default function MagicRequestForm() {
     try {
       const { data, errors } = await client.queries.magicRequest({
         prompt,
-        size,
       });
 
       if (errors) {
@@ -31,8 +29,8 @@ export default function MagicRequestForm() {
       }
       
       if (data) {
-        // The response from the function is a stringified JSON, so we need to parse it.
-        const parsedData = JSON.parse(data as string);
+        // The simplified function returns a stringified JSON string, so we parse it.
+        const parsedData = JSON.parse(data);
         setResult(parsedData);
       }
 
@@ -58,36 +56,17 @@ export default function MagicRequestForm() {
             className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="prompt"
           >
-            What kind of candle are you imagining?
+            Enter a message
           </label>
-          <textarea
+          <input
             id="prompt"
+            type="text"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows={4}
-            placeholder="e.g., A cozy cabin in the woods during a thunderstorm"
+            placeholder="Hello world"
             required
           />
-        </div>
-
-        <div className="mb-6">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="size"
-          >
-            Candle Size
-          </label>
-          <select
-            id="size"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option>Small 4oz</option>
-            <option>Medium 8oz</option>
-            <option>Large 16oz</option>
-          </select>
         </div>
 
         <div>
@@ -96,7 +75,7 @@ export default function MagicRequestForm() {
             disabled={loading}
             className="w-full btn-primary"
           >
-            {loading ? 'Generating...' : 'Generate Candle'}
+            {loading ? 'Sending...' : 'Send Message'}
           </button>
         </div>
       </form>
@@ -111,8 +90,8 @@ export default function MagicRequestForm() {
       )}
       {result && (
         <div className="mt-6 p-4 border rounded shadow-lg">
-          <h3 className="text-xl font-bold mb-2">{result.candleName}</h3>
-          <p>{result.description}</p>
+          <h3 className="text-xl font-bold mb-2">Response from Backend:</h3>
+          <p className="font-mono bg-gray-100 p-2 rounded">{result}</p>
         </div>
       )}
     </div>
