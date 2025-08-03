@@ -8,7 +8,7 @@ const schema = a.schema({
     size: a.string().required(),
     response: a.string(),
     status: a.enum(['NEW', 'PROCESSING', 'COMPLETED']),
-  }),
+  }).authorization((allow) => [allow.publicApiKey()]),
 
   // This is the custom query that invokes the function
   magicRequest: a
