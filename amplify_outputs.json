@@ -1,7 +1,3 @@
 {
-  "version": "1.4",
-  "custom": {
-    "magicRequestFunctionName": "amplify-threegirlsandawick-J-handlerlambdaE29D1580-x6WeMoQ7IBIp",
-    "aws_region": "us-east-1"
-  }
+  "version": "1.4"
 }
