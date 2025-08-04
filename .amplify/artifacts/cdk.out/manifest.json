@@ -22,7 +22,7 @@
         "validateOnSynth": false,
         "assumeRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-deploy-role-${AWS::AccountId}-${AWS::Region}",
         "cloudFormationExecutionRoleArn": "arn:${AWS::Partition}:iam::${AWS::AccountId}:role/cdk-hnb659fds-cfn-exec-role-${AWS::AccountId}-${AWS::Region}",
-        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/4ba538cbd1d0bfae6523c4073f62870b3a085762801c2551b54afae37a3bfe28.json",
+        "stackTemplateAssetObjectUrl": "s3://cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}/9dbf6757b6ec24f0a96f3834611d53d7fed75544090a05642bc87191b1d595ba.json",
         "requiresBootstrapStackVersion": 6,
         "bootstrapStackVersionSsmParameter": "/cdk-bootstrap/hnb659fds/version",
         "additionalDependencies": [
@@ -63,60 +63,6 @@
           {
             "type": "aws:cdk:logicalId",
             "data": "region"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/handler-lambda/ServiceRole/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "handlerlambdaServiceRole46D7AF61"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/handler-lambda/ServiceRole/DefaultPolicy/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "handlerlambdaServiceRoleDefaultPolicy3DA67D31"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/handler-lambda/Resource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "handlerlambdaE29D1580"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/CDKMetadata/Default": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CDKMetadata"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/CDKMetadata/Condition": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "CDKMetadataAvailable"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function/amplifythreegirlsandawickJramisandbox5427db1ab7functionhandlerlambda43E35A31Ref": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "amplifythreegirlsandawickJramisandbox5427db1ab7functionhandlerlambda43E35A31Ref"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/function.NestedStack/function.NestedStackResource": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "function1351588B"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/definedFunctions": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "definedFunctions"
-          }
-        ],
-        "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/customOutputs": [
-          {
-            "type": "aws:cdk:logicalId",
-            "data": "customOutputs"
           }
         ],
         "/amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7/CDKMetadata/Default": [
