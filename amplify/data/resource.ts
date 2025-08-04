@@ -1,10 +1,5 @@
-import {
-  type ClientSchema,
-  a,
-  defineData
-} from '@aws-amplify/backend';
+import { type ClientSchema, a, defineData } from '@aws-amplify/backend';
 
-// Minimal schema with MagicRequestResult type
 const schema = a.schema({
   MagicRequestResult: a.customType({
     candleName: a.string().required(),
@@ -26,4 +21,4 @@ export const data = defineData({
       expiresInDays: 30,
     },
   },
-}); 
+});
