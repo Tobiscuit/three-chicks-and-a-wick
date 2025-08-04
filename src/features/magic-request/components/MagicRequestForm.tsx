@@ -1,18 +1,17 @@
 'use client';
 
 import { useState } from 'react';
-import { generateClient } from 'aws-amplify/data';
-import type { Schema } from '@/amplify/data/resource';
+// import { generateClient } from 'aws-amplify/data';
+// import type { Schema } from '@/amplify/data/resource';
 
-const client = generateClient<Schema>();
+// const client = generateClient<Schema>();
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
   const [size, setSize] = useState('Medium 8oz');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  // const [result, setResult] = useState<Schema['MagicRequestResult']['type'] | null>(null);
-  const [result, setResult] = useState<any>(null);
+  const [result, setResult] = useState<{candleName: string, description: string} | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -21,11 +20,7 @@ export default function MagicRequestForm() {
     setResult(null);
 
     try {
-      // const { data, errors } = await client.queries.magicRequest({
-      //   prompt,
-      //   size,
-      // });
-      const data = null, errors = null;
+      // Temporarily disabled - will reimplement with modern syntax
 
       // if (errors) {
       //   throw new Error(errors.map((e) => e.message).join('\n'));
