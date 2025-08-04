@@ -1,8 +1,7 @@
 import {
   type ClientSchema,
   a,
-  defineData,
-  secret
+  defineData
 } from '@aws-amplify/backend';
 
 // Minimal schema with MagicRequestResult type
