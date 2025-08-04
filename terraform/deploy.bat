@@ -5,15 +5,17 @@ call npm install
 powershell Compress-Archive -Path * -DestinationPath magic-request.zip -Force
 cd ..
 
+set TERRAFORM_PATH=C:\Users\Jrami\Downloads\terraform_1.12.2_windows_amd64\terraform.exe
+
 echo Initializing Terraform...
-terraform init
+"%TERRAFORM_PATH%" init
 
 echo Planning Terraform deployment...
-terraform plan
+"%TERRAFORM_PATH%" plan
 
 echo Applying Terraform deployment...
-terraform apply -auto-approve
+"%TERRAFORM_PATH%" apply -auto-approve
 
 echo Deployment complete!
 echo GraphQL URL and API Key:
-terraform output
+"%TERRAFORM_PATH%" output
