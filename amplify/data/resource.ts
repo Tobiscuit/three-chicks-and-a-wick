@@ -8,7 +8,7 @@ import {
 
 // 1. Define the function that will be the handler
 const magicRequestHandler = defineFunction({
-  entry: './functions/magic-request/handler.ts',
+  entry: '../functions/magic-request/handler.ts',
   timeoutSeconds: 30,
   memoryMB: 512,
   environment: {
