@@ -2,9 +2,9 @@ import {
   type ClientSchema,
   a,
   defineData,
-  defineFunction
+  defineFunction,
+  secret
 } from '@aws-amplify/backend';
-import { secret } from 'aws-amplify/macros';
 
 // 1. Define the function that will be the handler
 const magicRequestHandler = defineFunction({
