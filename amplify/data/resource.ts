@@ -4,7 +4,6 @@ import {
   defineData,
   secret
 } from '@aws-amplify/backend';
-import { magicRequestHandler } from '../functions/magic-request/resource';
 
 // Minimal schema with MagicRequestResult type
 const schema = a.schema({
