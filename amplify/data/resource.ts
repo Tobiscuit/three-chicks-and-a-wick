@@ -6,26 +6,8 @@ import {
 } from '@aws-amplify/backend';
 import { magicRequestHandler } from '../functions/magic-request/resource';
 
-// 2. Define the schema and the custom query
+// 2. Define a minimal schema to test
 const schema = a.schema({
-  MagicRequestResult: a.customType({
-    candleName: a.string().required(),
-    description: a.string().required(),
-  }),
-
-  magicRequest: a
-    .query()
-    .arguments({
-      prompt: a.string().required(),
-      size: a.string().required(),
-    })
-    .returns(a.ref('MagicRequestResult'))
-    .authorization(allow => [allow.publicApiKey()])
-    // 3. Pass the function *object* as the handler
-    .handler(a.handler.function(magicRequestHandler)),
-
-  // We will still define a model for future inventory tracking,
-  // but it is not directly involved in the query.
   MagicRequest: a.model({
     prompt: a.string().required(),
     size: a.string().required(),
@@ -34,8 +16,7 @@ const schema = a.schema({
   }).authorization((allow) => [allow.publicApiKey()]),
 });
 
-// The client-side schema doesn't need to know about the model
-export type Schema = ClientSchema<Omit<typeof schema, 'MagicRequest'>>;
+export type Schema = ClientSchema<typeof schema>;
 
 export const data = defineData({
   schema,
