@@ -1,0 +1,9 @@
+{
+  "name": "magic-request-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function for magic candle requests",
+  "main": "index.js",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0"
+  }
+}

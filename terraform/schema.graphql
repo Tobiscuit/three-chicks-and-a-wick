@@ -1,0 +1,8 @@
+type Query {
+  magicRequest(prompt: String!, size: String!): MagicRequestResult
+}
+
+type MagicRequestResult {
+  candleName: String!
+  description: String!
+}
