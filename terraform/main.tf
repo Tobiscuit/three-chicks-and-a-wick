@@ -169,13 +169,7 @@ resource "aws_appsync_resolver" "magic_request" {
   type        = "Query"
   data_source = aws_appsync_datasource.lambda.name
 
-  request_template = jsonencode({
-    version = "2017-02-28"
-    operation = "Invoke"
-    payload = {
-      arguments = "$context.arguments"
-    }
-  })
+  request_template = "$util.toJson($context.arguments)"
 
   response_template = "$context.result"
 }

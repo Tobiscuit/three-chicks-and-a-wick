@@ -41,13 +41,24 @@ export default function MagicRequestForm() {
         }),
       });
 
-      const { data, errors } = await response.json();
+      const responseData = await response.json();
+      console.log('GraphQL Response:', responseData);
 
-      if (errors) {
-        throw new Error(errors.map((e: { message: string }) => e.message).join('\n'));
+      if (responseData.errors) {
+        throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
       }
 
-      setResult(data.magicRequest);
+      // Handle different response formats
+      let result;
+      if (responseData.data && responseData.data.magicRequest) {
+        result = responseData.data.magicRequest;
+      } else if (responseData.candleName && responseData.description) {
+        result = responseData;
+      } else {
+        throw new Error('Unexpected response format');
+      }
+
+      setResult(result);
 
     } catch (err: unknown) {
       if (err instanceof Error) {

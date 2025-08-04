@@ -2,7 +2,15 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 exports.handler = async (event) => {
   try {
-    const { prompt, size } = event.arguments;
+    console.log('Full event:', JSON.stringify(event, null, 2));
+    
+    // Parse the arguments string
+    const argsString = event.arguments;
+    const promptMatch = argsString.match(/prompt=([^,]+)/);
+    const sizeMatch = argsString.match(/size=([^}]+)/);
+    
+    const prompt = promptMatch ? promptMatch[1] : null;
+    const size = sizeMatch ? sizeMatch[1] : null;
 
     if (!prompt || !size) {
       throw new Error("Missing 'prompt' or 'size' in the request arguments.");
