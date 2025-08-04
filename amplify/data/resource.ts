@@ -6,8 +6,13 @@ import {
 } from '@aws-amplify/backend';
 import { magicRequestHandler } from '../functions/magic-request/resource';
 
-// Minimal valid schema
+// Minimal schema with MagicRequestResult type
 const schema = a.schema({
+  MagicRequestResult: a.customType({
+    candleName: a.string().required(),
+    description: a.string().required(),
+  }),
+  
   Todo: a.model({
     content: a.string(),
   }).authorization((allow) => [allow.publicApiKey()]),
