@@ -44,7 +44,7 @@ export default function MagicRequestForm() {
       const { data, errors } = await response.json();
 
       if (errors) {
-        throw new Error(errors.map((e: any) => e.message).join('\n'));
+        throw new Error(errors.map((e: { message: string }) => e.message).join('\n'));
       }
 
       setResult(data.magicRequest);
