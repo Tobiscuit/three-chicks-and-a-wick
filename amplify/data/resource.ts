@@ -2,22 +2,9 @@ import {
   type ClientSchema,
   a,
   defineData,
-  defineFunction,
   secret
 } from '@aws-amplify/backend';
-
-// 1. Define the function that will be the handler
-const magicRequestHandler = defineFunction({
-  entry: '../functions/magic-request/handler.ts',
-  timeoutSeconds: 30,
-  memoryMB: 512,
-  environment: {
-    // We must use the secret() macro here as shown in documentation
-    GEMINI_API_KEY: secret('GEMINI_API_KEY'),
-    SHOPIFY_ADMIN_API_TOKEN: secret('SHOPIFY_ADMIN_API_TOKEN'),
-    SHOPIFY_STORE_DOMAIN: secret('SHOPIFY_STORE_DOMAIN'),
-  }
-});
+import { magicRequestHandler } from '../functions/magic-request/resource';
 
 // 2. Define the schema and the custom query
 const schema = a.schema({
