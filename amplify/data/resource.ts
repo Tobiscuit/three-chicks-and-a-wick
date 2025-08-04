@@ -6,8 +6,12 @@ import {
 } from '@aws-amplify/backend';
 import { magicRequestHandler } from '../functions/magic-request/resource';
 
-// Absolute minimal schema
-const schema = a.schema({});
+// Minimal valid schema
+const schema = a.schema({
+  Todo: a.model({
+    content: a.string(),
+  }).authorization((allow) => [allow.publicApiKey()]),
+});
 
 export type Schema = ClientSchema<typeof schema>;
 

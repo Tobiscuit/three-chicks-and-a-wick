@@ -1,7 +1,6 @@
 import { defineFunction, secret } from '@aws-amplify/backend';
 
 export const magicRequestHandler = defineFunction({
-  entry: './handler.ts',
   timeoutSeconds: 30,
   memoryMB: 512,
   environment: {
