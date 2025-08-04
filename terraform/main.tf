@@ -110,7 +110,7 @@ resource "aws_appsync_graphql_api" "main" {
 # AppSync API Key
 resource "aws_appsync_api_key" "main" {
   api_id  = aws_appsync_graphql_api.main.id
-  expires = timeadd(timestamp(), "365d")
+  expires = timeadd(timestamp(), "8760h")
 }
 
 # IAM role for AppSync

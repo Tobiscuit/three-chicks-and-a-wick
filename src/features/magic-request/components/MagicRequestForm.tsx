@@ -1,17 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-// import { generateClient } from 'aws-amplify/data';
-// import type { Schema } from '@/amplify/data/resource';
+import { graphqlConfig } from '@/lib/graphql-config';
 
-// const client = generateClient<Schema>();
+interface MagicRequestResult {
+  candleName: string;
+  description: string;
+}
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
   const [size, setSize] = useState('Medium 8oz');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<{candleName: string, description: string} | null>(null);
+  const [result, setResult] = useState<MagicRequestResult | null>(null);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -20,14 +22,32 @@ export default function MagicRequestForm() {
     setResult(null);
 
     try {
-      // Temporarily disabled - will reimplement with modern syntax
+      const response = await fetch(graphqlConfig.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': graphqlConfig.apiKey,
+        },
+        body: JSON.stringify({
+          query: `
+            query MagicRequest($prompt: String!, $size: String!) {
+              magicRequest(prompt: $prompt, size: $size) {
+                candleName
+                description
+              }
+            }
+          `,
+          variables: { prompt, size },
+        }),
+      });
 
-      // if (errors) {
-      //   throw new Error(errors.map((e) => e.message).join('\n'));
-      // }
-      // 
-      // setResult(data);
-      setResult({ candleName: 'Test', description: 'Temporarily disabled' });
+      const { data, errors } = await response.json();
+
+      if (errors) {
+        throw new Error(errors.map((e: any) => e.message).join('\n'));
+      }
+
+      setResult(data.magicRequest);
 
     } catch (err: unknown) {
       if (err instanceof Error) {
