@@ -1,6 +1,5 @@
 // amplify/functions/magic-request/handler.ts
 import { Handler } from 'aws-lambda';
-import { GoogleGenAI } from "@google/genai";
 
 type InputEvent = {
     arguments: {
@@ -16,6 +15,7 @@ type Output = {
 
 export const handler: Handler<InputEvent, Output> = async (event) => {
   try {
+    const { GoogleGenAI } = await import("@google/genai");
     const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const { prompt, size } = event.arguments;
 
