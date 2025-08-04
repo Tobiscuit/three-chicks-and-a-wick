@@ -1,8 +1,0 @@
-{
-  "name": "magic-request-function",
-  "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "@google/genai": "^1.12.0"
-  }
-} 
