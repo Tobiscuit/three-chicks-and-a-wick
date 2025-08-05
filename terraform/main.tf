@@ -171,5 +171,5 @@ resource "aws_appsync_resolver" "magic_request" {
 
   request_template = "$util.toJson($context.arguments)"
 
-  response_template = "$context.result"
+  response_template = "$util.toJson($context.result)"
 }

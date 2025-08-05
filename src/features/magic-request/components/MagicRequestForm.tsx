@@ -134,9 +134,11 @@ export default function MagicRequestForm() {
         </div>
       )}
       {result && (
-        <div className="mt-6 p-4 border rounded shadow-lg">
-          <h3 className="text-xl font-bold mb-2">{result.candleName}</h3>
-          <p>{result.description}</p>
+        <div className="mt-6 border rounded shadow-lg overflow-hidden">
+          <div 
+            dangerouslySetInnerHTML={{ __html: result.description }}
+            className="candle-description"
+          />
         </div>
       )}
     </div>

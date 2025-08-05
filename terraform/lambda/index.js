@@ -19,12 +19,20 @@ exports.handler = async (event) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const customerPrompt = `You are a scent poet. Based on the user's request of '${prompt}', write an evocative, beautiful description for a custom candle. The description must include a creative name for the candle, formatted exactly like this: **Candle Name:** "The Scholar's Study". Also describe the top, middle, and base fragrance notes.`;
+    const customerPrompt = `You are a scent poet and web designer. Based on the user's request of '${prompt}', create a beautiful HTML description for a custom candle. Include:
+    1. A creative candle name as an H2 heading
+    2. An evocative description with top, middle, and base fragrance notes
+    3. Use inline CSS styling that matches the psychology and mood of the scent
+    4. Choose colors, fonts, and styling that evoke the scent's atmosphere
+    5. Make it visually beautiful and emotionally resonant
+    
+    Return only clean HTML with inline styles, no markdown.`;
     
     const customerResult = await model.generateContent(customerPrompt);
     const customerDescription = customerResult.response.text();
 
-    const nameMatch = customerDescription.match(/\*\*Candle Name:\*\*\s*"(.*?)"/);
+    // Extract candle name from HTML h2 tag
+    const nameMatch = customerDescription.match(/<h2[^>]*>([^<]+)<\/h2>/);
     const candleName = nameMatch ? nameMatch[1] : "Your Custom Candle";
 
     const clientPrompt = `You are a master chandler. Based on the request '${prompt}' for an ${size} candle, create a practical recipe. Deconstruct the scent into a list of fragrance oils and their parts (e.g., 3 parts sandalwood, 2 parts rain). Output ONLY a valid JSON object with the keys: "essences" (an array of strings), "waxType" (string), and "wickType" (string). Example: {"essences": ["Sandalwood: 3 parts", "Rain Fragrance Oil: 2 parts"], "waxType": "Soy Wax", "wickType": "Cotton Wick"}`;
