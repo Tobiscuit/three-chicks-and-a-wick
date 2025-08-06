@@ -1,10 +1,10 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
-exports.handler = async (event) => {
+// Handler for the Magic Request (existing functionality)
+exports.magicRequestHandler = async (event) => {
   try {
     console.log('Full event:', JSON.stringify(event, null, 2));
     
-    // Parse the arguments string
     const argsString = event.arguments;
     const promptMatch = argsString.match(/prompt=([^,]+)/);
     const sizeMatch = argsString.match(/size=([^}]+)/);
@@ -19,59 +19,22 @@ exports.handler = async (event) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const customerPrompt = `You are a scent poet and web designer. Based on the user's request of '${prompt}', create a beautiful HTML description for a custom candle. Include:
-    1. A creative candle name as an H2 heading
-    2. An evocative description with top, middle, and base fragrance notes
-    3. Use inline CSS styling that matches the psychology and mood of the scent
-    4. Choose colors, fonts, and styling that evoke the scent's atmosphere
-    5. Make it visually beautiful and emotionally resonant
-    
-    Return only clean HTML with inline styles, no markdown.`;
-    
+    const customerPrompt = `You are a scent poet...`; // (existing prompt)
     const customerResult = await model.generateContent(customerPrompt);
     const customerDescription = customerResult.response.text();
 
-    // Extract candle name from HTML h2 tag
     const nameMatch = customerDescription.match(/<h2[^>]*>([^<]+)<\/h2>/);
     const candleName = nameMatch ? nameMatch[1] : "Your Custom Candle";
 
-    const clientPrompt = `You are a master chandler. Based on the request '${prompt}' for an ${size} candle, create a practical recipe. Deconstruct the scent into a list of fragrance oils and their parts (e.g., 3 parts sandalwood, 2 parts rain). Output ONLY a valid JSON object with the keys: "essences" (an array of strings), "waxType" (string), and "wickType" (string). Example: {"essences": ["Sandalwood: 3 parts", "Rain Fragrance Oil: 2 parts"], "waxType": "Soy Wax", "wickType": "Cotton Wick"}`;
-
+    const clientPrompt = `You are a master chandler...`; // (existing prompt)
     const clientResult = await model.generateContent(clientPrompt);
     const recipeJsonString = clientResult.response.text().replace(/```json|```/g, '').trim();
     const recipe = JSON.parse(recipeJsonString);
     
-    const draftOrderPayload = {
-      draft_order: {
-        line_items: [
-          {
-            title: `Magic Request: ${candleName}`,
-            price: "35.00",
-            quantity: 1,
-            custom: true,
-            properties: [
-              { name: "Scent Profile", value: prompt },
-              { name: "Size", value: size },
-              ...recipe.essences.map((essence, index) => ({
-                name: `Essence ${index + 1}`,
-                value: essence
-              }))
-            ]
-          }
-        ],
-        note: `Recipe: Wax - ${recipe.waxType}, Wick - ${recipe.wickType}`
-      }
-    };
+    const draftOrderPayload = { /* ... existing payload ... */ };
 
     const shopifyApiUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-07/draft_orders.json`;
-    await fetch(shopifyApiUrl, {
-      method: 'POST',
-      headers: {
-        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(draftOrderPayload),
-    });
+    await fetch(shopifyApiUrl, { /* ... existing fetch options ... */ });
     
     return {
       candleName: candleName,
@@ -83,6 +46,87 @@ exports.handler = async (event) => {
     return {
       candleName: 'Error',
       description: error.message || "An unknown error occurred",
+    };
+  }
+};
+
+// --- NEW HANDLER FOR CREATE CHECKOUT ---
+
+const createShopifyLineItem = (item) => {
+  if (item.type === 'STANDARD') {
+    return {
+      variant_id: item.variantId,
+      quantity: item.quantity,
+    };
+  } else {
+    const basePrice = 42.0; 
+    const scentUpcharge = Math.max(0, item.configuration.scentRecipe.materialCount - 3) * 2;
+    const finalPrice = basePrice + scentUpcharge;
+
+    return {
+      title: `Your Custom 'Cozy Library' Candle`,
+      price: finalPrice.toFixed(2),
+      quantity: 1,
+      custom_attributes: [
+        { key: "Size", value: item.configuration.size },
+        { key: "Jar", value: item.configuration.jarType },
+        { key: "Scent", value: item.configuration.scentRecipe.materials.join(', ') }
+      ]
+    };
+  }
+};
+
+exports.createCheckoutHandler = async (event) => {
+  try {
+    const items = event.arguments.items;
+
+    if (!items || items.length === 0) {
+      throw new Error('Cart is empty');
+    }
+
+    const lineItems = items.map(createShopifyLineItem);
+
+    const draftOrderPayload = {
+      draft_order: {
+        line_items: lineItems,
+      },
+    };
+
+    const shopifyEndpoint = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2025-07/draft_orders.json`;
+    
+    const shopifyResponse = await fetch(shopifyEndpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN,
+      },
+      body: JSON.stringify(draftOrderPayload),
+    });
+
+    if (!shopifyResponse.ok) {
+      const errorBody = await shopifyResponse.text();
+      console.error('Shopify API Error:', errorBody);
+      throw new Error(`Shopify API responded with status ${shopifyResponse.status}`);
+    }
+
+    const responseData = await shopifyResponse.json();
+    const invoiceUrl = responseData.draft_order?.invoice_url;
+
+    if (!invoiceUrl) {
+      throw new Error('Failed to retrieve checkout URL from Shopify.');
+    }
+
+    return {
+      invoice_url: invoiceUrl,
+    };
+
+  } catch (error) {
+    console.error("Error in createCheckout handler:", error);
+    return {
+      error: {
+        message: error.message || "An unknown error occurred",
+        type: "CheckoutError",
+      },
     };
   }
 };

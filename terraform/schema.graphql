@@ -2,7 +2,40 @@ type Query {
   magicRequest(prompt: String!, size: String!): MagicRequestResult
 }
 
+type Mutation {
+  createCheckout(items: [CartItemInput!]!): CheckoutResult
+}
+
+input CartItemInput {
+  type: String!
+  variantId: String
+  quantity: Int
+  configuration: CustomCandleInput
+}
+
+input CustomCandleInput {
+  size: String!
+  jarType: String!
+  wickType: String!
+  scentRecipe: ScentRecipeInput!
+}
+
+input ScentRecipeInput {
+  materials: [String!]!
+  materialCount: Int!
+}
+
 type MagicRequestResult {
   candleName: String!
   description: String!
+}
+
+type CheckoutResult {
+  invoice_url: String
+  error: Error
+}
+
+type Error {
+  message: String!
+  type: String!
 }

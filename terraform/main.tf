@@ -173,3 +173,36 @@ resource "aws_appsync_resolver" "magic_request" {
 
   response_template = "$util.toJson($context.result)"
 }
+
+# Lambda function for creating a checkout
+resource "aws_lambda_function" "create_checkout_handler" {
+  filename         = "lambda/magic-request.zip" # We'll use the same zip file
+  function_name    = "${var.project_name}-create-checkout"
+  role            = aws_iam_role.lambda_role.arn
+  handler         = "index.createCheckoutHandler" # New handler
+  runtime         = "nodejs20.x"
+  timeout         = 30
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE = aws_dynamodb_table.magic_requests.name
+      GEMINI_API_KEY = var.gemini_api_key
+      SHOPIFY_ADMIN_API_TOKEN = var.shopify_admin_api_token
+      SHOPIFY_STORE_DOMAIN = var.shopify_store_domain
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_policy]
+}
+
+# AppSync Resolver for createCheckout mutation
+resource "aws_appsync_resolver" "create_checkout" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "createCheckout"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda.name # We can reuse the same data source
+
+  request_template = "$util.toJson($context.arguments)"
+
+  response_template = "$util.toJson($context.result)"
+}
