@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { useCart } from '@/context/CartContext';
+import { useCartStore } from '@/context/cart-store';
 import ProductGallery from '@/features/product/components/ProductGallery';
 import ProductCard from '@/features/product/components/ProductCard';
 import { Minus, Plus } from 'lucide-react';
@@ -52,7 +52,7 @@ export default function ProductView({
   product: ShopifyProduct;
   relatedProducts: RelatedProduct[];
 }) {
-  const { addToCart, isCartLoading } = useCart();
+  const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState(1);
   const [selectedProduct, setSelectedProduct] = useState<RelatedProduct | null>(null);
 
@@ -62,23 +62,21 @@ export default function ProductView({
     alt: edge.node.altText || product.title,
   }));
 
-  const handleAddToCart = async () => {
-    const cartProduct = {
-      id: product.id,
-      variantId: product.variants.edges[0].node.id,
-      handle: product.handle,
-      title: product.title,
-      price: {
-        amount: product.priceRange.minVariantPrice.amount,
-        currencyCode: product.priceRange.minVariantPrice.currencyCode || 'USD',
-      },
-      image: {
-        url: product.images.edges[0].node.url,
-        altText: product.images.edges[0].node.altText,
-      },
-    };
-    await addToCart(cartProduct, quantity);
+  const handleAddToCart = () => {
+    const variantId = product.variants.edges[0]?.node.id;
+    if (!variantId) {
+      console.error("No variant ID found for this product.");
+      // Optionally, show an error to the user
+      return;
+    }
+
+    addItem({
+      type: 'STANDARD',
+      variantId,
+      quantity,
+    });
     setQuantity(1); // Reset quantity after adding to cart
+    // Optionally, trigger a toast notification "Item added to cart!"
   };
 
   const productHandle = selectedProduct
@@ -162,10 +160,9 @@ export default function ProductView({
                   </div>
                   <button
                     onClick={handleAddToCart}
-                    disabled={isCartLoading}
                     className="btn-primary flex-1 max-w-xs"
                   >
-                    {isCartLoading ? 'Adding...' : 'Add to Cart'}
+                    Add to Cart
                   </button>
                 </div>
               </div>
@@ -215,4 +212,4 @@ export default function ProductView({
       </AnimatePresence>
     </>
   );
-} 
+}

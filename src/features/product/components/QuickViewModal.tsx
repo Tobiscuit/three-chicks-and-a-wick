@@ -6,7 +6,7 @@ import { X, Plus, Minus } from 'lucide-react';
 import { gql } from '@/gql';
 import { GetProductDetailsQuery } from '@/gql/graphql';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useCart } from '@/context/CartContext';
+import { useCartStore } from '@/context/cart-store';
 import { useState } from 'react';
 
 const GET_PRODUCT_DETAILS = gql(`
@@ -61,7 +61,7 @@ export default function QuickViewModal({
   onClose: () => void;
   productHandle: string | null;
 }) {
-  const { addToCart, isCartLoading } = useCart();
+  const { addItem } = useCartStore();
   const [quantity, setQuantity] = useState(1);
   const { data, loading, error } = useQuery<GetProductDetailsQuery>(
     GET_PRODUCT_DETAILS,
@@ -71,25 +71,22 @@ export default function QuickViewModal({
     }
   );
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!data || !data.product) return;
-    const cartProduct = {
-      id: data.product.id,
-      variantId: data.product.variants.edges[0].node.id,
-      handle: data.product.handle,
-      title: data.product.title,
-      price: {
-        amount: data.product.priceRange.minVariantPrice.amount,
-        currencyCode: data.product.priceRange.minVariantPrice.currencyCode || 'USD',
-      },
-      image: {
-        url: data.product.images.edges[0].node.url,
-        altText: data.product.images.edges[0].node.altText ?? '',
-      },
-    };
-    await addToCart(cartProduct, quantity);
-    setQuantity(1); // Reset quantity after adding to cart
-    onClose(); // Close modal after adding to cart
+    
+    const variantId = data.product.variants.edges[0]?.node.id;
+    if (!variantId) {
+      console.error("No variant ID found for this product.");
+      return;
+    }
+
+    addItem({
+      type: 'STANDARD',
+      variantId,
+      quantity,
+    });
+    setQuantity(1);
+    onClose();
   };
 
   if (loading || !data || !data.product) {
@@ -126,7 +123,6 @@ export default function QuickViewModal({
             className="w-full max-w-2xl lg:max-w-5xl bg-cream shadow-xl flex flex-col md:h-auto md:max-h-[90vh] md:rounded-xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* All modal content is inside this scaling div */}
             <div className="grid w-full grid-cols-1 items-start gap-x-6 gap-y-8 sm:grid-cols-12 lg:gap-x-8 p-6 md:p-8">
           <div className="sm:col-span-4 lg:col-span-5">
             <ProductGallery images={productImages} />
@@ -152,8 +148,8 @@ export default function QuickViewModal({
                         <Plus size={16} />
                       </button>
                     </div>
-                    <button onClick={handleAddToCart} disabled={isCartLoading} className="btn-primary flex-1">
-                      {isCartLoading ? 'Adding...' : 'Add to Cart'}
+                    <button onClick={handleAddToCart} className="btn-primary flex-1">
+                      Add to Cart
                 </button>
               </div>
             </section>
@@ -161,7 +157,6 @@ export default function QuickViewModal({
         </div>
           </motion.div>
 
-          {/* Close button is a sibling to the panel, so it doesn't scale */}
           <motion.button
             initial={{ opacity: 0 }}
             animate={{ opacity: 1, transition: { delay: 0.1 } }}

@@ -1,14 +1,15 @@
 // src/components/Cart.tsx
 'use client';
 
-import { useCart } from '@/context/CartContext';
+import { useCartStore, StandardItem, CustomCandleItem } from '@/context/cart-store';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { useEffect } from 'react';
-import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
-import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
+import { useEffect, useState } from 'react';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { RemoveScroll } from 'react-remove-scroll';
 import Link from 'next/link';
+import { amplifyApiClient } from '@/lib/client';
 
 interface CartProps {
   isOpen: boolean;
@@ -32,21 +33,13 @@ const desktopCartVariants = {
   exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2 } },
 }
 
-// Define a type for the cart item
-type CartItemType = {
-  lineId: string;
-  quantity: number;
-  product: {
-    title: string;
-    image: {
-      url: string;
-      altText: string;
-    };
-    price: {
-      amount: string;
-      currencyCode: string;
-    };
-  };
+// NOTE: This is a placeholder. In a real app, you'd fetch this data.
+const MOCK_PRODUCT_DETAILS: { [key: string]: { name: string; price: number; image: string } } = {
+  '456789123': {
+    name: 'The Classic Wick Trimmer',
+    price: 24.0,
+    image: '/images/wick-trimmer.jpg',
+  },
 };
 
 function formatCurrency(amount: number, currencyCode: string = 'USD') {
@@ -56,12 +49,12 @@ function formatCurrency(amount: number, currencyCode: string = 'USD') {
   }).format(amount);
 }
 
-function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number) => void, isFirstItem: boolean }) {
+function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: StandardItem, onRemove: () => void, onUpdateQuantity: (variantId: string, newQuantity: number) => void, isFirstItem: boolean }) {
   const isMobile = useMediaQuery('(max-width: 767px)');
   const controls = useAnimation();
+  const productDetails = MOCK_PRODUCT_DETAILS[item.variantId];
 
   useEffect(() => {
-    // Only run the hint animation on mobile for the first item
     if (isMobile && isFirstItem) {
       const hintAnimation = async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -72,16 +65,22 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
       hintAnimation();
     }
   }, [isMobile, isFirstItem, controls]);
+  
+  if (!productDetails) {
+    return (
+      <li className="relative mb-4 overflow-hidden p-4 text-center">
+        <p>Loading item...</p>
+      </li>
+    );
+  }
 
   return (
     <li className="relative mb-4 overflow-hidden">
-        {/* Delete button that sits underneath */}
         <div className="absolute inset-y-0 right-0 flex items-center justify-center bg-destructive text-white w-20">
             <button onClick={onRemove} className="w-full h-full flex items-center justify-center">
                 <Trash2 size={24} />
             </button>
         </div>
-        {/* The draggable content */}
         <motion.div
             className="relative flex items-center gap-4 bg-cream"
             drag={isMobile ? "x" : false}
@@ -96,26 +95,25 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
         >
             <div className="relative h-24 w-24 flex-shrink-0 rounded-lg overflow-hidden border border-neutral-dark/10 aspect-square">
                 <Image
-                    src={item.product.image.url}
-                    alt={item.product.image.altText}
+                    src={productDetails.image}
+                    alt={productDetails.name}
                     layout="fill"
                     objectFit="cover"
                 />
             </div>
             <div className="flex-grow">
-                <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
-                <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
+                <h3 className="font-bold text-neutral-dark leading-tight">{productDetails.name}</h3>
+                <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(productDetails.price)}</p>
             </div>
             <div className="flex flex-col items-center gap-2 pr-4">
-                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+                <button onClick={() => onUpdateQuantity(item.variantId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
                     <Plus size={18} />
                 </button>
                 <span className="font-bold w-8 text-center">{item.quantity}</span>
-                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                <button onClick={() => onUpdateQuantity(item.variantId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
                     <Minus size={18} />
                 </button>
             </div>
-            {/* Desktop-only remove button */}
             <div className="hidden md:block pr-2">
                 <button onClick={onRemove} className="text-neutral-dark/50 hover:text-destructive transition-colors">
                     <X size={20} />
@@ -127,20 +125,41 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  // Get the checkoutUrl directly from the cart context
-  const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
+  const { items, removeItem, updateItemQuantity, clearCart } = useCartStore();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
   if (!isOpen) return null;
 
-  const subtotal = cartItems.reduce((sum, item) => {
-    return sum + parseFloat(item.product.price.amount) * item.quantity;
+  const subtotal = items.reduce((sum, item) => {
+    if (item.type === 'STANDARD') {
+      const details = MOCK_PRODUCT_DETAILS[item.variantId];
+      return sum + (details ? details.price * item.quantity : 0);
+    }
+    // Add custom candle pricing logic here later
+    return sum;
   }, 0);
 
-  // The new checkout handler is much simpler
-  const handleCheckout = () => {
-    if (checkoutUrl) {
-      window.location.href = checkoutUrl;
+  const handleCheckout = async () => {
+    setIsCheckingOut(true);
+    try {
+      const response = await amplifyApiClient.post({
+        path: '/create-checkout',
+        body: { items },
+      });
+
+      const { invoice_url } = await response.body.json();
+      
+      if (invoice_url) {
+        window.location.href = invoice_url;
+        clearCart();
+      } else {
+        console.error('Checkout URL not found in response');
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+    } finally {
+      setIsCheckingOut(false);
     }
   };
 
@@ -171,7 +190,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                 </button>
               </div>
               
-              {cartItems.length === 0 ? (
+              {items.length === 0 ? (
                 <div className="flex-grow flex flex-col items-center justify-center text-center p-3">
                   <h3 className="text-xl font-bold text-neutral-dark mb-2">Your cart is empty!</h3>
                   <p className="text-neutral-dark/80 mb-6">Looks like you haven&apos;t added anything yet.</p>
@@ -184,15 +203,20 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <div className="flex-grow py-4 px-3 overflow-y-auto">
                     <ul>
                       <AnimatePresence>
-                        {cartItems.map((item, index) => (
-                          <CartItem 
-                            key={item.lineId} 
-                            item={item as CartItemType}
-                            onRemove={() => removeFromCart(item.lineId)}
-                            onUpdateQuantity={updateQuantity}
-                            isFirstItem={index === 0 && cartItems.length > 0}
-                          />
-                        ))}
+                        {items.map((item, index) => {
+                          if (item.type === 'STANDARD') {
+                            return (
+                              <CartItem 
+                                key={item.variantId} 
+                                item={item}
+                                onRemove={() => removeItem(item.variantId)}
+                                onUpdateQuantity={updateItemQuantity}
+                                isFirstItem={index === 0 && items.length > 0}
+                              />
+                            )
+                          }
+                          return null;
+                        })}
                       </AnimatePresence>
                     </ul>
                   </div>
@@ -200,14 +224,14 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <div className="py-4 px-3 border-t border-neutral-dark/10">
                       <div className="flex justify-between items-center mb-4">
                           <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
-                          <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
+                          <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal)}</p>
                       </div>
                       <button 
                         className="w-full btn-primary"
                         onClick={handleCheckout}
-                        disabled={!checkoutUrl}
+                        disabled={isCheckingOut || items.length === 0}
                       >
-                        Proceed to Checkout
+                        {isCheckingOut ? 'Processing...' : 'Proceed to Checkout'}
                       </button>
                        <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
                           or Continue Shopping
@@ -221,4 +245,4 @@ export default function Cart({ isOpen, onClose }: CartProps) {
       )}
     </AnimatePresence>
   );
-} 
+}

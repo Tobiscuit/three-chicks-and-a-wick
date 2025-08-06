@@ -5,10 +5,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
-import { useCart } from '@/context/CartContext';
+import { useCartStore } from '@/context/cart-store';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cart from './Cart';
-import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
+import { RemoveScroll } from 'react-remove-scroll';
 
 const navLinks = [
   { href: '/', label: 'Home' },
@@ -86,12 +86,10 @@ const MobileMenu = ({
 
 export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isCartOpen, setCartOpen] = useState(false); // State for cart visibility
-  const { cartItems } = useCart();
+  const [isCartOpen, setCartOpen] = useState(false);
+  const { items } = useCartStore();
 
-  // The old useEffect for scroll-locking is no longer needed here
-
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItems = items.reduce((sum, item) => sum + (item.type === 'STANDARD' ? item.quantity : 1), 0);
 
   return (
     <>
@@ -137,7 +135,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               <span className="sr-only">{isLoggedIn ? "Account" : "Login"}</span>
             </Link>
             <button
-              onClick={() => setCartOpen(true)} // Toggle cart state
+              onClick={() => setCartOpen(true)}
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
               <ShoppingCart className="h-6 w-6" />
@@ -156,7 +154,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
         onClose={() => setMobileMenuOpen(false)}
         isLoggedIn={isLoggedIn}
       />
-      <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} /> {/* Render Cart here */}
+      <Cart isOpen={isCartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
-} 
+}

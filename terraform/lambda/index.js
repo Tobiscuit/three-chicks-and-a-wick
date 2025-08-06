@@ -19,17 +19,27 @@ exports.handler = async (event) => {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    const customerPrompt = `You are a scent poet and web designer. Based on the user's request of '${prompt}', create a beautiful HTML description for a custom candle. Include:
-    1. A creative candle name as an H2 heading
-    2. An evocative description with top, middle, and base fragrance notes
-    3. Use inline CSS styling that matches the psychology and mood of the scent
-    4. Choose colors, fonts, and styling that evoke the scent's atmosphere
-    5. Make it visually beautiful and emotionally resonant
+    const customerPrompt = `Create a beautiful HTML description for a custom candle based on '${prompt}'. 
     
-    Return only clean HTML with inline styles, no markdown.`;
+    IMPORTANT: Return ONLY HTML code with inline CSS styles. No markdown, no code blocks, no explanations.
+    
+    Include:
+    - <h2> with candle name and styling that matches the scent mood
+    - <div> sections for description and fragrance notes
+    - Inline CSS with colors, fonts, padding that evoke the scent's atmosphere
+    - Make it visually stunning and emotionally resonant
+    
+    Example format:
+    <div style="background: linear-gradient(135deg, #colors); padding: 20px; border-radius: 10px;">
+      <h2 style="color: #color; font-family: serif;">Candle Name</h2>
+      <p style="color: #color;">Beautiful description...</p>
+    </div>`;
     
     const customerResult = await model.generateContent(customerPrompt);
-    const customerDescription = customerResult.response.text();
+    const customerDescription = customerResult.response.text()
+      .replace(/```html\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
 
     // Extract candle name from HTML h2 tag
     const nameMatch = customerDescription.match(/<h2[^>]*>([^<]+)<\/h2>/);
@@ -64,7 +74,9 @@ exports.handler = async (event) => {
     };
 
     const shopifyApiUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-07/draft_orders.json`;
-    await fetch(shopifyApiUrl, {
+    console.log('Creating Shopify draft order:', JSON.stringify(draftOrderPayload, null, 2));
+    
+    const shopifyResponse = await fetch(shopifyApiUrl, {
       method: 'POST',
       headers: {
         'X-Shopify-Access-Token': process.env.SHOPIFY_ADMIN_API_TOKEN,
@@ -72,6 +84,13 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify(draftOrderPayload),
     });
+    
+    const shopifyResult = await shopifyResponse.json();
+    console.log('Shopify API response:', shopifyResponse.status, JSON.stringify(shopifyResult, null, 2));
+    
+    if (!shopifyResponse.ok) {
+      console.error('Shopify API error:', shopifyResult);
+    }
     
     return {
       candleName: candleName,
