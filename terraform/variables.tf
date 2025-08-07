@@ -27,3 +27,9 @@ variable "shopify_store_domain" {
   type        = string
   sensitive   = true
 }
+
+variable "shopify_storefront_api_token" {
+  description = "Shopify Storefront API token"
+  type        = string
+  sensitive   = true
+}

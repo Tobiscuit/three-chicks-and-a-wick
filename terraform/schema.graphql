@@ -4,6 +4,42 @@ type Query {
 
 type Mutation {
   createCheckout(items: [CartItemInput!]!): CheckoutResult
+  addToCart(prompt: String!, size: String!, wick: String!, jar: String!, cartId: ID!): Cart
+  createCartWithCustomItem(prompt: String!, size: String!, wick: String!, jar: String!): Cart
+}
+
+type Cart {
+  id: ID!
+  lines: [CartLine!]!
+  totalQuantity: Int!
+  cost: CartCost!
+}
+
+type CartLine {
+  id: ID!
+  quantity: Int!
+  merchandise: Merchandise!
+  attributes: [Attribute!]!
+}
+
+type Merchandise {
+  id: ID!
+  title: String!
+  price: Money!
+}
+
+type Money {
+  amount: String!
+  currencyCode: String!
+}
+
+type Attribute {
+  key: String!
+  value: String!
+}
+
+type CartCost {
+  totalAmount: Money!
 }
 
 input CartItemInput {

@@ -1,0 +1,7 @@
+# Ignore node_modules to save tokens and improve performance
+node_modules/
+
+# Ignore local environment files
+.env.local
+
+

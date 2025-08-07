@@ -33,9 +33,18 @@ build-log.txt
 .env.development.local
 .env.test.local
 .env.production.local
+.env.local
 
 # vercel
 .vercel/
 
 # amplify
 .amplify/
+
+# terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+*.tfplan
+

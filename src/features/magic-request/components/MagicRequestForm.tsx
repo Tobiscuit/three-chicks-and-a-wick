@@ -2,24 +2,75 @@
 
 import { useState } from 'react';
 import { graphqlConfig } from '@/lib/graphql-config';
+import { useCart } from '@/context/CartContext';
 
-interface MagicRequestResult {
-  candleName: string;
-  description: string;
-}
+const Toast = ({ message, show }: { message: string; show: boolean }) => {
+  if (!show) return null;
+  return (
+    <div className="fixed bottom-5 right-5 bg-green-500 text-white py-2 px-4 rounded-lg shadow-lg animate-bounce">
+      {message}
+    </div>
+  );
+};
+
+const candleSizes = [
+  { name: 'The Spark', value: 'The Spark (8oz)' },
+  { name: 'The Flame', value: 'The Flame (12oz)' },
+  { name: 'The Glow', value: 'The Glow (16oz)' },
+];
+
+const wickOptions = [
+  { name: 'Cotton', value: 'Cotton' },
+  { name: 'Hemp', value: 'Hemp' },
+  { name: 'Wood', value: 'Wood' },
+];
+
+const jarOptions = [
+  { name: 'Standard Tin', value: 'Standard Tin' },
+  { name: 'Amber Glass', value: 'Amber Glass' },
+  { name: 'Frosted Glass', value: 'Frosted Glass' },
+  { name: 'Ceramic', value: 'Ceramic' },
+];
 
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
-  const [size, setSize] = useState('Medium 8oz');
+  const [size, setSize] = useState(candleSizes[0].value);
+  const [wick, setWick] = useState(wickOptions[0].value);
+  const [jar, setJar] = useState(jarOptions[0].value);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [result, setResult] = useState<MagicRequestResult | null>(null);
+  const [showToast, setShowToast] = useState(false);
+  const { cartId, setCart } = useCart();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
-    setResult(null);
+
+    const isExistingCart = !!cartId;
+    const mutation = isExistingCart
+      ? `
+      mutation addToCart($prompt: String!, $size: String!, $wick: String!, $jar: String!, $cartId: ID!) {
+        addToCart(prompt: $prompt, size: $size, wick: $wick, jar: $jar, cartId: $cartId) {
+          id
+          totalQuantity
+          cost { totalAmount { amount currencyCode } }
+          lines { id quantity attributes { key value } merchandise { id title price { amount currencyCode } } }
+        }
+      }`
+      : `
+      mutation createCartWithCustomItem($prompt: String!, $size: String!, $wick: String!, $jar: String!) {
+        createCartWithCustomItem(prompt: $prompt, size: $size, wick: $wick, jar: $jar) {
+          id
+          totalQuantity
+          cost { totalAmount { amount currencyCode } }
+          lines { id quantity attributes { key value } merchandise { id title price { amount currencyCode } } }
+        }
+      }`;
+
+    const variables = isExistingCart
+      ? { prompt, size, wick, jar, cartId }
+      : { prompt, size, wick, jar };
 
     try {
       const response = await fetch(graphqlConfig.url, {
@@ -29,36 +80,27 @@ export default function MagicRequestForm() {
           'x-api-key': graphqlConfig.apiKey,
         },
         body: JSON.stringify({
-          query: `
-            query MagicRequest($prompt: String!, $size: String!) {
-              magicRequest(prompt: $prompt, size: $size) {
-                candleName
-                description
-              }
-            }
-          `,
-          variables: { prompt, size },
+          query: mutation,
+          variables,
         }),
       });
 
       const responseData = await response.json();
-      console.log('GraphQL Response:', responseData);
 
       if (responseData.errors) {
         throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
       }
-
-      // Handle different response formats
-      let result;
-      if (responseData.data && responseData.data.magicRequest) {
-        result = responseData.data.magicRequest;
-      } else if (responseData.candleName && responseData.description) {
-        result = responseData;
+      
+      const dataKey = isExistingCart ? 'addToCart' : 'createCartWithCustomItem';
+      const newCart = responseData.data[dataKey];
+      if (newCart) {
+        setCart(newCart);
+        setShowToast(true);
+        setTimeout(() => setShowToast(false), 3000);
+        setPrompt('');
       } else {
-        throw new Error('Unexpected response format');
+        throw new Error('Cart data was not returned from the server.');
       }
-
-      setResult(result);
 
     } catch (err: unknown) {
       if (err instanceof Error) {
@@ -72,75 +114,125 @@ export default function MagicRequestForm() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <div className="w-full max-w-lg mx-auto font-body">
+      <Toast message="Your candle was added to the cart!" show={showToast} />
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="bg-white rounded-xl shadow-lg p-8 space-y-6"
       >
-        <div className="mb-4">
+        <div className="space-y-2">
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-neutral-dark text-lg font-bold font-sans"
             htmlFor="prompt"
           >
             What kind of candle are you imagining?
           </label>
+          <p className="text-sm text-neutral-dark/80">
+            Describe the scent, mood, or memory you want to capture.
+          </p>
           <textarea
             id="prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            rows={4}
-            placeholder="e.g., A cozy cabin in the woods during a thunderstorm"
+            className="w-full h-32 p-4 bg-cream rounded-lg border-2 border-subtle-border 
+                       focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent 
+                       transition-all duration-300 ease-in-out"
+            placeholder="e.g., 'A cozy library with hints of old books, vanilla, and a crackling fireplace.'"
             required
           />
         </div>
 
-        <div className="mb-6">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="size"
-          >
-            Candle Size
+        <div className="space-y-2">
+          <label className="block text-neutral-dark text-lg font-bold font-sans">
+            Choose Your Candle Size
           </label>
-          <select
-            id="size"
-            value={size}
-            onChange={(e) => setSize(e.target.value)}
-            className="shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          >
-            <option>Small 4oz</option>
-            <option>Medium 8oz</option>
-            <option>Large 16oz</option>
-          </select>
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            {candleSizes.map((candle) => (
+              <button
+                key={candle.value}
+                type="button"
+                onClick={() => setSize(candle.value)}
+                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
+                           ${
+                             size === candle.value
+                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
+                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
+                           }`}
+              >
+                <span className="font-bold font-sans block">{candle.name}</span>
+                <span className="text-sm">
+                  {candle.value.match(/\((.*)\)/)?.[1]}
+                </span>
+              </button>
+            ))}
+          </div>
         </div>
 
-        <div>
+        <div className="space-y-2">
+          <label className="block text-neutral-dark text-lg font-bold font-sans">
+            Choose Your Wick
+          </label>
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            {wickOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setWick(option.value)}
+                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
+                           ${
+                             wick === option.value
+                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
+                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
+                           }`}
+              >
+                <span className="font-bold font-sans block">{option.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-neutral-dark text-lg font-bold font-sans">
+            Choose Your Jar
+          </label>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
+            {jarOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setJar(option.value)}
+                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
+                           ${
+                             jar === option.value
+                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
+                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
+                           }`}
+              >
+                <span className="font-bold font-sans block">{option.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="pt-4">
           <button
             type="submit"
             disabled={loading}
-            className="w-full btn-primary"
+            className="w-full btn-primary disabled:opacity-50 disabled:scale-100"
           >
-            {loading ? 'Generating...' : 'Generate Candle'}
+            {loading ? 'Adding to Cart...' : 'Add My Candle to Cart'}
           </button>
         </div>
       </form>
       {error && (
         <div
-          className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative"
+          className="bg-destructive/10 border-2 border-destructive text-destructive/80 px-4 py-3 rounded-lg relative mt-6"
           role="alert"
         >
-          <strong className="font-bold">An Error Occurred</strong>
+          <strong className="font-bold font-sans">Oh no, something went wrong!</strong>
           <span className="block sm:inline ml-2">{error}</span>
-        </div>
-      )}
-      {result && (
-        <div className="mt-6 border rounded shadow-lg overflow-hidden">
-          <div 
-            dangerouslySetInnerHTML={{ __html: result.description }}
-            className="candle-description"
-          />
         </div>
       )}
     </div>
   );
-} 
+}

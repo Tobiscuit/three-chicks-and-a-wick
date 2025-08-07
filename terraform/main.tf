@@ -83,7 +83,7 @@ resource "aws_lambda_function" "magic_request_handler" {
   filename         = "lambda/magic-request.zip"
   function_name    = "${var.project_name}-magic-request"
   role            = aws_iam_role.lambda_role.arn
-  handler         = "index.handler"
+  handler         = "index.magicRequestHandler"
   runtime         = "nodejs20.x"
   timeout         = 30
 
@@ -144,7 +144,12 @@ resource "aws_iam_role_policy" "appsync_lambda_policy" {
         Action = [
           "lambda:InvokeFunction"
         ]
-        Resource = aws_lambda_function.magic_request_handler.arn
+        Resource = [
+          aws_lambda_function.magic_request_handler.arn,
+          aws_lambda_function.create_checkout_handler.arn,
+          aws_lambda_function.add_to_cart_handler.arn,
+          aws_lambda_function.create_cart_with_custom_item_handler.arn
+        ]
       }
     ]
   })
@@ -159,6 +164,42 @@ resource "aws_appsync_datasource" "lambda" {
 
   lambda_config {
     function_arn = aws_lambda_function.magic_request_handler.arn
+  }
+}
+
+# AppSync Data Source for Create Checkout Lambda
+resource "aws_appsync_datasource" "lambda_create_checkout" {
+  api_id           = aws_appsync_graphql_api.main.id
+  name             = "lambda_create_checkout_datasource"
+  service_role_arn = aws_iam_role.appsync_role.arn
+  type             = "AWS_LAMBDA"
+
+  lambda_config {
+    function_arn = aws_lambda_function.create_checkout_handler.arn
+  }
+}
+
+# AppSync Data Source for Add To Cart Lambda
+resource "aws_appsync_datasource" "lambda_add_to_cart" {
+  api_id           = aws_appsync_graphql_api.main.id
+  name             = "lambda_add_to_cart_datasource"
+  service_role_arn = aws_iam_role.appsync_role.arn
+  type             = "AWS_LAMBDA"
+
+  lambda_config {
+    function_arn = aws_lambda_function.add_to_cart_handler.arn
+  }
+}
+
+# AppSync Data Source for Create Cart With Custom Item Lambda
+resource "aws_appsync_datasource" "lambda_create_cart_with_custom_item" {
+  api_id           = aws_appsync_graphql_api.main.id
+  name             = "lambda_create_cart_with_custom_item_datasource"
+  service_role_arn = aws_iam_role.appsync_role.arn
+  type             = "AWS_LAMBDA"
+
+  lambda_config {
+    function_arn = aws_lambda_function.create_cart_with_custom_item_handler.arn
   }
 }
 
@@ -200,9 +241,87 @@ resource "aws_appsync_resolver" "create_checkout" {
   api_id      = aws_appsync_graphql_api.main.id
   field       = "createCheckout"
   type        = "Mutation"
-  data_source = aws_appsync_datasource.lambda.name # We can reuse the same data source
+  data_source = aws_appsync_datasource.lambda_create_checkout.name
 
   request_template = "$util.toJson($context.arguments)"
+
+  response_template = "$util.toJson($context.result)"
+}
+
+# Lambda function for adding a custom product to the cart
+resource "aws_lambda_function" "add_to_cart_handler" {
+  filename         = "lambda/magic-request.zip" # We'll use the same zip file for now
+  function_name    = "${var.project_name}-add-to-cart"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "index.addToCartHandler" # New handler
+  runtime          = "nodejs20.x"
+  timeout          = 30
+
+  environment {
+    variables = {
+      SHOPIFY_STOREFRONT_API_TOKEN = var.shopify_storefront_api_token
+      SHOPIFY_STORE_DOMAIN       = var.shopify_store_domain
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_policy]
+}
+
+# AppSync Resolver for addToCart mutation
+resource "aws_appsync_resolver" "add_to_cart" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "addToCart"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda_add_to_cart.name
+
+  request_template = <<EOF
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "arguments": $utils.toJson($context.arguments)
+    }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+# Lambda function for creating a cart with a custom item
+resource "aws_lambda_function" "create_cart_with_custom_item_handler" {
+  filename         = "lambda/magic-request.zip"
+  function_name    = "${var.project_name}-create-cart-with-custom-item"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "index.createCartWithCustomItemHandler" # New handler
+  runtime          = "nodejs20.x"
+  timeout          = 30
+
+  environment {
+    variables = {
+      SHOPIFY_STOREFRONT_API_TOKEN = var.shopify_storefront_api_token
+      SHOPIFY_STORE_DOMAIN       = var.shopify_store_domain
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_policy]
+}
+
+# AppSync Resolver for createCartWithCustomItem mutation
+resource "aws_appsync_resolver" "create_cart_with_custom_item" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "createCartWithCustomItem"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda_create_cart_with_custom_item.name
+
+  request_template = <<EOF
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "arguments": $utils.toJson($context.arguments)
+    }
+}
+EOF
 
   response_template = "$util.toJson($context.result)"
 }

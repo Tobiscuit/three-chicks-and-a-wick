@@ -6,8 +6,8 @@ import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
 import { useEffect } from 'react';
-import { useMediaQuery } from '@/hooks/useMediaQuery'; // Import the new hook
-import { RemoveScroll } from 'react-remove-scroll'; // Import the new component
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+import { RemoveScroll } from 'react-remove-scroll';
 import Link from 'next/link';
 
 interface CartProps {
@@ -32,7 +32,7 @@ const desktopCartVariants = {
   exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2 } },
 }
 
-// Define a type for the cart item
+// Re-simplified CartItemType
 type CartItemType = {
   lineId: string;
   quantity: number;
@@ -61,7 +61,6 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
   const controls = useAnimation();
 
   useEffect(() => {
-    // Only run the hint animation on mobile for the first item
     if (isMobile && isFirstItem) {
       const hintAnimation = async () => {
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -75,13 +74,11 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
 
   return (
     <li className="relative mb-4 overflow-hidden">
-        {/* Delete button that sits underneath */}
         <div className="absolute inset-y-0 right-0 flex items-center justify-center bg-destructive text-white w-20">
             <button onClick={onRemove} className="w-full h-full flex items-center justify-center">
                 <Trash2 size={24} />
             </button>
         </div>
-        {/* The draggable content */}
         <motion.div
             className="relative flex items-center gap-4 bg-cream"
             drag={isMobile ? "x" : false}
@@ -115,7 +112,6 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
                     <Minus size={18} />
                 </button>
             </div>
-            {/* Desktop-only remove button */}
             <div className="hidden md:block pr-2">
                 <button onClick={onRemove} className="text-neutral-dark/50 hover:text-destructive transition-colors">
                     <X size={20} />
@@ -127,7 +123,6 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  // Get the checkoutUrl directly from the cart context
   const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
   const isDesktop = useMediaQuery('(min-width: 768px)');
 
@@ -137,7 +132,6 @@ export default function Cart({ isOpen, onClose }: CartProps) {
     return sum + parseFloat(item.product.price.amount) * item.quantity;
   }, 0);
 
-  // The new checkout handler is much simpler
   const handleCheckout = () => {
     if (checkoutUrl) {
       window.location.href = checkoutUrl;
@@ -221,4 +215,4 @@ export default function Cart({ isOpen, onClose }: CartProps) {
       )}
     </AnimatePresence>
   );
-} 
+}
