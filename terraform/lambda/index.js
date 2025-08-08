@@ -201,11 +201,15 @@ exports.startMagicPreviewHandler = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
   const sqs = new AWS.SQS();
   const table = process.env.PREVIEW_JOBS_TABLE;
-  const queueUrl = (await sqs.getQueueUrl({ QueueName: `${process.env.AWS_LAMBDA_FUNCTION_NAME.split('-')[0]}-preview-jobs` }).promise()).QueueUrl;
-
-  await dynamodb.put({ TableName: table, Item: { jobId, status: 'QUEUED', args } }).promise();
-  await sqs.sendMessage({ QueueUrl: queueUrl, MessageBody: JSON.stringify({ jobId }) }).promise();
-  return { jobId, status: 'QUEUED' };
+  const queueUrl = process.env.PREVIEW_JOBS_QUEUE_URL;
+  try {
+    if (!table || !queueUrl) throw new Error('Preview job resources missing');
+    await dynamodb.put({ TableName: table, Item: { jobId, status: 'QUEUED', args } }).promise();
+    await sqs.sendMessage({ QueueUrl: queueUrl, MessageBody: JSON.stringify({ jobId }) }).promise();
+    return { jobId, status: 'QUEUED' };
+  } catch (e) {
+    return { jobId, status: 'ERROR', error: e.message || 'Unknown error' };
+  }
 };
 
 // Async preview: get job status
