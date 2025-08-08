@@ -5,7 +5,7 @@ import MagicRequestForm from '@/features/magic-request/components/MagicRequestFo
 export default function MagicRequestPage() {
   return (
     <div className="container mx-auto px-4 py-8 sm:py-12">
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-10">
           <h1 className="text-4xl sm:text-5xl font-extrabold text-gray-900 tracking-tight">
             Create Your Magic Candle

@@ -71,47 +71,93 @@ exports.magicRequestV2Handler = async (event) => {
     const size = args.size || '';
     const wick = args.wick || '';
     const jar = args.jar || '';
+    const wax = args.wax || '';
 
-    console.log('[magicRequestV2] AI mode (always on). size=', size, 'wick=', wick, 'jar=', jar);
+    console.log('[magicRequestV2] AI mode (always on). size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const system = `You are a brand-aware UI content generator for Three Chicks and a Wick.
-Return ONLY JSON (no code fences). Follow this schema exactly:
+    const system = `You are a senior UI/UX content and style generator for Three Chicks and a Wick.
+Return ONLY JSON (no code fences). Follow this schema exactly and keep it compact:
 {
   "version": "1.0",
   "candle": { "name": string, "size": string },
-  "preview": { "blocks": Array< { "type": "heading"|"paragraph"|"bulletList", "level"?: 1|2|3|4, "text"?: string, "items"?: string[] } > },
-  "design": { "tokens": { "headingColor": string, "bodyColor": string, "accent": string }, "classes": { "container": string, "heading": string, "paragraph": string, "list": string } },
-  "animation": { "entrance": "fadeInUp"|"fadeIn"|"slideUp", "durationMs": number }
+  "htmlBase64": string, // base64 of full, mobile-first HTML with inline <style> scoped to #candle-preview
+  "preview"?: { "blocks": Array< { "type": "heading"|"paragraph"|"bulletList", "level"?: 1|2|3|4, "text"?: string, "items"?: string[] } > },
+  "design"?: {
+    "tokens"?: {
+      "backgroundHex"?: string,
+      "headingHex"?: string,
+      "bodyHex"?: string,
+      "accentHex"?: string
+    }
+  },
+  "animation"?: { "entrance": "fadeInUp"|"fadeIn"|"slideUp", "durationMs": number }
 }
 Rules:
-- Use tokens from our design system: playfulPink, creativeTeal, candlelightCream, charcoalTin.
-- Use Nunito for headings and Poppins for body in classes.
-- No HTML anywhere; only plain text and arrays.`;
+- Theme the layout visually to the user's idea using archetypal and modern applied psychology (e.g., cozy library on a cold rainy day → warm ambers, textured paper, subtle vignette). Avoid images; use color, shape, and subtle texture.
+- Keep fonts aligned with brand (Nunito for headings, Poppins for body). Assume fonts are already loaded globally; do not import fonts.
+- Mobile-first: headings max ~text-2xl on mobile; increase modestly on larger viewports with media queries.
+- Wrap all CSS in a <style> scoped to #candle-preview to avoid leaking styles. Wrap the entire content in <div id=\"candle-preview\"> ... </div>.
+- The brand accent must be visible: use #F25287 for borders, highlights, or bullets; consider subtle gradients with cream (#FEF9E7) and theme hues.
+- Use US English. Do NOT copy the user's text verbatim. Create an original title (2–4 words) and two short paragraphs (total 90–150 words) capturing the vibe with correct spelling and grammar.
+- Include a short 3–5 item bullet list of features. Style bullets using the accent color.
+- Ensure accessible contrast and avoid excessive saturation.`;
 
-    const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}"`;
-    const result = await model.generateContent({
-      contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
-      generationConfig: { responseMimeType: 'application/json' },
-    });
-    const raw = (result && result.response && result.response.text()) || '';
-    const cleaned = raw.replace(/```[\s\S]*?```/g, '').trim();
-    const start = cleaned.indexOf('{');
-    const end = cleaned.lastIndexOf('}');
-    if (start !== -1 && end !== -1 && end > start) {
-      const jsonSlice = cleaned.slice(start, end + 1);
+    const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}", wax: "${wax}"`;
+    const tryGenerate = async () => {
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.5 },
+      });
+      const raw = (result && result.response && result.response.text()) || '';
+      const cleaned = raw
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/[\u2028\u2029]/g, ' ')
+        .trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start === -1 || end === -1 || end <= start) {
+        throw new Error('AI output missing JSON braces');
+      }
+      let jsonSlice = cleaned.slice(start, end + 1);
+      // Escape stray single backslashes in JSON strings
+      jsonSlice = jsonSlice.replace(/\\(?!["\\/bfnrtu])/g, '\\\\\\');
       try {
-        const aiParsed = JSON.parse(jsonSlice);
-        if (aiParsed && aiParsed.preview && Array.isArray(aiParsed.preview.blocks)) {
-          aiParsed.meta = { mode: 'ai' };
-          return { json: JSON.stringify(aiParsed) };
+        let aiParsed;
+        try {
+          aiParsed = JSON.parse(jsonSlice);
+        } catch (_e) {
+          const relaxed = jsonSlice.replace(/\r?\n/g, ' ').replace(/,(\s*[}\]])/g, '$1');
+          aiParsed = JSON.parse(relaxed);
         }
+        if (aiParsed && typeof aiParsed.htmlBase64 === 'string' && aiParsed.htmlBase64.trim()) {
+          try {
+            const html = Buffer.from(aiParsed.htmlBase64, 'base64').toString('utf8');
+            aiParsed.html = html;
+          } catch (_d) {
+            // ignore decode errors; will fall back to blocks if present
+          }
+          delete aiParsed.htmlBase64;
+        }
+        aiParsed.meta = { mode: 'ai' };
+        return aiParsed;
       } catch (e) {
         throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
       }
+    };
+
+    // Attempt up to 2 tries for robustness
+    let parsed;
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        parsed = await tryGenerate();
+        break;
+      } catch (e) {
+        if (attempt === 1) throw e;
+      }
     }
-    throw new Error('AI output missing valid JSON payload');
+    return { json: JSON.stringify(parsed) };
   } catch (error) {
     console.error('Error in magicRequestV2 handler:', error);
     const fallback = {

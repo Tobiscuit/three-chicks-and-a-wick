@@ -1,6 +1,6 @@
 type Query {
   magicRequest(prompt: String!, size: String!): MagicRequestResult
-  magicRequestV2(prompt: String!, size: String!, wick: String!, jar: String!): MagicPreviewV2
+  magicRequestV2(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!): MagicPreviewV2
 }
 
 type Mutation {

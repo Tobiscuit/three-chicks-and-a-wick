@@ -5,13 +5,32 @@ import { graphqlConfig } from '@/lib/graphql-config';
 import { useCart } from '@/context/CartContext';
 
 type PreviewBlock = {
-  type: 'heading' | 'paragraph' | string;
+  type: 'heading' | 'paragraph' | 'bulletList' | string;
+  level?: 1 | 2 | 3 | 4;
   text?: string;
+  items?: string[];
 };
 
 type MagicPreview = {
-  candle?: { name?: string } | null;
+  version?: string;
+  candle?: { name?: string; size?: string } | null;
+  html?: string | null;
   preview?: { blocks?: PreviewBlock[] } | null;
+  design?: {
+    tokens?: {
+      backgroundHex?: string;
+      headingHex?: string;
+      bodyHex?: string;
+      accentHex?: string;
+    };
+    classes?: {
+      container?: string;
+      heading?: string;
+      paragraph?: string;
+      list?: string;
+    };
+  } | null;
+  animation?: { entrance?: 'fadeInUp' | 'fadeIn' | 'slideUp'; durationMs?: number } | null;
 };
 
 const Toast = ({ message, show }: { message: string; show: boolean }) => {
@@ -42,17 +61,24 @@ const jarOptions = [
   { name: 'Ceramic', value: 'Ceramic' },
 ];
 
+const waxOptions = [
+  { name: 'Soy', value: 'Soy' },
+  { name: 'Beeswax', value: 'Beeswax' },
+  { name: 'Coconut Soy', value: 'Coconut Soy' },
+];
+
 export default function MagicRequestForm() {
   const [prompt, setPrompt] = useState('');
   const [size, setSize] = useState(candleSizes[0].value);
   const [wick, setWick] = useState(wickOptions[0].value);
   const [jar, setJar] = useState(jarOptions[0].value);
+  const [wax, setWax] = useState(waxOptions[0].value);
   const [generating, setGenerating] = useState(false);
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [previewName, setPreviewName] = useState<string | null>(null);
-  const [previewDescription, setPreviewDescription] = useState<string | null>(null);
+  const [previewData, setPreviewData] = useState<MagicPreview | null>(null);
   const { cartId, setCart } = useCart();
 
   const handleGenerate = async () => {
@@ -60,8 +86,8 @@ export default function MagicRequestForm() {
     setError(null);
 
     const query = `
-      query MagicRequestV2($prompt: String!, $size: String!, $wick: String!, $jar: String!) {
-        magicRequestV2(prompt: $prompt, size: $size, wick: $wick, jar: $jar) {
+      query MagicRequestV2($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
+        magicRequestV2(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
           json
         }
       }`;
@@ -75,7 +101,7 @@ export default function MagicRequestForm() {
         },
         body: JSON.stringify({
           query,
-          variables: { prompt, size, wick, jar },
+          variables: { prompt, size, wick, jar, wax },
         }),
       });
 
@@ -90,13 +116,7 @@ export default function MagicRequestForm() {
       }
       const parsed = JSON.parse(result.json) as MagicPreview;
       setPreviewName(parsed?.candle?.name ?? null);
-      const paragraph = parsed?.preview?.blocks?.find((block) => block.type === 'paragraph');
-      const heading = parsed?.preview?.blocks?.find((block) => block.type === 'heading');
-      const html = `
-        ${heading ? `<h2>${heading.text}</h2>` : ''}
-        ${paragraph ? `<p>${paragraph.text}</p>` : ''}
-      `;
-      setPreviewDescription(html);
+      setPreviewData(parsed);
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message); else setError('An unknown error occurred.');
     } finally {
@@ -112,8 +132,8 @@ export default function MagicRequestForm() {
     const isExistingCart = !!cartId;
     const mutation = isExistingCart
       ? `
-      mutation addToCart($prompt: String!, $size: String!, $wick: String!, $jar: String!, $cartId: ID!) {
-        addToCart(prompt: $prompt, size: $size, wick: $wick, jar: $jar, cartId: $cartId) {
+      mutation addToCart($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!, $cartId: ID!) {
+        addToCart(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax, cartId: $cartId) {
           id
           totalQuantity
           cost { totalAmount { amount currencyCode } }
@@ -121,8 +141,8 @@ export default function MagicRequestForm() {
         }
       }`
       : `
-      mutation createCartWithCustomItem($prompt: String!, $size: String!, $wick: String!, $jar: String!) {
-        createCartWithCustomItem(prompt: $prompt, size: $size, wick: $wick, jar: $jar) {
+      mutation createCartWithCustomItem($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
+        createCartWithCustomItem(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
           id
           totalQuantity
           cost { totalAmount { amount currencyCode } }
@@ -131,8 +151,8 @@ export default function MagicRequestForm() {
       }`;
 
     const variables = isExistingCart
-      ? { prompt, size, wick, jar, cartId }
-      : { prompt, size, wick, jar };
+      ? { prompt, size, wick, jar, wax, cartId }
+      : { prompt, size, wick, jar, wax };
 
     try {
       const response = await fetch(graphqlConfig.url, {
@@ -177,9 +197,10 @@ export default function MagicRequestForm() {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto font-body">
+    <div className="w-full mx-auto font-body">
       <Toast message="Your candle was added to the cart!" show={showToast} />
-      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
+      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8 space-y-6 order-1 md:order-none">
         <div className="space-y-2">
           <label
             className="block text-neutral-dark text-lg font-bold font-sans"
@@ -194,12 +215,35 @@ export default function MagicRequestForm() {
             id="prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="w-full h-32 p-4 bg-cream rounded-lg border-2 border-subtle-border 
+            className="w-full md:h-48 h-32 p-4 bg-cream rounded-lg border-2 border-subtle-border 
                        focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent 
                        transition-all duration-300 ease-in-out"
             placeholder="e.g., 'A cozy library with hints of old books, vanilla, and a crackling fireplace.'"
             required
           />
+        </div>
+
+        <div className="space-y-2">
+          <label className="block text-neutral-dark text-lg font-bold font-sans">
+            Choose Your Wax
+          </label>
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            {waxOptions.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setWax(option.value)}
+                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
+                           ${
+                             wax === option.value
+                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
+                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
+                           }`}
+              >
+                <span className="font-bold font-sans block">{option.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -283,7 +327,7 @@ export default function MagicRequestForm() {
           >
             {generating ? 'Conjuring...' : 'Reveal My Candle'}
           </button>
-          {previewName && previewDescription && (
+          {previewName && previewData && (
             <button
               type="submit"
               disabled={adding}
@@ -295,11 +339,22 @@ export default function MagicRequestForm() {
         </div>
       </form>
 
-      {previewName && previewDescription && (
-        <div className="mt-6 bg-cream border-2 border-subtle-border rounded-lg p-5 space-y-2">
-          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: previewDescription }} />
+      <div className="order-2 md:order-none">
+        <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Left column: options already above */}
+            {/* Right column: prompt textarea moved here on desktop */}
+          </div>
         </div>
-      )}
+        {previewData && previewData.html ? (
+          <div className="mt-6 md:mt-0 rounded-2xl border-2 border-cream p-3 sm:p-4">
+            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: previewData.html }} />
+          </div>
+        ) : previewData ? (
+          <PreviewBlocks preview={previewData} />
+        ) : null}
+      </div>
+      </div>
       {error && (
         <div
           className="bg-destructive/10 border-2 border-destructive text-destructive/80 px-4 py-3 rounded-lg relative mt-6"
@@ -309,6 +364,63 @@ export default function MagicRequestForm() {
           <span className="block sm:inline ml-2">{error}</span>
         </div>
       )}
+    </div>
+  );
+}
+
+function PreviewBlocks({ preview }: { preview: MagicPreview }) {
+  const bg = preview.design?.tokens?.backgroundHex || '#FFF7ED';
+  const headingColor = preview.design?.tokens?.headingHex || '#1F2937';
+  const bodyColor = preview.design?.tokens?.bodyHex || '#374151';
+  const accent = preview.design?.tokens?.accentHex || '#F472B6';
+  const containerClasses = preview.design?.classes?.container || 'rounded-xl p-5';
+  const headingClasses = preview.design?.classes?.heading || 'font-headings text-2xl sm:text-3xl';
+  const paragraphClasses = preview.design?.classes?.paragraph || 'font-body text-base sm:text-lg';
+  const listClasses = preview.design?.classes?.list || 'list-none space-y-2';
+
+  return (
+    <div className="mt-6 rounded-2xl border-2 border-cream bg-cream p-3 sm:p-4">
+      <div
+        className={`rounded-xl shadow-sm ${containerClasses}`}
+        style={{ backgroundColor: bg, color: bodyColor }}
+      >
+        <div className="space-y-3">
+          {(preview.preview?.blocks || []).map((block, idx) => {
+          if (block.type === 'heading') {
+            const Tag = (block.level && block.level >= 1 && block.level <= 4 ? (`h${block.level}` as const) : 'h2');
+            return (
+              <Tag key={idx} className={headingClasses} style={{ color: headingColor }}>
+                {block.text}
+              </Tag>
+            );
+          }
+          if (block.type === 'paragraph') {
+            return (
+              <p key={idx} className={paragraphClasses}>
+                {block.text}
+              </p>
+            );
+          }
+          if (block.type === 'bulletList') {
+            return (
+              <ul key={idx} className={listClasses}>
+                {(block.items || []).map((it, i) => (
+                  <li key={i} className="flex items-start gap-2">
+                    <span
+                      className="mt-2 inline-block h-2 w-2 flex-shrink-0 rounded-full"
+                      style={{ backgroundColor: accent }}
+                    />
+                    <span className={paragraphClasses}>{it}</span>
+                  </li>
+                ))}
+              </ul>
+            );
+          }
+          return null;
+          })}
+          <div className="h-1 rounded-full" style={{ backgroundColor: accent, opacity: 0.3 }} />
+        </div>
+      </div>
     </div>
   );
 }
