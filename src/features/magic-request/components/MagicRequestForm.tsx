@@ -80,17 +80,24 @@ export default function MagicRequestForm() {
   const [showToast, setShowToast] = useState(false);
   const [previewName, setPreviewName] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<MagicPreview | null>(null);
+  const [jobId, setJobId] = useState<string | null>(null);
   const { cartId, setCart } = useCart();
 
   const handleGenerate = async () => {
     setGenerating(true);
     setError(null);
 
-    const query = `
-      query MagicRequestV2($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
-        magicRequestV2(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
-          json
+    // Start async preview job
+    const startMutation = `
+      mutation StartMagicPreview($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
+        startMagicPreview(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
+          jobId
+          status
         }
+      }`;
+    const getJobQuery = `
+      query MagicPreviewJob($jobId: ID!) {
+        magicPreviewJob(jobId: $jobId) { jobId status html error }
       }`;
 
     try {
@@ -100,10 +107,7 @@ export default function MagicRequestForm() {
           'Content-Type': 'application/json',
           'x-api-key': graphqlConfig.apiKey,
         },
-        body: JSON.stringify({
-          query,
-          variables: { prompt, size, wick, jar, wax },
-        }),
+        body: JSON.stringify({ query: startMutation, variables: { prompt, size, wick, jar, wax } }),
       });
 
       const responseData = await response.json();
@@ -111,17 +115,39 @@ export default function MagicRequestForm() {
         throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
       }
 
-      const result = responseData.data?.magicRequestV2;
-      if (!result || !result.json) {
-        throw new Error('No preview data returned.');
-      }
-      const parsed = JSON.parse(result.json) as MagicPreview;
-      setPreviewName(parsed?.candle?.name ?? null);
-      setPreviewData(parsed);
+      const started = responseData.data?.startMagicPreview;
+      if (!started?.jobId) throw new Error('Failed to start preview job.');
+      setJobId(started.jobId);
+
+      // Poll until READY or ERROR
+      const startedAt = Date.now();
+      const poll = async () => {
+        const res = await fetch(graphqlConfig.url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-api-key': graphqlConfig.apiKey },
+          body: JSON.stringify({ query: getJobQuery, variables: { jobId: started.jobId } }),
+        });
+        const data = await res.json();
+        if (data.errors) throw new Error(data.errors.map((e: { message: string }) => e.message).join('\n'));
+        const job = data.data?.magicPreviewJob;
+        if (job?.status === 'READY' && job.html) {
+          setPreviewData({ version: '1.0', candle: { name: previewName ?? undefined, size }, html: job.html });
+          setGenerating(false);
+          return;
+        }
+        if (job?.status === 'ERROR') {
+          throw new Error(job?.error || 'Preview generation failed');
+        }
+        // Keep polling fast to stay responsive; back off after ~10s
+        const elapsed = Date.now() - startedAt;
+        const delay = elapsed < 10000 ? 1000 : 2000;
+        setTimeout(poll, delay);
+      };
+      poll();
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message); else setError('An unknown error occurred.');
     } finally {
-      setGenerating(false);
+      // leave generating true while polling; it will be turned off on READY or on error
     }
   };
 

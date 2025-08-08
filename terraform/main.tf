@@ -384,10 +384,6 @@ EOF
 
   response_template = "$util.toJson($context.result)"
 }
-EOF
-
-  response_template = "$util.toJson($context.result)"
-}
 
 # Lambda function for creating a checkout
 resource "aws_lambda_function" "create_checkout_handler" {
