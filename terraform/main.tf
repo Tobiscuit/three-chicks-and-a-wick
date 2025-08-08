@@ -183,6 +183,8 @@ resource "aws_lambda_function" "magic_request_v2_handler" {
     variables = {
       GEMINI_API_KEY = var.gemini_api_key
       GEMINI_MODEL   = var.gemini_model
+      PREVIEW_JOBS_TABLE = aws_dynamodb_table.preview_jobs.name
+      PREVIEW_JOBS_QUEUE_URL = aws_sqs_queue.preview_jobs.id
     }
   }
 
