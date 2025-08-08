@@ -8,7 +8,7 @@ exports.magicRequestHandler = async (event) => {
     // AppSync passes JSON in event.arguments
     const args = event && event.arguments ? event.arguments : {};
     const prompt = args.prompt || null;
-    const size = args.size || null;
+    const size = argssize || null;
 
     if (!prompt || !size) {
       throw new Error("Missing 'prompt' or 'size' in the request arguments.");
@@ -16,7 +16,7 @@ exports.magicRequestHandler = async (event) => {
 
     // Use Gemini to generate name and description as strict JSON
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
 
     const instruction = `Return ONLY valid minified JSON with keys candleName (string) and description (HTML string). No code fences, no extra text.
 Constraints:
@@ -76,7 +76,7 @@ exports.magicRequestV2Handler = async (event) => {
     console.log('[magicRequestV2] AI mode (always on). size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
     const system = `You are a senior UI/UX content and style generator for Three Chicks and a Wick.
 Return ONLY JSON (no code fences). Follow this schema exactly and keep it compact:
 {
@@ -107,8 +107,11 @@ Rules:
     const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}", wax: "${wax}"`;
     const tryGenerate = async () => {
       const result = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.5 },
+        contents: [
+          { role: 'user', parts: [{ text: system }] },
+          { role: 'user', parts: [{ text: user }] }
+        ],
+        generationConfig: { responseMimeType: 'application/json', temperature: 0.3 },
       });
       const raw = (result && result.response && result.response.text()) || '';
       const cleaned = raw
@@ -118,7 +121,14 @@ Rules:
       const start = cleaned.indexOf('{');
       const end = cleaned.lastIndexOf('}');
       if (start === -1 || end === -1 || end <= start) {
-        throw new Error('AI output missing JSON braces');
+        // Treat as raw HTML response
+        let html = cleaned;
+        html = html.replace(/```[\s\S]*?```/g, '').trim();
+        html = html
+          .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+          .replace(/ on\w+="[^"]*"/gi, '')
+          .replace(/ on\w+='[^']*'/gi, '');
+        return { version: '1.0', candle: { name: '', size }, html, meta: { mode: 'ai-html' } };
       }
       let jsonSlice = cleaned.slice(start, end + 1);
       // Escape stray single backslashes in JSON strings
@@ -141,6 +151,13 @@ Rules:
           delete aiParsed.htmlBase64;
         }
         aiParsed.meta = { mode: 'ai' };
+        // Grammar/light cleanup for title and paragraphs if present
+        if (aiParsed.candle && typeof aiParsed.candle.name === 'string') {
+          aiParsed.candle.name = aiParsed.candle.name
+            .replace(/\s+/g, ' ')
+            .replace(/[^a-zA-Z0-9'\-\s]/g, '')
+            .trim();
+        }
         return aiParsed;
       } catch (e) {
         throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
@@ -214,7 +231,7 @@ const findVariantAndAddToCart = async (cartId, { size, wick, jar, prompt }) => {
 
   // 2. Call Gemini to get the recipe and determine the scent tier
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-1.5-flash" });
   
   const chandlerPrompt = `You are a master chandler creating a recipe for a custom candle based on a user's prompt. The user's prompt is: "${prompt}". Create a detailed scent recipe. Aim for a sophisticated and well-balanced blend of 3 to 5 high-quality scent materials. Do not exceed 7 unique materials under any circumstances. Return ONLY a JSON object with two keys: "candleName" (a creative name for the candle) and "materials" (an array of unique scent material strings).`;
   

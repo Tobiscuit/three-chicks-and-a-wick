@@ -92,6 +92,7 @@ resource "aws_lambda_function" "magic_request_handler" {
     variables = {
       DYNAMODB_TABLE = aws_dynamodb_table.magic_requests.name
       GEMINI_API_KEY = var.gemini_api_key
+      GEMINI_MODEL   = var.gemini_model
       SHOPIFY_ADMIN_API_TOKEN = var.shopify_admin_api_token
       SHOPIFY_STORE_DOMAIN = var.shopify_store_domain
     }
@@ -113,6 +114,7 @@ resource "aws_lambda_function" "magic_request_v2_handler" {
   environment {
     variables = {
       GEMINI_API_KEY = var.gemini_api_key
+      GEMINI_MODEL   = var.gemini_model
     }
   }
 
@@ -289,6 +291,7 @@ resource "aws_lambda_function" "create_checkout_handler" {
     variables = {
       DYNAMODB_TABLE = aws_dynamodb_table.magic_requests.name
       GEMINI_API_KEY = var.gemini_api_key
+      GEMINI_MODEL   = var.gemini_model
       SHOPIFY_ADMIN_API_TOKEN = var.shopify_admin_api_token
       SHOPIFY_STORE_DOMAIN = var.shopify_store_domain
     }

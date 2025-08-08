@@ -16,6 +16,12 @@ variable "gemini_api_key" {
   sensitive   = true
 }
 
+variable "gemini_model" {
+  description = "Google Gemini model id (e.g., gemini-2.5-pro)"
+  type        = string
+  default     = "gemini-1.5-flash"
+}
+
 variable "shopify_admin_api_token" {
   description = "Shopify Admin API token"
   type        = string

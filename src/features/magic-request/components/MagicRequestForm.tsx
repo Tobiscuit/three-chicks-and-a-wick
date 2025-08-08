@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { graphqlConfig } from '@/lib/graphql-config';
 import { useCart } from '@/context/CartContext';
+import ShadowHtmlPreview from './ShadowHtmlPreview';
 
 type PreviewBlock = {
   type: 'heading' | 'paragraph' | 'bulletList' | string;
@@ -197,164 +198,94 @@ export default function MagicRequestForm() {
   };
 
   return (
-    <div className="w-full mx-auto font-body">
+    <div className="w-full mx-auto font-body max-w-4xl">
       <Toast message="Your candle was added to the cart!" show={showToast} />
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8 space-y-6 order-1 md:order-none">
-        <div className="space-y-2">
-          <label
-            className="block text-neutral-dark text-lg font-bold font-sans"
-            htmlFor="prompt"
-          >
-            What kind of candle are you imagining?
-          </label>
-          <p className="text-sm text-neutral-dark/80">
-            Describe the scent, mood, or memory you want to capture.
-          </p>
-          <textarea
-            id="prompt"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            className="w-full md:h-48 h-32 p-4 bg-cream rounded-lg border-2 border-subtle-border 
-                       focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent 
-                       transition-all duration-300 ease-in-out"
-            placeholder="e.g., 'A cozy library with hints of old books, vanilla, and a crackling fireplace.'"
-            required
-          />
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-neutral-dark text-lg font-bold font-sans">
-            Choose Your Wax
-          </label>
-          <div className="grid grid-cols-3 gap-4 pt-2">
-            {waxOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setWax(option.value)}
-                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
-                           ${
-                             wax === option.value
-                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
-                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
-                           }`}
-              >
-                <span className="font-bold font-sans block">{option.name}</span>
-              </button>
-            ))}
+      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          {/* Left: options */}
+          <div className="space-y-6">
+            <div className="space-y-2">
+              <label className="block text-neutral-dark text-lg font-bold font-sans">Choose Your Wax</label>
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                {waxOptions.map((option) => (
+                  <button key={option.value} type="button" onClick={() => setWax(option.value)}
+                    className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu ${wax === option.value ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105' : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'}`}>
+                    <span className="font-bold font-sans block">{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-neutral-dark text-lg font-bold font-sans">Choose Your Candle Size</label>
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                {candleSizes.map((candle) => (
+                  <button key={candle.value} type="button" onClick={() => setSize(candle.value)}
+                    className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu ${size === candle.value ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105' : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'}`}>
+                    <span className="font-bold font-sans block">{candle.name}</span>
+                    <span className="text-sm">{candle.value.match(/\((.*)\)/)?.[1]}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-neutral-dark text-lg font-bold font-sans">Choose Your Wick</label>
+              <div className="grid grid-cols-3 gap-4 pt-2">
+                {wickOptions.map((option) => (
+                  <button key={option.value} type="button" onClick={() => setWick(option.value)}
+                    className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu ${wick === option.value ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105' : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'}`}>
+                    <span className="font-bold font-sans block">{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="block text-neutral-dark text-lg font-bold font-sans">Choose Your Jar</label>
+              <div className="grid grid-cols-2 md:grid-cols-2 gap-4 pt-2">
+                {jarOptions.map((option) => (
+                  <button key={option.value} type="button" onClick={() => setJar(option.value)}
+                    className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu ${jar === option.value ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105' : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'}`}>
+                    <span className="font-bold font-sans block">{option.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
-        </div>
 
-        <div className="space-y-2">
-          <label className="block text-neutral-dark text-lg font-bold font-sans">
-            Choose Your Candle Size
-          </label>
-          <div className="grid grid-cols-3 gap-4 pt-2">
-            {candleSizes.map((candle) => (
-              <button
-                key={candle.value}
-                type="button"
-                onClick={() => setSize(candle.value)}
-                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
-                           ${
-                             size === candle.value
-                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
-                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
-                           }`}
-              >
-                <span className="font-bold font-sans block">{candle.name}</span>
-                <span className="text-sm">
-                  {candle.value.match(/\((.*)\)/)?.[1]}
-                </span>
+          {/* Right: prompt and actions */}
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="block text-neutral-dark text-lg font-bold font-sans" htmlFor="prompt">What kind of candle are you imagining?</label>
+              <p className="text-sm text-neutral-dark/80">Describe the scent, mood, or memory you want to capture.</p>
+              <textarea id="prompt" value={prompt} onChange={(e) => setPrompt(e.target.value)}
+                className="w-full h-48 p-4 bg-cream rounded-lg border-2 border-subtle-border focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition-all duration-300 ease-in-out"
+                placeholder="e.g., 'A cozy library with hints of old books, vanilla, and a crackling fireplace.'" required />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <button type="button" onClick={handleGenerate} disabled={generating || !prompt} className="w-full sm:w-auto btn-secondary disabled:opacity-50 disabled:scale-100">
+                {generating ? 'Conjuring...' : 'Reveal My Candle'}
               </button>
-            ))}
+              {previewName && previewData && (
+                <button type="submit" disabled={adding} className="w-full sm:w-auto btn-primary disabled:opacity-50 disabled:scale-100">
+                  {adding ? 'Adding to Cart...' : 'Add My Candle to Cart'}
+                </button>
+              )}
+            </div>
           </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-neutral-dark text-lg font-bold font-sans">
-            Choose Your Wick
-          </label>
-          <div className="grid grid-cols-3 gap-4 pt-2">
-            {wickOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setWick(option.value)}
-                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
-                           ${
-                             wick === option.value
-                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
-                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
-                           }`}
-              >
-                <span className="font-bold font-sans block">{option.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-neutral-dark text-lg font-bold font-sans">
-            Choose Your Jar
-          </label>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-2">
-            {jarOptions.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setJar(option.value)}
-                className={`text-center p-4 border-2 rounded-lg cursor-pointer transition-all duration-300 transform-gpu 
-                           ${
-                             jar === option.value
-                               ? 'bg-secondary text-neutral-dark border-secondary shadow-lg scale-105'
-                               : 'bg-cream text-neutral-dark border-subtle-border hover:border-accent hover:-translate-y-1'
-                           }`}
-              >
-                <span className="font-bold font-sans block">{option.name}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="flex flex-col sm:flex-row gap-3 pt-4">
-          <button
-            type="button"
-            onClick={handleGenerate}
-            disabled={generating || !prompt}
-            className="w-full sm:w-auto btn-secondary disabled:opacity-50 disabled:scale-100"
-          >
-            {generating ? 'Conjuring...' : 'Reveal My Candle'}
-          </button>
-          {previewName && previewData && (
-            <button
-              type="submit"
-              disabled={adding}
-              className="w-full sm:w-auto btn-primary disabled:opacity-50 disabled:scale-100"
-            >
-              {adding ? 'Adding to Cart...' : 'Add My Candle to Cart'}
-            </button>
-          )}
         </div>
       </form>
 
-      <div className="order-2 md:order-none">
-        <div className="grid grid-cols-1 gap-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Left column: options already above */}
-            {/* Right column: prompt textarea moved here on desktop */}
-          </div>
+      {/* Output below */}
+      {previewData && (
+        <div className="mt-8 md:mt-10 max-w-3xl mx-auto">
+          {previewData.html ? (
+            <div className="rounded-2xl border-2 border-cream p-3 sm:p-4">
+              <ShadowHtmlPreview html={previewData.html} />
+            </div>
+          ) : (
+            <PreviewBlocks preview={previewData} />
+          )}
         </div>
-        {previewData && previewData.html ? (
-          <div className="mt-6 md:mt-0 rounded-2xl border-2 border-cream p-3 sm:p-4">
-            <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: previewData.html }} />
-          </div>
-        ) : previewData ? (
-          <PreviewBlocks preview={previewData} />
-        ) : null}
-      </div>
-      </div>
+      )}
       {error && (
         <div
           className="bg-destructive/10 border-2 border-destructive text-destructive/80 px-4 py-3 rounded-lg relative mt-6"
