@@ -73,6 +73,7 @@ exports.magicRequestV2Handler = async (event) => {
     const jar = args.jar || '';
 
     const mode = (process.env.PREVIEW_MODE || 'static').toLowerCase();
+    console.log('[magicRequestV2] mode=', mode, 'size=', size, 'wick=', wick, 'jar=', jar);
 
     if (mode === 'ai') {
       const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
