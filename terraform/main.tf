@@ -113,7 +113,6 @@ resource "aws_lambda_function" "magic_request_v2_handler" {
   environment {
     variables = {
       GEMINI_API_KEY = var.gemini_api_key
-      PREVIEW_MODE   = var.preview_mode
     }
   }
 

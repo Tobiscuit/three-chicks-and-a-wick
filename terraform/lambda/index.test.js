@@ -19,15 +19,7 @@ describe('magicRequestV2Handler', () => {
     process.env = originalEnv;
   });
 
-  test('returns static payload when PREVIEW_MODE=static', async () => {
-    process.env.PREVIEW_MODE = 'static';
-    const { magicRequestV2Handler } = require('./index');
-    const res = await magicRequestV2Handler(baseEvent);
-    const parsed = JSON.parse(res.json);
-    expect(parsed.meta.mode).toBe('static');
-    expect(parsed.candle.name).toMatch(/Your The Spark Magic Candle/);
-    expect(parsed.preview.blocks[1].text).toMatch(/Inspired by your idea/);
-  });
+  // Static mode removed; always AI. We only test error fallback now.
 
   // Note: AI-success path requires mocking an ESM module; we validate AI error fallback instead.
 

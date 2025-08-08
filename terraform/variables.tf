@@ -34,8 +34,4 @@ variable "shopify_storefront_api_token" {
   sensitive   = true
 }
 
-variable "preview_mode" {
-  description = "Magic preview mode: 'static' or 'ai'"
-  type        = string
-  default     = "static"
-}
+// preview_mode removed; AI is always on

@@ -11,12 +11,11 @@ This Terraform configuration creates:
 1. Copy `terraform.tfvars.example` to `terraform.tfvars`
 2. Fill in your API keys and configuration
 3. Run `deploy.bat` to deploy the infrastructure
-4. To enable AI preview generation, set `preview_mode = "ai"` in `terraform.tfvars` (default is `static`).
 
 ## What it creates
 
 - **GraphQL API**: AppSync API with queries `magicRequest` and `magicRequestV2`
-- **Lambda Functions**: Handles Gemini AI preview (V2) and Shopify integration
+- **Lambda Functions**: Handles Gemini AI preview (V2, always on) and Shopify integration
 - **DynamoDB Table**: Stores candle request data
 - **IAM Roles**: Proper permissions for all services
 

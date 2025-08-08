@@ -72,13 +72,11 @@ exports.magicRequestV2Handler = async (event) => {
     const wick = args.wick || '';
     const jar = args.jar || '';
 
-    const mode = (process.env.PREVIEW_MODE || 'static').toLowerCase();
-    console.log('[magicRequestV2] mode=', mode, 'size=', size, 'wick=', wick, 'jar=', jar);
+    console.log('[magicRequestV2] AI mode (always on). size=', size, 'wick=', wick, 'jar=', jar);
 
-    if (mode === 'ai') {
-      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-      const system = `You are a brand-aware UI content generator for Three Chicks and a Wick.
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const system = `You are a brand-aware UI content generator for Three Chicks and a Wick.
 Return ONLY JSON (no code fences). Follow this schema exactly:
 {
   "version": "1.0",
@@ -92,49 +90,28 @@ Rules:
 - Use Nunito for headings and Poppins for body in classes.
 - No HTML anywhere; only plain text and arrays.`;
 
-      const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}"`;
-      const result = await model.generateContent({
-        contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
-        generationConfig: { responseMimeType: 'application/json' },
-      });
-      const raw = (result && result.response && result.response.text()) || '';
-      const cleaned = raw.replace(/```[\s\S]*?```/g, '').trim();
-      const start = cleaned.indexOf('{');
-      const end = cleaned.lastIndexOf('}');
-      if (start !== -1 && end !== -1 && end > start) {
-        const jsonSlice = cleaned.slice(start, end + 1);
-        try {
-          const aiParsed = JSON.parse(jsonSlice);
-          if (aiParsed && aiParsed.preview && Array.isArray(aiParsed.preview.blocks)) {
-            aiParsed.meta = { mode: 'ai' };
-            return { json: JSON.stringify(aiParsed) };
-          }
-        } catch (e) {
-          throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
+    const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}"`;
+    const result = await model.generateContent({
+      contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
+      generationConfig: { responseMimeType: 'application/json' },
+    });
+    const raw = (result && result.response && result.response.text()) || '';
+    const cleaned = raw.replace(/```[\s\S]*?```/g, '').trim();
+    const start = cleaned.indexOf('{');
+    const end = cleaned.lastIndexOf('}');
+    if (start !== -1 && end !== -1 && end > start) {
+      const jsonSlice = cleaned.slice(start, end + 1);
+      try {
+        const aiParsed = JSON.parse(jsonSlice);
+        if (aiParsed && aiParsed.preview && Array.isArray(aiParsed.preview.blocks)) {
+          aiParsed.meta = { mode: 'ai' };
+          return { json: JSON.stringify(aiParsed) };
         }
+      } catch (e) {
+        throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
       }
-      throw new Error('AI output missing valid JSON payload');
     }
-
-    // Static deterministic fallback
-    const parsed = {
-      version: '1.0',
-      candle: { name: `Your ${size.replace(/\(.*\)/, '').trim()} Magic Candle`, size },
-      preview: {
-        blocks: [
-          { type: 'heading', level: 2, text: `Your ${size.replace(/\(.*\)/, '').trim()} Magic Candle` },
-          { type: 'paragraph', text: `Inspired by your idea with a ${wick} wick in a ${jar} jar: ${prompt}` }
-        ]
-      },
-      design: {
-        tokens: { headingColor: 'charcoalTin', bodyColor: 'charcoalTin', accent: 'playfulPink' },
-        classes: { container: 'bg-cream rounded-xl p-6 border-subtle-border', heading: 'font-headings text-2xl', paragraph: 'font-body text-base', list: 'list-disc pl-5' }
-      },
-      animation: { entrance: 'fadeInUp', durationMs: 450 },
-      meta: { mode: 'static' }
-    };
-
-    return { json: JSON.stringify(parsed) };
+    throw new Error('AI output missing valid JSON payload');
   } catch (error) {
     console.error('Error in magicRequestV2 handler:', error);
     const fallback = {
