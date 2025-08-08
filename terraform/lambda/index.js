@@ -66,6 +66,12 @@ Example: {"candleName":"Cozy Library Glow","description":"<h2>Cozy Library Glow<
 // V2: Strict JSON response (no HTML parsing) for UI-safe rendering
 exports.magicRequestV2Handler = async (event) => {
   try {
+    if (event && event.action === 'start') {
+      return await exports.startMagicPreviewHandler(event);
+    }
+    if (event && event.action === 'get') {
+      return await exports.getMagicPreviewJobHandler(event);
+    }
     const args = event && event.arguments ? event.arguments : {};
     const prompt = args.prompt || '';
     const size = args.size || '';
@@ -185,6 +191,59 @@ Rules:
       animation: { entrance: 'fadeIn', durationMs: 300 },
     };
     return { json: JSON.stringify(fallback) };
+  }
+};
+// Async preview: start job -> enqueue -> return jobId
+exports.startMagicPreviewHandler = async (event) => {
+  const args = event.arguments || {};
+  const jobId = `job_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const sqs = new AWS.SQS();
+  const table = process.env.PREVIEW_JOBS_TABLE;
+  const queueUrl = (await sqs.getQueueUrl({ QueueName: `${process.env.AWS_LAMBDA_FUNCTION_NAME.split('-')[0]}-preview-jobs` }).promise()).QueueUrl;
+
+  await dynamodb.put({ TableName: table, Item: { jobId, status: 'QUEUED', args } }).promise();
+  await sqs.sendMessage({ QueueUrl: queueUrl, MessageBody: JSON.stringify({ jobId }) }).promise();
+  return { jobId, status: 'QUEUED' };
+};
+
+// Async preview: get job status
+exports.getMagicPreviewJobHandler = async (event) => {
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const table = process.env.PREVIEW_JOBS_TABLE;
+  const jobId = event.arguments.jobId;
+  const res = await dynamodb.get({ TableName: table, Key: { jobId } }).promise();
+  const item = res.Item || { jobId, status: 'ERROR', error: 'NotFound' };
+  return item;
+};
+
+// SQS worker (same bundle)
+exports.previewWorkerHandler = async (event) => {
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const table = process.env.PREVIEW_JOBS_TABLE;
+  const { GoogleGenerativeAI } = require('@google/generative-ai');
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
+
+  for (const record of event.Records) {
+    const { jobId } = JSON.parse(record.body);
+    const job = await dynamodb.get({ TableName: table, Key: { jobId } }).promise();
+    const args = job.Item.args;
+    await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :p', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':p': 'PROCESSING' } }).promise();
+    try {
+      const system = `Return ONLY HTML wrapped in <div id="candle-preview"> with one inline <style> that scopes to #candle-preview only. Mobile-first typography; brand accent #F25287 and cream #FEF9E7; US English; two paragraphs total 90–150 words; 3–5 bullet list.`;
+      const user = `prompt: "${args.prompt}", size: "${args.size}", wick: "${args.wick}", jar: "${args.jar}", wax: "${args.wax}"`;
+      const result = await model.generateContent({ contents: [ { role: 'user', parts: [{ text: system }] }, { role: 'user', parts: [{ text: user }] } ], generationConfig: { responseMimeType: 'text/html', temperature: 0.3 } });
+      let html = (result && result.response && result.response.text()) || '';
+      html = html.replace(/```[\s\S]*?```/g, '').replace(/[\u2028\u2029]/g, ' ').trim();
+      html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '').replace(/ on\w+="[^"]*"/gi, '').replace(/ on\w+='[^']*'/gi, '');
+      await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :r, html = :h', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':r': 'READY', ':h': html } }).promise();
+    } catch (e) {
+      await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :e, error = :m', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':e': 'ERROR', ':m': e.message || 'unknown' } }).promise();
+    }
   }
 };
 // --- NEW LOGIC FOR MULTI-PRODUCT VARIANT ARCHITECTURE ---

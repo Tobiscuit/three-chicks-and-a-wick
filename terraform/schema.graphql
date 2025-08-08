@@ -1,12 +1,14 @@
 type Query {
   magicRequest(prompt: String!, size: String!): MagicRequestResult
   magicRequestV2(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!): MagicPreviewV2
+  magicPreviewJob(jobId: ID!): MagicPreviewJob!
 }
 
 type Mutation {
   createCheckout(items: [CartItemInput!]!): CheckoutResult
   addToCart(prompt: String!, size: String!, wick: String!, jar: String!, cartId: ID!): Cart
   createCartWithCustomItem(prompt: String!, size: String!, wick: String!, jar: String!): Cart
+  startMagicPreview(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!): MagicPreviewJob!
 }
 
 type Cart {
@@ -74,6 +76,20 @@ type CheckoutResult {
 
 type MagicPreviewV2 {
   json: String!
+}
+
+enum PreviewJobStatus {
+  QUEUED
+  PROCESSING
+  READY
+  ERROR
+}
+
+type MagicPreviewJob {
+  jobId: ID!
+  status: PreviewJobStatus!
+  html: String
+  error: String
 }
 
 type Error {

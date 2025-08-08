@@ -10,6 +10,73 @@ terraform {
 provider "aws" {
   region = var.aws_region
 }
+# SQS queue for async preview jobs
+resource "aws_sqs_queue" "preview_jobs" {
+  name                      = "${var.project_name}-preview-jobs"
+  visibility_timeout_seconds = 300
+  message_retention_seconds = 86400
+}
+
+# DynamoDB table for preview jobs
+resource "aws_dynamodb_table" "preview_jobs" {
+  name           = "${var.project_name}-preview-jobs"
+  billing_mode   = "PAY_PER_REQUEST"
+  hash_key       = "jobId"
+
+  attribute {
+    name = "jobId"
+    type = "S"
+  }
+}
+
+# Worker Lambda for processing preview jobs
+resource "aws_lambda_function" "preview_worker" {
+  filename         = "lambda/magic-request.zip"
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
+  function_name    = "${var.project_name}-preview-worker"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "index.previewWorkerHandler"
+  runtime          = "nodejs20.x"
+  timeout          = 120
+  memory_size      = 2048
+
+  environment {
+    variables = {
+      GEMINI_API_KEY = var.gemini_api_key
+      GEMINI_MODEL   = var.gemini_model
+      PREVIEW_JOBS_TABLE = aws_dynamodb_table.preview_jobs.name
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "preview_worker_sqs" {
+  event_source_arn = aws_sqs_queue.preview_jobs.arn
+  function_name    = aws_lambda_function.preview_worker.arn
+  batch_size       = 1
+}
+
+# IAM policy to allow worker to read/write preview jobs table and SQS
+resource "aws_iam_role_policy" "lambda_preview_policy" {
+  name = "${var.project_name}-lambda-preview-policy"
+  role = aws_iam_role.lambda_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect   = "Allow",
+        Action   = ["dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:GetItem"],
+        Resource = aws_dynamodb_table.preview_jobs.arn
+      },
+      {
+        Effect   = "Allow",
+        Action   = ["sqs:SendMessage", "sqs:ReceiveMessage", "sqs:DeleteMessage", "sqs:GetQueueAttributes"],
+        Resource = aws_sqs_queue.preview_jobs.arn
+      }
+    ]
+  })
+}
+
 
 # DynamoDB table for data storage
 resource "aws_dynamodb_table" "magic_requests" {
@@ -272,6 +339,48 @@ resource "aws_appsync_resolver" "magic_request_v2" {
     "payload": {
         "arguments": $utils.toJson($context.arguments)
     }
+}
+
+# AppSync Resolver to start preview job (sync)
+resource "aws_appsync_resolver" "start_magic_preview" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "startMagicPreview"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "start"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+# AppSync Resolver to get preview job status
+resource "aws_appsync_resolver" "magic_preview_job" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "magicPreviewJob"
+  type        = "Query"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "get"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
 }
 EOF
 
