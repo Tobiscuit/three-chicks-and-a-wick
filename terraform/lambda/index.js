@@ -5,41 +5,54 @@ exports.magicRequestHandler = async (event) => {
   try {
     console.log('Full event:', JSON.stringify(event, null, 2));
     
-    const argsString = event.arguments;
-    const promptMatch = argsString.match(/prompt=([^,]+)/);
-    const sizeMatch = argsString.match(/size=([^}]+)/);
-    
-    const prompt = promptMatch ? promptMatch[1] : null;
-    const size = sizeMatch ? sizeMatch[1] : null;
+    // AppSync passes JSON in event.arguments
+    const args = event && event.arguments ? event.arguments : {};
+    const prompt = args.prompt || null;
+    const size = args.size || null;
 
     if (!prompt || !size) {
       throw new Error("Missing 'prompt' or 'size' in the request arguments.");
     }
 
+    // Use Gemini to generate name and description as strict JSON
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-    const customerPrompt = `You are a scent poet...`; // (existing prompt)
-    const customerResult = await model.generateContent(customerPrompt);
-    const customerDescription = customerResult.response.text();
+    const instruction = `Return ONLY valid minified JSON with keys candleName (string) and description (HTML string). No code fences, no extra text.
+Constraints:
+- candleName: concise, creative, no quotes inside
+- description: brief HTML with <h2> for the name and a <p> paragraph that we can render directly.
+Example: {"candleName":"Cozy Library Glow","description":"<h2>Cozy Library Glow</h2><p>...text...</p>"}`;
 
-    const nameMatch = customerDescription.match(/<h2[^>]*>([^<]+)<\/h2>/);
-    const candleName = nameMatch ? nameMatch[1] : "Your Custom Candle";
+    const aiPrompt = `User prompt: "${prompt}". Size: "${size}". ${instruction}`;
+    const result = await model.generateContent(aiPrompt);
+    const text = (result && result.response && result.response.text()) || '';
 
-    const clientPrompt = `You are a master chandler...`; // (existing prompt)
-    const clientResult = await model.generateContent(clientPrompt);
-    const recipeJsonString = clientResult.response.text().replace(/```json|```/g, '').trim();
-    const recipe = JSON.parse(recipeJsonString);
-    
-    const draftOrderPayload = { /* ... existing payload ... */ };
-
-    const shopifyApiUrl = `https://${process.env.SHOPIFY_STORE_DOMAIN}/admin/api/2024-07/draft_orders.json`;
-    await fetch(shopifyApiUrl, { /* ... existing fetch options ... */ });
-    
-    return {
-      candleName: candleName,
-      description: customerDescription,
+    const extractJson = (raw) => {
+      if (!raw) return null;
+      // Strip code fences if present
+      const cleaned = raw.replace(/```json|```/gi, '').trim();
+      // Find the first '{' and last '}' to tolerate prefix/suffix noise
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start === -1 || end === -1 || end <= start) return null;
+      return cleaned.slice(start, end + 1);
     };
+
+    let jsonText = extractJson(text);
+    let parsed;
+    try {
+      parsed = jsonText ? JSON.parse(jsonText) : null;
+    } catch (_e) {
+      parsed = null;
+    }
+
+    const fallbackName = `Your ${size.replace(/\(.*\)/, '').trim()} Magic Candle`;
+    const safeName = (parsed && typeof parsed.candleName === 'string' && parsed.candleName.trim()) || fallbackName;
+    const safeDesc = (parsed && typeof parsed.description === 'string' && parsed.description.trim())
+      || `<h2>${safeName}</h2><p>A handcrafted creation inspired by: ${prompt}</p>`;
+
+    return { candleName: safeName, description: safeDesc };
 
   } catch (error) {
     console.error("Error in Lambda handler:", error);
@@ -50,6 +63,89 @@ exports.magicRequestHandler = async (event) => {
   }
 };
 
+// V2: Strict JSON response (no HTML parsing) for UI-safe rendering
+exports.magicRequestV2Handler = async (event) => {
+  try {
+    const args = event && event.arguments ? event.arguments : {};
+    const prompt = args.prompt || '';
+    const size = args.size || '';
+    const wick = args.wick || '';
+    const jar = args.jar || '';
+
+    const mode = (process.env.PREVIEW_MODE || 'static').toLowerCase();
+
+    if (mode === 'ai') {
+      const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+      const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+      const system = `You are a brand-aware UI content generator for Three Chicks and a Wick.
+Return ONLY JSON (no code fences). Follow this schema exactly:
+{
+  "version": "1.0",
+  "candle": { "name": string, "size": string },
+  "preview": { "blocks": Array< { "type": "heading"|"paragraph"|"bulletList", "level"?: 1|2|3|4, "text"?: string, "items"?: string[] } > },
+  "design": { "tokens": { "headingColor": string, "bodyColor": string, "accent": string }, "classes": { "container": string, "heading": string, "paragraph": string, "list": string } },
+  "animation": { "entrance": "fadeInUp"|"fadeIn"|"slideUp", "durationMs": number }
+}
+Rules:
+- Use tokens from our design system: playfulPink, creativeTeal, candlelightCream, charcoalTin.
+- Use Nunito for headings and Poppins for body in classes.
+- No HTML anywhere; only plain text and arrays.`;
+
+      const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}"`;
+      const result = await model.generateContent({
+        contents: [{ role: 'user', parts: [{ text: `${system}\n\n${user}` }] }],
+        generationConfig: { responseMimeType: 'application/json' },
+      });
+      const raw = (result && result.response && result.response.text()) || '';
+      const cleaned = raw.replace(/```[\s\S]*?```/g, '').trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start !== -1 && end !== -1 && end > start) {
+        const jsonSlice = cleaned.slice(start, end + 1);
+        try {
+          const aiParsed = JSON.parse(jsonSlice);
+          if (aiParsed && aiParsed.preview && Array.isArray(aiParsed.preview.blocks)) {
+            aiParsed.meta = { mode: 'ai' };
+            return { json: JSON.stringify(aiParsed) };
+          }
+        } catch (e) {
+          throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
+        }
+      }
+      throw new Error('AI output missing valid JSON payload');
+    }
+
+    // Static deterministic fallback
+    const parsed = {
+      version: '1.0',
+      candle: { name: `Your ${size.replace(/\(.*\)/, '').trim()} Magic Candle`, size },
+      preview: {
+        blocks: [
+          { type: 'heading', level: 2, text: `Your ${size.replace(/\(.*\)/, '').trim()} Magic Candle` },
+          { type: 'paragraph', text: `Inspired by your idea with a ${wick} wick in a ${jar} jar: ${prompt}` }
+        ]
+      },
+      design: {
+        tokens: { headingColor: 'charcoalTin', bodyColor: 'charcoalTin', accent: 'playfulPink' },
+        classes: { container: 'bg-cream rounded-xl p-6 border-subtle-border', heading: 'font-headings text-2xl', paragraph: 'font-body text-base', list: 'list-disc pl-5' }
+      },
+      animation: { entrance: 'fadeInUp', durationMs: 450 },
+      meta: { mode: 'static' }
+    };
+
+    return { json: JSON.stringify(parsed) };
+  } catch (error) {
+    console.error('Error in magicRequestV2 handler:', error);
+    const fallback = {
+      version: '1.0',
+      candle: { name: 'Your Magic Candle', size: '' },
+      preview: { blocks: [ { type: 'heading', level: 2, text: 'Your Magic Candle' }, { type: 'paragraph', text: error.message || 'Something went wrong.' } ] },
+      design: { tokens: { headingColor: 'charcoalTin', bodyColor: 'charcoalTin', accent: 'playfulPink' }, classes: { container: 'bg-cream rounded-xl p-6 border-subtle-border', heading: 'font-headings text-2xl', paragraph: 'font-body text-base', list: 'list-disc pl-5' } },
+      animation: { entrance: 'fadeIn', durationMs: 300 },
+    };
+    return { json: JSON.stringify(fallback) };
+  }
+};
 // --- NEW LOGIC FOR MULTI-PRODUCT VARIANT ARCHITECTURE ---
 
 // Helper function to determine the Scent Tier
@@ -210,15 +306,18 @@ exports.createCartWithCustomItemHandler = async (event) => {
   }
 };
 
-// --- OLD DRAFT ORDER LOGIC (RETAINED FOR REFERENCE, BUT NO LONGER USED BY MAGIC REQUEST) ---
+// Helper for draft order line items used by createCheckout
+const createShopifyLineItem = (item) => {
   if (item.type === 'STANDARD') {
     return {
       variant_id: item.variantId,
       quantity: item.quantity,
     };
-  } else {
+  }
+
     const basePrice = 42.0; 
-    const scentUpcharge = Math.max(0, item.configuration.scentRecipe.materialCount - 3) * 2;
+  const materialCount = item?.configuration?.scentRecipe?.materialCount ?? 0;
+  const scentUpcharge = Math.max(0, materialCount - 3) * 2;
     const finalPrice = basePrice + scentUpcharge;
 
     return {
@@ -226,12 +325,11 @@ exports.createCartWithCustomItemHandler = async (event) => {
       price: finalPrice.toFixed(2),
       quantity: 1,
       custom_attributes: [
-        { key: "Size", value: item.configuration.size },
-        { key: "Jar", value: item.configuration.jarType },
-        { key: "Scent", value: item.configuration.scentRecipe.materials.join(', ') }
-      ]
-    };
-  }
+      { key: 'Size', value: item?.configuration?.size ?? '' },
+      { key: 'Jar', value: item?.configuration?.jarType ?? '' },
+      { key: 'Scent', value: (item?.configuration?.scentRecipe?.materials ?? []).join(', ') },
+    ],
+  };
 };
 
 exports.createCheckoutHandler = async (event) => {

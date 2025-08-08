@@ -37,14 +37,68 @@ export default function MagicRequestForm() {
   const [size, setSize] = useState(candleSizes[0].value);
   const [wick, setWick] = useState(wickOptions[0].value);
   const [jar, setJar] = useState(jarOptions[0].value);
-  const [loading, setLoading] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
+  const [previewName, setPreviewName] = useState<string | null>(null);
+  const [previewDescription, setPreviewDescription] = useState<string | null>(null);
+  const [previewJson, setPreviewJson] = useState<any | null>(null);
   const { cartId, setCart } = useCart();
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setError(null);
+
+    const query = `
+      query MagicRequestV2($prompt: String!, $size: String!, $wick: String!, $jar: String!) {
+        magicRequestV2(prompt: $prompt, size: $size, wick: $wick, jar: $jar) {
+          json
+        }
+      }`;
+
+    try {
+      const response = await fetch(graphqlConfig.url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': graphqlConfig.apiKey,
+        },
+        body: JSON.stringify({
+          query,
+          variables: { prompt, size, wick, jar },
+        }),
+      });
+
+      const responseData = await response.json();
+      if (responseData.errors) {
+        throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
+      }
+
+      const result = responseData.data?.magicRequestV2;
+      if (!result || !result.json) {
+        throw new Error('No preview data returned.');
+      }
+      const parsed = JSON.parse(result.json);
+      setPreviewJson(parsed);
+      setPreviewName(parsed?.candle?.name ?? null);
+      const paragraph = parsed?.preview?.blocks?.find((b: any) => b.type === 'paragraph');
+      const heading = parsed?.preview?.blocks?.find((b: any) => b.type === 'heading');
+      const html = `
+        ${heading ? `<h2>${heading.text}</h2>` : ''}
+        ${paragraph ? `<p>${paragraph.text}</p>` : ''}
+      `;
+      setPreviewDescription(html);
+    } catch (err: unknown) {
+      if (err instanceof Error) setError(err.message); else setError('An unknown error occurred.');
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleAddToCart = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setLoading(true);
+    setAdding(true);
     setError(null);
 
     const isExistingCart = !!cartId;
@@ -98,6 +152,7 @@ export default function MagicRequestForm() {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 3000);
         setPrompt('');
+        // Keep preview so user still sees what was generated
       } else {
         throw new Error('Cart data was not returned from the server.');
       }
@@ -109,17 +164,14 @@ export default function MagicRequestForm() {
         setError('An unknown error occurred.');
       }
     } finally {
-      setLoading(false);
+      setAdding(false);
     }
   };
 
   return (
     <div className="w-full max-w-lg mx-auto font-body">
       <Toast message="Your candle was added to the cart!" show={showToast} />
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl shadow-lg p-8 space-y-6"
-      >
+      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8 space-y-6">
         <div className="space-y-2">
           <label
             className="block text-neutral-dark text-lg font-bold font-sans"
@@ -214,16 +266,32 @@ export default function MagicRequestForm() {
           </div>
         </div>
 
-        <div className="pt-4">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4">
           <button
-            type="submit"
-            disabled={loading}
-            className="w-full btn-primary disabled:opacity-50 disabled:scale-100"
+            type="button"
+            onClick={handleGenerate}
+            disabled={generating || !prompt}
+            className="w-full sm:w-auto btn-secondary disabled:opacity-50 disabled:scale-100"
           >
-            {loading ? 'Adding to Cart...' : 'Add My Candle to Cart'}
+            {generating ? 'Conjuring...' : 'Reveal My Candle'}
           </button>
+          {previewName && previewDescription && (
+            <button
+              type="submit"
+              disabled={adding}
+              className="w-full sm:w-auto btn-primary disabled:opacity-50 disabled:scale-100"
+            >
+              {adding ? 'Adding to Cart...' : 'Add My Candle to Cart'}
+            </button>
+          )}
         </div>
       </form>
+
+      {previewName && previewDescription && (
+        <div className="mt-6 bg-cream border-2 border-subtle-border rounded-lg p-5 space-y-2">
+          <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: previewDescription }} />
+        </div>
+      )}
       {error && (
         <div
           className="bg-destructive/10 border-2 border-destructive text-destructive/80 px-4 py-3 rounded-lg relative mt-6"

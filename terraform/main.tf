@@ -81,6 +81,7 @@ resource "aws_iam_role_policy" "lambda_policy" {
 # Lambda function
 resource "aws_lambda_function" "magic_request_handler" {
   filename         = "lambda/magic-request.zip"
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
   function_name    = "${var.project_name}-magic-request"
   role            = aws_iam_role.lambda_role.arn
   handler         = "index.magicRequestHandler"
@@ -93,6 +94,26 @@ resource "aws_lambda_function" "magic_request_handler" {
       GEMINI_API_KEY = var.gemini_api_key
       SHOPIFY_ADMIN_API_TOKEN = var.shopify_admin_api_token
       SHOPIFY_STORE_DOMAIN = var.shopify_store_domain
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_policy]
+}
+
+# Lambda for Magic Request V2 (JSON-mode preview)
+resource "aws_lambda_function" "magic_request_v2_handler" {
+  filename         = "lambda/magic-request.zip"
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
+  function_name    = "${var.project_name}-magic-request-v2"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "index.magicRequestV2Handler"
+  runtime          = "nodejs20.x"
+  timeout          = 30
+
+  environment {
+    variables = {
+      GEMINI_API_KEY = var.gemini_api_key
+      PREVIEW_MODE   = var.preview_mode
     }
   }
 
@@ -148,7 +169,8 @@ resource "aws_iam_role_policy" "appsync_lambda_policy" {
           aws_lambda_function.magic_request_handler.arn,
           aws_lambda_function.create_checkout_handler.arn,
           aws_lambda_function.add_to_cart_handler.arn,
-          aws_lambda_function.create_cart_with_custom_item_handler.arn
+          aws_lambda_function.create_cart_with_custom_item_handler.arn,
+          aws_lambda_function.magic_request_v2_handler.arn
         ]
       }
     ]
@@ -164,6 +186,18 @@ resource "aws_appsync_datasource" "lambda" {
 
   lambda_config {
     function_arn = aws_lambda_function.magic_request_handler.arn
+  }
+}
+
+# Data source for V2
+resource "aws_appsync_datasource" "lambda_magic_v2" {
+  api_id           = aws_appsync_graphql_api.main.id
+  name             = "lambda_magic_v2_datasource"
+  service_role_arn = aws_iam_role.appsync_role.arn
+  type             = "AWS_LAMBDA"
+
+  lambda_config {
+    function_arn = aws_lambda_function.magic_request_v2_handler.arn
   }
 }
 
@@ -210,7 +244,34 @@ resource "aws_appsync_resolver" "magic_request" {
   type        = "Query"
   data_source = aws_appsync_datasource.lambda.name
 
-  request_template = "$util.toJson($context.arguments)"
+  request_template = <<EOF
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "arguments": $utils.toJson($context.arguments)
+    }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+resource "aws_appsync_resolver" "magic_request_v2" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "magicRequestV2"
+  type        = "Query"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "arguments": $utils.toJson($context.arguments)
+    }
+}
+EOF
 
   response_template = "$util.toJson($context.result)"
 }
@@ -218,6 +279,7 @@ resource "aws_appsync_resolver" "magic_request" {
 # Lambda function for creating a checkout
 resource "aws_lambda_function" "create_checkout_handler" {
   filename         = "lambda/magic-request.zip" # We'll use the same zip file
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
   function_name    = "${var.project_name}-create-checkout"
   role            = aws_iam_role.lambda_role.arn
   handler         = "index.createCheckoutHandler" # New handler
@@ -243,7 +305,15 @@ resource "aws_appsync_resolver" "create_checkout" {
   type        = "Mutation"
   data_source = aws_appsync_datasource.lambda_create_checkout.name
 
-  request_template = "$util.toJson($context.arguments)"
+  request_template = <<EOF
+{
+    "version": "2017-02-28",
+    "operation": "Invoke",
+    "payload": {
+        "arguments": $utils.toJson($context.arguments)
+    }
+}
+EOF
 
   response_template = "$util.toJson($context.result)"
 }
@@ -251,6 +321,7 @@ resource "aws_appsync_resolver" "create_checkout" {
 # Lambda function for adding a custom product to the cart
 resource "aws_lambda_function" "add_to_cart_handler" {
   filename         = "lambda/magic-request.zip" # We'll use the same zip file for now
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
   function_name    = "${var.project_name}-add-to-cart"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.addToCartHandler" # New handler
@@ -290,6 +361,7 @@ EOF
 # Lambda function for creating a cart with a custom item
 resource "aws_lambda_function" "create_cart_with_custom_item_handler" {
   filename         = "lambda/magic-request.zip"
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
   function_name    = "${var.project_name}-create-cart-with-custom-item"
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.createCartWithCustomItemHandler" # New handler

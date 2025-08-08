@@ -1,5 +1,6 @@
 type Query {
   magicRequest(prompt: String!, size: String!): MagicRequestResult
+  magicRequestV2(prompt: String!, size: String!, wick: String!, jar: String!): MagicPreviewV2
 }
 
 type Mutation {
@@ -69,6 +70,10 @@ type MagicRequestResult {
 type CheckoutResult {
   invoice_url: String
   error: Error
+}
+
+type MagicPreviewV2 {
+  json: String!
 }
 
 type Error {
