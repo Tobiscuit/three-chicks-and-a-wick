@@ -109,7 +109,8 @@ resource "aws_lambda_function" "magic_request_v2_handler" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.magicRequestV2Handler"
   runtime          = "nodejs20.x"
-  timeout          = 30
+  timeout          = 120
+  memory_size      = 2048
 
   environment {
     variables = {
