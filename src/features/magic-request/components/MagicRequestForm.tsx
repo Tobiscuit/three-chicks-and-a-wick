@@ -4,6 +4,16 @@ import { useState } from 'react';
 import { graphqlConfig } from '@/lib/graphql-config';
 import { useCart } from '@/context/CartContext';
 
+type PreviewBlock = {
+  type: 'heading' | 'paragraph' | string;
+  text?: string;
+};
+
+type MagicPreview = {
+  candle?: { name?: string } | null;
+  preview?: { blocks?: PreviewBlock[] } | null;
+};
+
 const Toast = ({ message, show }: { message: string; show: boolean }) => {
   if (!show) return null;
   return (
@@ -43,7 +53,6 @@ export default function MagicRequestForm() {
   const [showToast, setShowToast] = useState(false);
   const [previewName, setPreviewName] = useState<string | null>(null);
   const [previewDescription, setPreviewDescription] = useState<string | null>(null);
-  const [previewJson, setPreviewJson] = useState<any | null>(null);
   const { cartId, setCart } = useCart();
 
   const handleGenerate = async () => {
@@ -79,11 +88,10 @@ export default function MagicRequestForm() {
       if (!result || !result.json) {
         throw new Error('No preview data returned.');
       }
-      const parsed = JSON.parse(result.json);
-      setPreviewJson(parsed);
+      const parsed = JSON.parse(result.json) as MagicPreview;
       setPreviewName(parsed?.candle?.name ?? null);
-      const paragraph = parsed?.preview?.blocks?.find((b: any) => b.type === 'paragraph');
-      const heading = parsed?.preview?.blocks?.find((b: any) => b.type === 'heading');
+      const paragraph = parsed?.preview?.blocks?.find((block) => block.type === 'paragraph');
+      const heading = parsed?.preview?.blocks?.find((block) => block.type === 'heading');
       const html = `
         ${heading ? `<h2>${heading.text}</h2>` : ''}
         ${paragraph ? `<p>${paragraph.text}</p>` : ''}
