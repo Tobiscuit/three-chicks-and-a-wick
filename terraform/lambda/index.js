@@ -8,7 +8,7 @@ exports.magicRequestHandler = async (event) => {
     // AppSync passes JSON in event.arguments
     const args = event && event.arguments ? event.arguments : {};
     const prompt = args.prompt || null;
-    const size = argssize || null;
+    const size = args.size || null;
 
     if (!prompt || !size) {
       throw new Error("Missing 'prompt' or 'size' in the request arguments.");
@@ -16,7 +16,7 @@ exports.magicRequestHandler = async (event) => {
 
     // Use Gemini to generate name and description as strict JSON
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
 
     const instruction = `Return ONLY valid minified JSON with keys candleName (string) and description (HTML string). No code fences, no extra text.
 Constraints:
@@ -79,36 +79,11 @@ exports.magicRequestV2Handler = async (event) => {
     const jar = args.jar || '';
     const wax = args.wax || '';
 
-    console.log('[magicRequestV2] AI mode (always on). size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
+    console.log('[magicRequestV2] HTML-only mode. size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
 
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-1.5-flash' });
-    const system = `You are a senior UI/UX content and style generator for Three Chicks and a Wick.
-Return ONLY JSON (no code fences). Follow this schema exactly and keep it compact:
-{
-  "version": "1.0",
-  "candle": { "name": string, "size": string },
-  "htmlBase64": string, // base64 of full, mobile-first HTML with inline <style> scoped to #candle-preview
-  "preview"?: { "blocks": Array< { "type": "heading"|"paragraph"|"bulletList", "level"?: 1|2|3|4, "text"?: string, "items"?: string[] } > },
-  "design"?: {
-    "tokens"?: {
-      "backgroundHex"?: string,
-      "headingHex"?: string,
-      "bodyHex"?: string,
-      "accentHex"?: string
-    }
-  },
-  "animation"?: { "entrance": "fadeInUp"|"fadeIn"|"slideUp", "durationMs": number }
-}
-Rules:
-- Theme the layout visually to the user's idea using archetypal and modern applied psychology (e.g., cozy library on a cold rainy day → warm ambers, textured paper, subtle vignette). Avoid images; use color, shape, and subtle texture.
-- Keep fonts aligned with brand (Nunito for headings, Poppins for body). Assume fonts are already loaded globally; do not import fonts.
-- Mobile-first: headings max ~text-2xl on mobile; increase modestly on larger viewports with media queries.
-- Wrap all CSS in a <style> scoped to #candle-preview to avoid leaking styles. Wrap the entire content in <div id=\"candle-preview\"> ... </div>.
-- The brand accent must be visible: use #F25287 for borders, highlights, or bullets; consider subtle gradients with cream (#FEF9E7) and theme hues.
-- Use US English. Do NOT copy the user's text verbatim. Create an original title (2–4 words) and two short paragraphs (total 90–150 words) capturing the vibe with correct spelling and grammar.
-- Include a short 3–5 item bullet list of features. Style bullets using the accent color.
-- Ensure accessible contrast and avoid excessive saturation.`;
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
+    const system = `You are a world-class UI/UX designer and copywriter for the premium candle brand 'Three Chicks and a Wick.'\n\nYour goal is to produce a complete, mobile-first reveal experience for a customer's custom candle.\n\nReturn ONLY a single raw HTML snippet. No markdown, no code fences, no JSON. The snippet must:\n- Be wrapped in <div id=\"candle-preview\"> ... </div>\n- Include one inline <style> with all CSS scoped to #candle-preview\n- Use accessible, modern design that matches the user's vibe prompt psychologically\n- Use brand fonts (assume available): Nunito for headings, Poppins for body\n- Use brand accent #F25287, cream #FEF9E7, and ensure good contrast\n- Contain an evocative candle name (2–4 words), two short paragraphs total 90–150 words, and a 3–5 item bullet list\n- Be US English and original (do not copy the user's text verbatim)`;
 
     const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}", wax: "${wax}"`;
     const tryGenerate = async () => {
@@ -117,7 +92,7 @@ Rules:
           { role: 'user', parts: [{ text: system }] },
           { role: 'user', parts: [{ text: user }] }
         ],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.3 },
+        generationConfig: { responseMimeType: 'text/html', temperature: 0.3 },
       });
       const raw = (result && result.response && result.response.text()) || '';
       const cleaned = raw

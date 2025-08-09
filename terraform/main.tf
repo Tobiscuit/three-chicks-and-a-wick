@@ -342,6 +342,10 @@ resource "aws_appsync_resolver" "magic_request_v2" {
         "arguments": $utils.toJson($context.arguments)
     }
 }
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
 
 # AppSync Resolver to start preview job (sync)
 resource "aws_appsync_resolver" "start_magic_preview" {
