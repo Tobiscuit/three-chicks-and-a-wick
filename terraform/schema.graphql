@@ -2,13 +2,18 @@ type Query {
   magicRequest(prompt: String!, size: String!): MagicRequestResult
   magicRequestV2(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!): MagicPreviewV2
   magicPreviewJob(jobId: ID!): MagicPreviewJob!
+  # New async API (scaffold)
+  getMagicRequestStatus(jobId: ID!): MagicPreviewJob!
+  getCommunityCreations(limit: Int, nextToken: String): CommunityCreationsPage!
 }
 
 type Mutation {
-  createCheckout(items: [CartItemInput!]!): CheckoutResult
   addToCart(prompt: String!, size: String!, wick: String!, jar: String!, cartId: ID!): Cart
   createCartWithCustomItem(prompt: String!, size: String!, wick: String!, jar: String!): Cart
   startMagicPreview(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!): MagicPreviewJob!
+  # New async API (scaffold)
+  startMagicRequest(prompt: String!, size: String!, wick: String!, jar: String!, wax: String!, cartId: ID): MagicPreviewJob!
+  shareCandle(jobId: ID!): ShareResult!
 }
 
 type Cart {
@@ -69,10 +74,6 @@ type MagicRequestResult {
   description: String!
 }
 
-type CheckoutResult {
-  invoice_url: String
-  error: Error
-}
 
 type MagicPreviewV2 {
   json: String!
@@ -90,9 +91,29 @@ type MagicPreviewJob {
   status: PreviewJobStatus!
   html: String
   error: String
+  cartId: ID
+  variantId: ID
+  isShared: Boolean
 }
 
 type Error {
   message: String!
   type: String!
+}
+
+# Simple scaffolded types for community
+type CommunityItem {
+  jobId: ID!
+  candleName: String
+  html: String
+  createdAt: AWSTimestamp
+}
+
+type CommunityCreationsPage {
+  items: [CommunityItem!]!
+  nextToken: String
+}
+
+type ShareResult {
+  ok: Boolean!
 }

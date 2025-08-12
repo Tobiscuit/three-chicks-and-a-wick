@@ -13,7 +13,7 @@ provider "aws" {
 # SQS queue for async preview jobs
 resource "aws_sqs_queue" "preview_jobs" {
   name                      = "${var.project_name}-preview-jobs"
-  visibility_timeout_seconds = 300
+  visibility_timeout_seconds = 360
   message_retention_seconds = 86400
 }
 
@@ -37,8 +37,8 @@ resource "aws_lambda_function" "preview_worker" {
   role             = aws_iam_role.lambda_role.arn
   handler          = "index.previewWorkerHandler"
   runtime          = "nodejs20.x"
-  timeout          = 120
-  memory_size      = 2048
+  timeout          = 300
+  memory_size      = 3008
 
   environment {
     variables = {
@@ -177,12 +177,13 @@ resource "aws_lambda_function" "magic_request_v2_handler" {
   handler          = "index.magicRequestV2Handler"
   runtime          = "nodejs20.x"
   timeout          = 120
-  memory_size      = 2048
+  memory_size      = 3008
 
   environment {
     variables = {
       GEMINI_API_KEY = var.gemini_api_key
       GEMINI_MODEL   = var.gemini_model
+      DIAGNOSTIC_HELLO = "0"
       PREVIEW_JOBS_TABLE = aws_dynamodb_table.preview_jobs.name
       PREVIEW_JOBS_QUEUE_URL = aws_sqs_queue.preview_jobs.id
     }
@@ -238,7 +239,6 @@ resource "aws_iam_role_policy" "appsync_lambda_policy" {
         ]
         Resource = [
           aws_lambda_function.magic_request_handler.arn,
-          aws_lambda_function.create_checkout_handler.arn,
           aws_lambda_function.add_to_cart_handler.arn,
           aws_lambda_function.create_cart_with_custom_item_handler.arn,
           aws_lambda_function.magic_request_v2_handler.arn
@@ -382,6 +382,87 @@ resource "aws_appsync_resolver" "magic_preview_job" {
   "payload": {
     "arguments": $utils.toJson($context.arguments),
     "action": "get"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+# New resolvers for async Magic Request (scaffold to same Lambda, different action)
+resource "aws_appsync_resolver" "start_magic_request" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "startMagicRequest"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "start"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+resource "aws_appsync_resolver" "get_magic_request_status" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "getMagicRequestStatus"
+  type        = "Query"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "get"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+resource "aws_appsync_resolver" "share_candle" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "shareCandle"
+  type        = "Mutation"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "share"
+  }
+}
+EOF
+
+  response_template = "$util.toJson($context.result)"
+}
+
+resource "aws_appsync_resolver" "get_community_creations" {
+  api_id      = aws_appsync_graphql_api.main.id
+  field       = "getCommunityCreations"
+  type        = "Query"
+  data_source = aws_appsync_datasource.lambda_magic_v2.name
+
+  request_template = <<EOF
+{
+  "version": "2017-02-28",
+  "operation": "Invoke",
+  "payload": {
+    "arguments": $utils.toJson($context.arguments),
+    "action": "community"
   }
 }
 EOF

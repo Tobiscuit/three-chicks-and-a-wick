@@ -1,4 +1,4 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const { GoogleGenAI } = require('@google/genai');
 
 // Handler for the Magic Request (existing functionality)
 exports.magicRequestHandler = async (event) => {
@@ -15,8 +15,10 @@ exports.magicRequestHandler = async (event) => {
     }
 
     // Use Gemini to generate name and description as strict JSON
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
+    const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const modelId = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const modelIdFast = process.env.GEMINI_MODEL || process.env.GEMINI_MODEL_FAST || 'gemini-2.5-flash';
+    console.log('[magicRequest] calling genai', { modelId, mode: 'sync-legacy' });
 
     const instruction = `Return ONLY valid minified JSON with keys candleName (string) and description (HTML string). No code fences, no extra text.
 Constraints:
@@ -25,8 +27,8 @@ Constraints:
 Example: {"candleName":"Cozy Library Glow","description":"<h2>Cozy Library Glow</h2><p>...text...</p>"}`;
 
     const aiPrompt = `User prompt: "${prompt}". Size: "${size}". ${instruction}`;
-    const result = await model.generateContent(aiPrompt);
-    const text = (result && result.response && result.response.text()) || '';
+    const result = await genAI.models.generateContent({ model: modelId, contents: aiPrompt });
+    const text = (result && result.text) ? result.text : (result && result.response && result.response.text()) || '';
 
     const extractJson = (raw) => {
       if (!raw) return null;
@@ -66,11 +68,18 @@ Example: {"candleName":"Cozy Library Glow","description":"<h2>Cozy Library Glow<
 // V2: Strict JSON response (no HTML parsing) for UI-safe rendering
 exports.magicRequestV2Handler = async (event) => {
   try {
+    console.log('[magicRequestV2] version','2025-08-11T-deploy-2');
     if (event && event.action === 'start') {
       return await exports.startMagicPreviewHandler(event);
     }
     if (event && event.action === 'get') {
       return await exports.getMagicPreviewJobHandler(event);
+    }
+    if (event && event.action === 'share') {
+      return await exports.shareCandleHandler(event);
+    }
+    if (event && event.action === 'community') {
+      return await exports.getCommunityCreationsHandler(event);
     }
     const args = event && event.arguments ? event.arguments : {};
     const prompt = args.prompt || '';
@@ -79,92 +88,127 @@ exports.magicRequestV2Handler = async (event) => {
     const jar = args.jar || '';
     const wax = args.wax || '';
 
-    console.log('[magicRequestV2] HTML-only mode. size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
+    console.log('[magicRequestV2] sync path. size=', size, 'wick=', wick, 'jar=', jar, 'wax=', wax);
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
-    const system = `You are a world-class UI/UX designer and copywriter for the premium candle brand 'Three Chicks and a Wick.'\n\nYour goal is to produce a complete, mobile-first reveal experience for a customer's custom candle.\n\nReturn ONLY a single raw HTML snippet. No markdown, no code fences, no JSON. The snippet must:\n- Be wrapped in <div id=\"candle-preview\"> ... </div>\n- Include one inline <style> with all CSS scoped to #candle-preview\n- Use accessible, modern design that matches the user's vibe prompt psychologically\n- Use brand fonts (assume available): Nunito for headings, Poppins for body\n- Use brand accent #F25287, cream #FEF9E7, and ensure good contrast\n- Contain an evocative candle name (2–4 words), two short paragraphs total 90–150 words, and a 3–5 item bullet list\n- Be US English and original (do not copy the user's text verbatim)`;
+    const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const modelId = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
+    const system = `You are a world-class UI/UX designer and copywriter for the premium candle brand 'Three Chicks and a Wick.'\nYour goal is to produce a complete, mobile-first reveal experience for a customer's custom candle.`;
+    const textPrompt = `${system}\n\nReturn ONLY a strict, minified JSON object with a single key \"htmlBase64\" whose value is the base64-encoded UTF-8 HTML snippet. Do not include markdown or code fences.\nHTML requirements:\n- Wrap in <div id=\"candle-preview\"> ... </div>\n- One inline <style> with CSS scoped to #candle-preview\n- Fonts: Nunito (headings), Poppins (body)\n- Colors: accent #F25287, cream #FEF9E7, good contrast\n- Content: evocative candle name (2–4 words), two short paragraphs totaling 90–150 words, and a 3–5 item bullet list\n- US English and original\n\nUser input (use to guide tone only): prompt=${prompt}; size=${size}; wick=${wick}; jar=${jar}; wax=${wax}`;
+    // No internal timeouts; await the model call directly to capture actual failure modes
 
-    const user = `prompt: "${prompt}", size: "${size}", wick: "${wick}", jar: "${jar}", wax: "${wax}"`;
-    const tryGenerate = async () => {
-      const result = await model.generateContent({
-        contents: [
-          { role: 'user', parts: [{ text: system }] },
-          { role: 'user', parts: [{ text: user }] }
-        ],
-        generationConfig: { responseMimeType: 'text/html', temperature: 0.3 },
-      });
-      const raw = (result && result.response && result.response.text()) || '';
-      const cleaned = raw
-        .replace(/```[\s\S]*?```/g, '')
-        .replace(/[\u2028\u2029]/g, ' ')
-        .trim();
-      const start = cleaned.indexOf('{');
-      const end = cleaned.lastIndexOf('}');
-      if (start === -1 || end === -1 || end <= start) {
-        // Treat as raw HTML response
-        let html = cleaned;
-        html = html.replace(/```[\s\S]*?```/g, '').trim();
-        html = html
-          .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-          .replace(/ on\w+="[^"]*"/gi, '')
-          .replace(/ on\w+='[^']*'/gi, '');
-        return { version: '1.0', candle: { name: '', size }, html, meta: { mode: 'ai-html' } };
-      }
-      let jsonSlice = cleaned.slice(start, end + 1);
-      // Escape stray single backslashes in JSON strings
-      jsonSlice = jsonSlice.replace(/\\(?!["\\/bfnrtu])/g, '\\\\\\');
+    // Diagnostic mode: if DIAGNOSTIC_HELLO is set, send a trivial prompt to validate key/connectivity
+    if (process.env.DIAGNOSTIC_HELLO === '1') {
+      const diagStart = Date.now();
+      console.log('[magicRequestV2][diag] BEGIN hello-world test', { modelId });
       try {
-        let aiParsed;
-        try {
-          aiParsed = JSON.parse(jsonSlice);
-        } catch (_e) {
-          const relaxed = jsonSlice.replace(/\r?\n/g, ' ').replace(/,(\s*[}\]])/g, '$1');
-          aiParsed = JSON.parse(relaxed);
-        }
-        if (aiParsed && typeof aiParsed.htmlBase64 === 'string' && aiParsed.htmlBase64.trim()) {
-          try {
-            const html = Buffer.from(aiParsed.htmlBase64, 'base64').toString('utf8');
-            aiParsed.html = html;
-          } catch (_d) {
-            // ignore decode errors; will fall back to blocks if present
+        const diagRes = await genAI.models.generateContent({ model: modelId, contents: 'Hello World' });
+        const diagText = (diagRes && diagRes.text) ? diagRes.text : (diagRes && diagRes.response && diagRes.response.text()) || '';
+        console.log('[magicRequestV2][diag] OK', { ms: Date.now() - diagStart, sample: (diagText || '').slice(0, 80) });
+        const ok = { version: '1.0', candle: { name: 'Diag OK', size }, html: `<div id="candle-preview"><style>#candle-preview{font-family:Poppins;background:#FEF9E7;padding:16px;border:1px solid #eee;border-radius:12px}</style><h2>Diagnostic OK</h2><p>Gemini call succeeded in ${Date.now() - diagStart}ms.</p></div>`, rawText: diagText, meta: { mode: 'diag-ok', modelId } };
+        return { json: JSON.stringify(ok) };
+      } catch (e) {
+        console.error('[magicRequestV2][diag] FAIL', { ms: Date.now() - diagStart, message: e?.message, stack: e?.stack });
+        const fail = { version: '1.0', candle: { name: 'Diag FAIL', size }, html: `<div id="candle-preview"><style>#candle-preview{font-family:Poppins;background:#FEF9E7;padding:16px;border:1px solid #eee;border-radius:12px}</style><h2>Diagnostic Failed</h2><p>${String(e?.message || 'Unknown error').replace(/</g,'&lt;')}</p></div>`, rawText: '', meta: { mode: 'diag-fail', modelId, error: e?.message } };
+        return { json: JSON.stringify(fail) };
+      }
+    }
+
+    const tryGenerate = async () => {
+      const startMs = Date.now();
+      console.log('[magicRequestV2] calling genai', { modelId, mode: 'sync-json' });
+      const result = await genAI.models.generateContent({
+        model: modelId,
+        contents: [
+          { role: 'user', parts: [{ text: textPrompt }] }
+        ],
+        generationConfig: {
+          temperature: 0.3,
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: 'object',
+            properties: {
+              htmlBase64: { type: 'string' },
+              candle: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  size: { type: 'string' }
+                }
+              },
+              meta: { type: 'object' }
+            },
+            required: ['htmlBase64']
           }
-          delete aiParsed.htmlBase64;
         }
-        aiParsed.meta = { mode: 'ai' };
-        // Grammar/light cleanup for title and paragraphs if present
-        if (aiParsed.candle && typeof aiParsed.candle.name === 'string') {
-          aiParsed.candle.name = aiParsed.candle.name
-            .replace(/\s+/g, ' ')
-            .replace(/[^a-zA-Z0-9'\-\s]/g, '')
-            .trim();
-        }
-        return aiParsed;
+      });
+      console.log('[magicRequestV2] genai returned', { ms: Date.now() - startMs });
+      const raw = (result && result.response && typeof result.response.text === 'function') ? result.response.text() : (result && result.text) || '';
+      let aiParsed;
+      try {
+        aiParsed = raw ? JSON.parse(raw) : null;
       } catch (e) {
         throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
       }
+      if (aiParsed && typeof aiParsed.htmlBase64 === 'string' && aiParsed.htmlBase64.trim()) {
+        try {
+          const htmlDecoded = Buffer.from(aiParsed.htmlBase64, 'base64').toString('utf8');
+          aiParsed.html = htmlDecoded;
+        } catch (_d) {}
+        delete aiParsed.htmlBase64;
+      }
+      if (aiParsed && typeof aiParsed.html === 'string') {
+        let html = aiParsed.html;
+        html = html.replace(/```[\s\S]*?```/g, '');
+        html = html.replace(/<script[\s\S]*?>[\s\S]*?<\\/script>/gi, '');
+        html = html.replace(/ on\w+=\"[^\"]*\"/gi, '').replace(/ on\w+='[^']*'/gi, '');
+        html = html.replace(/@import[^;]+;?/gi, '');
+        html = html.replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '');
+        aiParsed.html = html.trim();
+      }
+      aiParsed = aiParsed || {};
+      aiParsed.meta = { ...(aiParsed.meta || {}), mode: 'ai' };
+      if (aiParsed.candle && typeof aiParsed.candle.name === 'string') {
+        aiParsed.candle.name = aiParsed.candle.name
+          .replace(/\s+/g, ' ')
+          .replace(/[^a-zA-Z0-9'\-\s]/g, '')
+          .trim();
+      }
+      return aiParsed;
     };
 
-    // Attempt up to 2 tries for robustness
-    let parsed;
-    for (let attempt = 0; attempt < 2; attempt += 1) {
-      try {
-        parsed = await tryGenerate();
-        break;
-      } catch (e) {
-        if (attempt === 1) throw e;
-      }
-    }
+    // Single fast attempt to stay within AppSync 30s limit
+    const parsed = await tryGenerate();
     return { json: JSON.stringify(parsed) };
   } catch (error) {
-    console.error('Error in magicRequestV2 handler:', error);
-    const fallback = {
-      version: '1.0',
-      candle: { name: 'Your Magic Candle', size: '' },
-      preview: { blocks: [ { type: 'heading', level: 2, text: 'Your Magic Candle' }, { type: 'paragraph', text: error.message || 'Something went wrong.' } ] },
-      design: { tokens: { headingColor: 'charcoalTin', bodyColor: 'charcoalTin', accent: 'playfulPink' }, classes: { container: 'bg-cream rounded-xl p-6 border-subtle-border', heading: 'font-headings text-2xl', paragraph: 'font-body text-base', list: 'list-disc pl-5' } },
-      animation: { entrance: 'fadeIn', durationMs: 300 },
-    };
+    console.error('Error in magicRequestV2 handler:', {
+      message: error?.message,
+      stack: error?.stack,
+    });
+    const safePrompt = (event?.arguments?.prompt || '').toString();
+    const size = (event?.arguments?.size || '').toString();
+    const wick = (event?.arguments?.wick || '').toString();
+    const jar = (event?.arguments?.jar || '').toString();
+    const fallbackHtml = `
+      <div id="candle-preview">
+        <style>
+          #candle-preview{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#FEF9E7;color:#222;border-radius:12px;padding:20px;border:1px solid #eee}
+          #candle-preview h2{font-family:Nunito,sans-serif;margin:0 0 8px 0;font-size:22px;color:#111}
+          #candle-preview p{margin:8px 0 0 0;line-height:1.5}
+          #candle-preview ul{margin:8px 0 0 18px}
+          #candle-preview .accent{color:#F25287}
+          #candle-preview .meta{opacity:.8;font-size:12px;margin-top:10px}
+        </style>
+        <h2 class="accent">Your Magic Candle</h2>
+        <p>A handcrafted reveal based on: <strong>${safePrompt.replace(/</g,'&lt;').slice(0,140)}</strong>.</p>
+        <p>This is a fast fallback preview so your demo is unblocked while the AI service is unavailable.</p>
+        <ul>
+          <li>Size: ${size.replace(/</g,'&lt;')}</li>
+          <li>Wick: ${wick.replace(/</g,'&lt;')}</li>
+          <li>Jar: ${jar.replace(/</g,'&lt;')}</li>
+        </ul>
+        <div class="meta">Note: Fast preview mode.</div>
+      </div>`;
+    const fallback = { version: '1.0', candle: { name: 'Your Magic Candle', size }, html: fallbackHtml, meta: { mode: 'fallback' } };
     return { json: JSON.stringify(fallback) };
   }
 };
@@ -198,14 +242,40 @@ exports.getMagicPreviewJobHandler = async (event) => {
   return item;
 };
 
+// Mark a candle as shared
+exports.shareCandleHandler = async (event) => {
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const table = process.env.PREVIEW_JOBS_TABLE;
+  const jobId = event?.arguments?.jobId;
+  if (!table || !jobId) return { ok: false };
+  await dynamodb.update({
+    TableName: table,
+    Key: { jobId },
+    UpdateExpression: 'SET isShared = :t',
+    ExpressionAttributeValues: { ':t': true }
+  }).promise();
+  return { ok: true };
+};
+
+// List shared candles (basic scan; optimize later with GSI)
+exports.getCommunityCreationsHandler = async (event) => {
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const table = process.env.PREVIEW_JOBS_TABLE;
+  const limit = Math.max(1, Math.min(50, Number(event?.arguments?.limit) || 20));
+  const res = await dynamodb.scan({ TableName: table, FilterExpression: 'isShared = :t', ExpressionAttributeValues: { ':t': true }, Limit: limit }).promise();
+  const items = (res.Items || []).map(it => ({ jobId: it.jobId, candleName: it?.candle?.name, html: it.html, createdAt: it.createdAt }));
+  return { items, nextToken: res.LastEvaluatedKey ? JSON.stringify(res.LastEvaluatedKey) : null };
+};
+
 // SQS worker (same bundle)
 exports.previewWorkerHandler = async (event) => {
   const AWS = require('aws-sdk');
   const dynamodb = new AWS.DynamoDB.DocumentClient();
   const table = process.env.PREVIEW_JOBS_TABLE;
-  const { GoogleGenerativeAI } = require('@google/generative-ai');
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-pro' });
+  const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+  const modelId = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
 
   for (const record of event.Records) {
     const { jobId } = JSON.parse(record.body);
@@ -213,12 +283,39 @@ exports.previewWorkerHandler = async (event) => {
     const args = job.Item.args;
     await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :p', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':p': 'PROCESSING' } }).promise();
     try {
-      const system = `Return ONLY HTML wrapped in <div id="candle-preview"> with one inline <style> that scopes to #candle-preview only. Mobile-first typography; brand accent #F25287 and cream #FEF9E7; US English; two paragraphs total 90–150 words; 3–5 bullet list.`;
-      const user = `prompt: "${args.prompt}", size: "${args.size}", wick: "${args.wick}", jar: "${args.jar}", wax: "${args.wax}"`;
-      const result = await model.generateContent({ contents: [ { role: 'user', parts: [{ text: system }] }, { role: 'user', parts: [{ text: user }] } ], generationConfig: { responseMimeType: 'text/html', temperature: 0.3 } });
-      let html = (result && result.response && result.response.text()) || '';
-      html = html.replace(/```[\s\S]*?```/g, '').replace(/[\u2028\u2029]/g, ' ').trim();
-      html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '').replace(/ on\w+="[^"]*"/gi, '').replace(/ on\w+='[^']*'/gi, '');
+    const system = `Return ONLY a strict minified JSON object with a single key htmlBase64 whose value is the base64-encoded UTF-8 HTML snippet. The HTML must be wrapped in <div id=\"candle-preview\"> ... </div> and include one inline <style> scoped to #candle-preview. Use brand accent #F25287 and cream #FEF9E7; US English; two paragraphs total 90–150 words; and a 3–5 item bullet list.`;
+    const user = JSON.stringify({ system_prompt: system, user_input: { prompt: args.prompt, size: args.size, wick: args.wick, jar: args.jar, wax: args.wax } });
+      const withTimeout = async (promise, ms, label) => {
+        let timer;
+        const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label || 'GenAI'} timeout after ${ms}ms`)), ms); });
+        try { return await Promise.race([promise, timeout]); } finally { clearTimeout(timer); }
+      };
+      console.log('[previewWorker] calling genai', { modelId, responseMimeType: 'omitted', mode: 'worker' });
+      const result = await withTimeout(
+        genAI.models.generateContent({ model: modelId, contents: user, generationConfig: { temperature: 0.3, responseMimeType: 'application/json' } }),
+        20000,
+        'GenAI'
+      );
+      const raw = (result && result.text) ? result.text : (result && result.response && result.response.text()) || '';
+      let cleaned = raw.replace(/```[\s\S]*?```/g, '').replace(/[\u2028\u2029]/g, ' ').trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      let html = cleaned;
+      if (start !== -1 && end !== -1 && end > start) {
+        try {
+          const parsed = JSON.parse(cleaned.slice(start, end + 1));
+          if (typeof parsed.htmlBase64 === 'string' && parsed.htmlBase64.trim()) {
+            html = Buffer.from(parsed.htmlBase64, 'base64').toString('utf8');
+          }
+        } catch (_e) {}
+      }
+      html = html
+        .replace(/```[\s\S]*?```/g, '')
+        .replace(/[\u2028\u2029]/g, ' ')
+        .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
+        .replace(/ on\w+="[^"]*"/gi, '')
+        .replace(/ on\w+='[^']*'/gi, '')
+        .trim();
       await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :r, html = :h', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':r': 'READY', ':h': html } }).promise();
     } catch (e) {
       await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :e, error = :m', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':e': 'ERROR', ':m': e.message || 'unknown' } }).promise();
@@ -268,13 +365,14 @@ const findVariantAndAddToCart = async (cartId, { size, wick, jar, prompt }) => {
   }
 
   // 2. Call Gemini to get the recipe and determine the scent tier
-  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-1.5-flash" });
+    const genAI2 = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+    const modelId2 = process.env.GEMINI_MODEL || 'gemini-2.5-pro';
+    console.log('[addToCart] calling genai', { modelId: modelId2, mode: 'recipe' });
   
   const chandlerPrompt = `You are a master chandler creating a recipe for a custom candle based on a user's prompt. The user's prompt is: "${prompt}". Create a detailed scent recipe. Aim for a sophisticated and well-balanced blend of 3 to 5 high-quality scent materials. Do not exceed 7 unique materials under any circumstances. Return ONLY a JSON object with two keys: "candleName" (a creative name for the candle) and "materials" (an array of unique scent material strings).`;
   
-  const result = await model.generateContent(chandlerPrompt);
-  const responseText = result.response.text().replace(/```json|```/g, '').trim();
+  const result = await genAI2.models.generateContent({ model: modelId2, contents: chandlerPrompt });
+  const responseText = ((result && result.text) ? result.text : (result && result.response && result.response.text()) || '').replace(/```json|```/g, '').trim();
   const recipe = JSON.parse(responseText);
   
   const scentTier = getScentTier(recipe.materials.length);
