@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { graphqlConfig } from '@/lib/graphql-config';
-import { useCart } from '@/context/CartContext';
+// import { useCart } from '@/context/CartContext';
 import ShadowHtmlPreview from './ShadowHtmlPreview';
 
 type PreviewBlock = {
@@ -81,7 +81,7 @@ export default function MagicRequestForm() {
   const [previewName, setPreviewName] = useState<string | null>(null);
   const [previewData, setPreviewData] = useState<MagicPreview | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
-  const { cartId, setCart } = useCart();
+	const [cartId, setCartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
 
   const handleGenerate = async () => {
     setGenerating(true);
@@ -95,10 +95,10 @@ export default function MagicRequestForm() {
           status
         }
       }`;
-    const getJobQuery = `
-      query MagicPreviewJob($jobId: ID!) {
-        magicPreviewJob(jobId: $jobId) { jobId status html error }
-      }`;
+		const getJobQuery = `
+		  query MagicPreviewJob($jobId: ID!) {
+			magicPreviewJob(jobId: $jobId) { jobId status html jobError errorMessage }
+		  }`;
 
     try {
       const response = await fetch(graphqlConfig.url, {
@@ -135,9 +135,9 @@ export default function MagicRequestForm() {
           setGenerating(false);
           return;
         }
-        if (job?.status === 'ERROR') {
-          throw new Error(job?.error || 'Preview generation failed');
-        }
+			if (job?.status === 'ERROR') {
+				throw new Error(job?.jobError || job?.errorMessage || 'Preview generation failed');
+			}
         // Keep polling fast to stay responsive; back off after ~10s
         const elapsed = Date.now() - startedAt;
         const delay = elapsed < 10000 ? 1000 : 2000;
@@ -201,14 +201,15 @@ export default function MagicRequestForm() {
       }
       
       const dataKey = isExistingCart ? 'addToCart' : 'createCartWithCustomItem';
-      const newCart = responseData.data[dataKey];
-      if (newCart) {
-        setCart(newCart);
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 3000);
-        setPrompt('');
-        // Keep preview so user still sees what was generated
-      } else {
+			const newCart = responseData.data[dataKey];
+			if (newCart) {
+				try { localStorage.setItem('shopify_cart_id', newCart.id); } catch {}
+				setCartId(newCart.id);
+				setShowToast(true);
+				setTimeout(() => setShowToast(false), 3000);
+				setPrompt('');
+				// Keep preview so user still sees what was generated
+			} else {
         throw new Error('Cart data was not returned from the server.');
       }
 
