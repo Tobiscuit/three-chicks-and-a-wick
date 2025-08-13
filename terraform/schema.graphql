@@ -90,7 +90,8 @@ type MagicPreviewJob {
   jobId: ID!
   status: PreviewJobStatus!
   html: String
-  error: String
+  jobError: String
+  errorMessage: String
   cartId: ID
   variantId: ID
   isShared: Boolean

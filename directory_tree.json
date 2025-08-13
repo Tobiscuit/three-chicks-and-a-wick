@@ -1,0 +1,851 @@
+{
+  "root": "three-chicks-and-a-wick",
+  "files": 154,
+  "dirs": 38,
+  "tree": [
+    {
+      "name": ".amplify",
+      "type": "dir",
+      "children": [
+        {
+          "name": "artifacts",
+          "type": "dir",
+          "children": [
+            {
+              "name": "cdk.out",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7.assets.json",
+                  "type": "file"
+                },
+                {
+                  "name": "amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7.template.json",
+                  "type": "file"
+                },
+                {
+                  "name": "cdk.out",
+                  "type": "file"
+                },
+                {
+                  "name": "manifest.json",
+                  "type": "file"
+                },
+                {
+                  "name": "tree.json",
+                  "type": "file"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "tsconfig.tsbuildinfo",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": ".cursorignore",
+      "type": "file"
+    },
+    {
+      "name": ".env.local",
+      "type": "file"
+    },
+    {
+      "name": ".gitignore",
+      "type": "file"
+    },
+    {
+      "name": ".npmrc",
+      "type": "file"
+    },
+    {
+      "name": "amplify",
+      "type": "dir",
+      "children": [
+        {
+          "name": "backend.ts",
+          "type": "file"
+        },
+        {
+          "name": "functions",
+          "type": "dir",
+          "children": [
+            {
+              "name": "create-checkout.ts",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "amplify_outputs.json",
+      "type": "file"
+    },
+    {
+      "name": "amplify.yml",
+      "type": "file"
+    },
+    {
+      "name": "architectural-diagram.mmd",
+      "type": "file"
+    },
+    {
+      "name": "codegen.ts",
+      "type": "file"
+    },
+    {
+      "name": "components.json",
+      "type": "file"
+    },
+    {
+      "name": "current_project_structure.txt",
+      "type": "file"
+    },
+    {
+      "name": "design-system.json",
+      "type": "file"
+    },
+    {
+      "name": "directory_tree.txt",
+      "type": "file"
+    },
+    {
+      "name": "eslint.config.mjs",
+      "type": "file"
+    },
+    {
+      "name": "generate-tree.ps1",
+      "type": "file"
+    },
+    {
+      "name": "initial-folder-structure.txt",
+      "type": "file"
+    },
+    {
+      "name": "log.txt",
+      "type": "file"
+    },
+    {
+      "name": "next-env.d.ts",
+      "type": "file"
+    },
+    {
+      "name": "next.config.mjs",
+      "type": "file"
+    },
+    {
+      "name": "next.config.ts",
+      "type": "file"
+    },
+    {
+      "name": "package-lock.json",
+      "type": "file"
+    },
+    {
+      "name": "package.json",
+      "type": "file"
+    },
+    {
+      "name": "postcss.config.mjs",
+      "type": "file"
+    },
+    {
+      "name": "public",
+      "type": "dir",
+      "children": [
+        {
+          "name": "file.svg",
+          "type": "file"
+        },
+        {
+          "name": "globe.svg",
+          "type": "file"
+        },
+        {
+          "name": "images",
+          "type": "dir",
+          "children": [
+            {
+              "name": "3-chicks-and-a-wick.png",
+              "type": "file"
+            },
+            {
+              "name": "3C&AW.png",
+              "type": "file"
+            },
+            {
+              "name": "3C&AW.svg",
+              "type": "file"
+            },
+            {
+              "name": "Correct-Name-2.svg",
+              "type": "file"
+            },
+            {
+              "name": "Correct-Name.svg",
+              "type": "file"
+            },
+            {
+              "name": "Gemini_Generated_Image_5x7jqr5x7jqr5x7j.png",
+              "type": "file"
+            },
+            {
+              "name": "Gemini_Generated_Image_pnbqvpnbqvpnbqvp.png",
+              "type": "file"
+            },
+            {
+              "name": "Lavender-Bliss-Candle.png",
+              "type": "file"
+            },
+            {
+              "name": "Official-Logo.svg",
+              "type": "file"
+            },
+            {
+              "name": "placeholders",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "product-1.png",
+                  "type": "file"
+                },
+                {
+                  "name": "product-2.png",
+                  "type": "file"
+                },
+                {
+                  "name": "product-3.png",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "products",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "Cashmere & Cocoa Butter Candle.png",
+                  "type": "file"
+                },
+                {
+                  "name": "Cashmere & Cocoa Butter Candle.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "citrus-grove-soap-bar.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "DIY Clay Earring Kit.png",
+                  "type": "file"
+                },
+                {
+                  "name": "DIY Clay Earring Kit.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "diy-macrame-plant-hanger-kit.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "enchanted-forest-wax-melts.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "Golden Pear & Spice Candle.png",
+                  "type": "file"
+                },
+                {
+                  "name": "Golden Pear & Spice Candle.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "lavender-bliss-candle.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "Morning Mist Room Spray.png",
+                  "type": "file"
+                },
+                {
+                  "name": "Morning Mist Room Spray.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "ocean-breeze-candle.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "Spiced Apple Cider Wax Melts.png",
+                  "type": "file"
+                },
+                {
+                  "name": "Spiced Apple Cider Wax Melts.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "vanilla-bean-dream-candle.webp",
+                  "type": "file"
+                },
+                {
+                  "name": "Wild Rose & Oud Candle.png",
+                  "type": "file"
+                },
+                {
+                  "name": "Wild Rose & Oud Candle.webp",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "Vector-Horizontal-Logo-No-BG-Cropped.svg",
+              "type": "file"
+            },
+            {
+              "name": "Vector-Horizontal-Logo-No-BG.svg",
+              "type": "file"
+            },
+            {
+              "name": "Vector-Horizontal-Logo.svg",
+              "type": "file"
+            },
+            {
+              "name": "VectorLogoV2-Filled-NewFont.svg",
+              "type": "file"
+            },
+            {
+              "name": "VectorLogoV2.svg",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "next.svg",
+          "type": "file"
+        },
+        {
+          "name": "vercel.svg",
+          "type": "file"
+        },
+        {
+          "name": "window.svg",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "README.md",
+      "type": "file"
+    },
+    {
+      "name": "scripts",
+      "type": "dir",
+      "children": [
+        {
+          "name": "codegen.mjs",
+          "type": "file"
+        },
+        {
+          "name": "convert-images.mjs",
+          "type": "file"
+        },
+        {
+          "name": "create-product.mjs",
+          "type": "file"
+        },
+        {
+          "name": "delete-all-products.mjs",
+          "type": "file"
+        },
+        {
+          "name": "print-tree.mjs",
+          "type": "file"
+        },
+        {
+          "name": "seed-custom-products.mjs",
+          "type": "file"
+        },
+        {
+          "name": "seed-products.mjs",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "src",
+      "type": "dir",
+      "children": [
+        {
+          "name": "app",
+          "type": "dir",
+          "children": [
+            {
+              "name": "about-us",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "page.tsx",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "api",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "auth",
+                  "type": "dir",
+                  "children": [
+                    {
+                      "name": "[...shopify]",
+                      "type": "dir",
+                      "children": [
+                        {
+                          "name": "route.ts",
+                          "type": "file"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "ApolloProvider.tsx",
+              "type": "file"
+            },
+            {
+              "name": "contact-us",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "page.tsx",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "favicon.ico",
+              "type": "file"
+            },
+            {
+              "name": "globals.css",
+              "type": "file"
+            },
+            {
+              "name": "layout.tsx",
+              "type": "file"
+            },
+            {
+              "name": "magic-request",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "page.tsx",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "page.tsx",
+              "type": "file"
+            },
+            {
+              "name": "product-listings",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "page.tsx",
+                  "type": "file"
+                }
+              ]
+            },
+            {
+              "name": "products",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "[handle]",
+                  "type": "dir",
+                  "children": [
+                    {
+                      "name": "loading.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "page.tsx",
+                      "type": "file"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "components",
+          "type": "dir",
+          "children": [
+            {
+              "name": "Cart.tsx",
+              "type": "file"
+            },
+            {
+              "name": "CategoryCards.tsx",
+              "type": "file"
+            },
+            {
+              "name": "Footer.tsx",
+              "type": "file"
+            },
+            {
+              "name": "Header.tsx",
+              "type": "file"
+            },
+            {
+              "name": "HeaderClient.tsx",
+              "type": "file"
+            },
+            {
+              "name": "NewsletterSignup.tsx",
+              "type": "file"
+            },
+            {
+              "name": "ui",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "input.tsx",
+                  "type": "file"
+                },
+                {
+                  "name": "Modal.tsx",
+                  "type": "file"
+                },
+                {
+                  "name": "Pagination.tsx",
+                  "type": "file"
+                },
+                {
+                  "name": "SlideOutPanel.tsx",
+                  "type": "file"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "context",
+          "type": "dir",
+          "children": [
+            {
+              "name": "cart-store.ts",
+              "type": "file"
+            },
+            {
+              "name": "CartContext.tsx",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "features",
+          "type": "dir",
+          "children": [
+            {
+              "name": "home",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "components",
+                  "type": "dir",
+                  "children": [
+                    {
+                      "name": "EducationSection.tsx",
+                      "type": "file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "magic-request",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "components",
+                  "type": "dir",
+                  "children": [
+                    {
+                      "name": "MagicRequestForm.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ShadowHtmlPreview.tsx",
+                      "type": "file"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "name": "product",
+              "type": "dir",
+              "children": [
+                {
+                  "name": "components",
+                  "type": "dir",
+                  "children": [
+                    {
+                      "name": "ProductCard.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ProductCardSkeleton.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ProductCarousel.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ProductGallery.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ProductGrid.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "ProductView.tsx",
+                      "type": "file"
+                    },
+                    {
+                      "name": "QuickViewModal.tsx",
+                      "type": "file"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "gql",
+          "type": "dir",
+          "children": [
+            {
+              "name": "fragment-masking.ts",
+              "type": "file"
+            },
+            {
+              "name": "gql.ts",
+              "type": "file"
+            },
+            {
+              "name": "graphql.ts",
+              "type": "file"
+            },
+            {
+              "name": "index.ts",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "hooks",
+          "type": "dir",
+          "children": [
+            {
+              "name": "useMediaQuery.ts",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "lib",
+          "type": "dir",
+          "children": [
+            {
+              "name": "client.ts",
+              "type": "file"
+            },
+            {
+              "name": "constants.ts",
+              "type": "file"
+            },
+            {
+              "name": "graphql-config.ts",
+              "type": "file"
+            },
+            {
+              "name": "shopify.ts",
+              "type": "file"
+            },
+            {
+              "name": "utils.ts",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "utils",
+          "type": "dir",
+          "children": [
+            {
+              "name": "amplify-utils.ts",
+              "type": "file"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "stitch",
+      "type": "dir",
+      "children": [
+        {
+          "name": "about-us.html",
+          "type": "file"
+        },
+        {
+          "name": "checkout.html",
+          "type": "file"
+        },
+        {
+          "name": "contact-us.html",
+          "type": "file"
+        },
+        {
+          "name": "faq.html",
+          "type": "file"
+        },
+        {
+          "name": "home.html",
+          "type": "file"
+        },
+        {
+          "name": "order-confirmation.html",
+          "type": "file"
+        },
+        {
+          "name": "product-details.html",
+          "type": "file"
+        },
+        {
+          "name": "product-listings.html",
+          "type": "file"
+        },
+        {
+          "name": "search-results.html",
+          "type": "file"
+        },
+        {
+          "name": "shopping-cart.html",
+          "type": "file"
+        },
+        {
+          "name": "user-account-profile.html",
+          "type": "file"
+        },
+        {
+          "name": "wishlist-favorites.html",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "terraform",
+      "type": "dir",
+      "children": [
+        {
+          "name": ".gitignore",
+          "type": "file"
+        },
+        {
+          "name": ".terraform.lock.hcl",
+          "type": "file"
+        },
+        {
+          "name": "deploy.bat",
+          "type": "file"
+        },
+        {
+          "name": "lambda",
+          "type": "dir",
+          "children": [
+            {
+              "name": "index.js",
+              "type": "file"
+            },
+            {
+              "name": "index.test.js",
+              "type": "file"
+            },
+            {
+              "name": "magic-request.zip",
+              "type": "file"
+            },
+            {
+              "name": "package-lock.json",
+              "type": "file"
+            },
+            {
+              "name": "package.json",
+              "type": "file"
+            }
+          ]
+        },
+        {
+          "name": "magic-request.zip",
+          "type": "file"
+        },
+        {
+          "name": "main.tf",
+          "type": "file"
+        },
+        {
+          "name": "outputs.tf",
+          "type": "file"
+        },
+        {
+          "name": "README.md",
+          "type": "file"
+        },
+        {
+          "name": "schema.graphql",
+          "type": "file"
+        },
+        {
+          "name": "terraform.tfstate",
+          "type": "file"
+        },
+        {
+          "name": "terraform.tfstate.backup",
+          "type": "file"
+        },
+        {
+          "name": "terraform.tfvars",
+          "type": "file"
+        },
+        {
+          "name": "terraform.tfvars.example",
+          "type": "file"
+        },
+        {
+          "name": "variables.tf",
+          "type": "file"
+        }
+      ]
+    },
+    {
+      "name": "tsconfig.json",
+      "type": "file"
+    }
+  ]
+}

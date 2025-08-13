@@ -40,11 +40,17 @@ resource "aws_lambda_function" "preview_worker" {
   timeout          = 300
   memory_size      = 3008
 
+  tracing_config {
+    mode = "Active"
+  }
+
   environment {
     variables = {
       GEMINI_API_KEY = var.gemini_api_key
       GEMINI_MODEL   = var.gemini_model
       PREVIEW_JOBS_TABLE = aws_dynamodb_table.preview_jobs.name
+      SHOPIFY_STOREFRONT_API_TOKEN = var.shopify_storefront_api_token
+      SHOPIFY_STORE_DOMAIN         = var.shopify_store_domain
     }
   }
 }
@@ -140,6 +146,14 @@ resource "aws_iam_role_policy" "lambda_policy" {
           "dynamodb:Scan"
         ]
         Resource = aws_dynamodb_table.magic_requests.arn
+      },
+      {
+        Effect = "Allow",
+        Action = [
+          "xray:PutTraceSegments",
+          "xray:PutTelemetryRecords"
+        ],
+        Resource = "*"
       }
     ]
   })
@@ -494,24 +508,7 @@ resource "aws_lambda_function" "create_checkout_handler" {
 }
 
 # AppSync Resolver for createCheckout mutation
-resource "aws_appsync_resolver" "create_checkout" {
-  api_id      = aws_appsync_graphql_api.main.id
-  field       = "createCheckout"
-  type        = "Mutation"
-  data_source = aws_appsync_datasource.lambda_create_checkout.name
-
-  request_template = <<EOF
-{
-    "version": "2017-02-28",
-    "operation": "Invoke",
-    "payload": {
-        "arguments": $utils.toJson($context.arguments)
-    }
-}
-EOF
-
-  response_template = "$util.toJson($context.result)"
-}
+// Removed createCheckout resolver; field not present in schema
 
 # Lambda function for adding a custom product to the cart
 resource "aws_lambda_function" "add_to_cart_handler" {

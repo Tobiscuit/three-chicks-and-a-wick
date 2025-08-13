@@ -148,32 +148,32 @@ exports.magicRequestV2Handler = async (event) => {
         aiParsed = raw ? JSON.parse(raw) : null;
       } catch (e) {
         throw new Error(`AI JSON parse error: ${e?.message || 'unknown'}`);
-      }
-      if (aiParsed && typeof aiParsed.htmlBase64 === 'string' && aiParsed.htmlBase64.trim()) {
-        try {
+        }
+        if (aiParsed && typeof aiParsed.htmlBase64 === 'string' && aiParsed.htmlBase64.trim()) {
+          try {
           const htmlDecoded = Buffer.from(aiParsed.htmlBase64, 'base64').toString('utf8');
           aiParsed.html = htmlDecoded;
         } catch (_d) {}
-        delete aiParsed.htmlBase64;
-      }
+          delete aiParsed.htmlBase64;
+        }
       if (aiParsed && typeof aiParsed.html === 'string') {
         let html = aiParsed.html;
         html = html.replace(/```[\s\S]*?```/g, '');
-        html = html.replace(/<script[\s\S]*?>[\s\S]*?<\\/script>/gi, '');
-        html = html.replace(/ on\w+=\"[^\"]*\"/gi, '').replace(/ on\w+='[^']*'/gi, '');
+        html = html.replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '');
+        html = html.replace(/ on\w+="[^"]*"/gi, '').replace(/ on\w+='[^']*'/gi, '');
         html = html.replace(/@import[^;]+;?/gi, '');
         html = html.replace(/[^\x09\x0A\x0D\x20-\x7E]/g, '');
         aiParsed.html = html.trim();
       }
       aiParsed = aiParsed || {};
       aiParsed.meta = { ...(aiParsed.meta || {}), mode: 'ai' };
-      if (aiParsed.candle && typeof aiParsed.candle.name === 'string') {
-        aiParsed.candle.name = aiParsed.candle.name
-          .replace(/\s+/g, ' ')
-          .replace(/[^a-zA-Z0-9'\-\s]/g, '')
-          .trim();
-      }
-      return aiParsed;
+        if (aiParsed.candle && typeof aiParsed.candle.name === 'string') {
+          aiParsed.candle.name = aiParsed.candle.name
+            .replace(/\s+/g, ' ')
+            .replace(/[^a-zA-Z0-9'\-\s]/g, '')
+            .trim();
+        }
+        return aiParsed;
     };
 
     // Single fast attempt to stay within AppSync 30s limit
@@ -223,7 +223,22 @@ exports.startMagicPreviewHandler = async (event) => {
   const queueUrl = process.env.PREVIEW_JOBS_QUEUE_URL;
   try {
     if (!table || !queueUrl) throw new Error('Preview job resources missing');
-    await dynamodb.put({ TableName: table, Item: { jobId, status: 'QUEUED', args } }).promise();
+    const now = Date.now();
+    const ttlDays = 60;
+    const ttl = Math.floor(now / 1000) + ttlDays * 24 * 60 * 60;
+    await dynamodb.put({
+      TableName: table,
+      Item: {
+        jobId,
+        entityType: 'CANDLE_JOB',
+        status: 'QUEUED',
+        args,
+        isShared: false,
+        createdAt: now,
+        updatedAt: now,
+        ttl,
+      }
+    }).promise();
     await sqs.sendMessage({ QueueUrl: queueUrl, MessageBody: JSON.stringify({ jobId }) }).promise();
     return { jobId, status: 'QUEUED' };
   } catch (e) {
@@ -238,7 +253,7 @@ exports.getMagicPreviewJobHandler = async (event) => {
   const table = process.env.PREVIEW_JOBS_TABLE;
   const jobId = event.arguments.jobId;
   const res = await dynamodb.get({ TableName: table, Key: { jobId } }).promise();
-  const item = res.Item || { jobId, status: 'ERROR', error: 'NotFound' };
+  const item = res.Item || { jobId, status: 'ERROR', jobError: 'NotFound' };
   return item;
 };
 
@@ -281,34 +296,63 @@ exports.previewWorkerHandler = async (event) => {
     const { jobId } = JSON.parse(record.body);
     const job = await dynamodb.get({ TableName: table, Key: { jobId } }).promise();
     const args = job.Item.args;
-    await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :p', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':p': 'PROCESSING' } }).promise();
+    await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :p, updatedAt = :u', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':p': 'PROCESSING', ':u': Date.now() } }).promise();
     try {
-    const system = `Return ONLY a strict minified JSON object with a single key htmlBase64 whose value is the base64-encoded UTF-8 HTML snippet. The HTML must be wrapped in <div id=\"candle-preview\"> ... </div> and include one inline <style> scoped to #candle-preview. Use brand accent #F25287 and cream #FEF9E7; US English; two paragraphs total 90–150 words; and a 3–5 item bullet list.`;
-    const user = JSON.stringify({ system_prompt: system, user_input: { prompt: args.prompt, size: args.size, wick: args.wick, jar: args.jar, wax: args.wax } });
+      const system = `You are a master candle poet for the brand 'Three Chicks and a Wick.' Your task is to interpret a user's idea and create a brief, evocative, and luxurious description for their custom candle.\n\nIMPORTANT: Respond with ONLY a single, raw, minified JSON object. Do not include markdown, comments, or conversational text.\n\nSchema (must match exactly): {\\"candleName\\": string (2-4 words), \\"paragraphs\\": string[2], \\"materials\\": string[3..7]}`;
+      const textPrompt = `${system}\n\nUser input: prompt=${args.prompt}; size=${args.size}; wick=${args.wick}; jar=${args.jar}; wax=${args.wax}`;
       const withTimeout = async (promise, ms, label) => {
         let timer;
         const timeout = new Promise((_, reject) => { timer = setTimeout(() => reject(new Error(`${label || 'GenAI'} timeout after ${ms}ms`)), ms); });
         try { return await Promise.race([promise, timeout]); } finally { clearTimeout(timer); }
       };
-      console.log('[previewWorker] calling genai', { modelId, responseMimeType: 'omitted', mode: 'worker' });
+      console.log('[previewWorker] calling genai', {
+        modelId,
+        mode: 'worker-json',
+        promptPreview: String(textPrompt || '').slice(0, 200)
+      });
       const result = await withTimeout(
-        genAI.models.generateContent({ model: modelId, contents: user, generationConfig: { temperature: 0.3, responseMimeType: 'application/json' } }),
-        20000,
+        genAI.models.generateContent({
+          model: modelId,
+          contents: [ { role: 'user', parts: [{ text: textPrompt }] } ],
+          generationConfig: {
+            temperature: 0.3,
+            responseMimeType: 'application/json',
+            responseSchema: {
+              type: 'object',
+              properties: {
+                candleName: { type: 'string' },
+                paragraphs: { type: 'array', items: { type: 'string' } },
+                materials: { type: 'array', items: { type: 'string' } }
+              },
+              required: ['candleName', 'paragraphs', 'materials']
+            }
+          }
+        }),
+        25000,
         'GenAI'
       );
-      const raw = (result && result.text) ? result.text : (result && result.response && result.response.text()) || '';
-      let cleaned = raw.replace(/```[\s\S]*?```/g, '').replace(/[\u2028\u2029]/g, ' ').trim();
-      const start = cleaned.indexOf('{');
-      const end = cleaned.lastIndexOf('}');
-      let html = cleaned;
-      if (start !== -1 && end !== -1 && end > start) {
-        try {
-          const parsed = JSON.parse(cleaned.slice(start, end + 1));
-          if (typeof parsed.htmlBase64 === 'string' && parsed.htmlBase64.trim()) {
-            html = Buffer.from(parsed.htmlBase64, 'base64').toString('utf8');
-          }
-        } catch (_e) {}
-      }
+      const raw = (result && result.response && result.response.text && result.response.text()) || result.text || '';
+      console.log('[previewWorker] genai raw response preview', { sample: String(raw || '').slice(0, 240) });
+      let ai;
+      try { ai = raw ? JSON.parse(raw) : {}; } catch { ai = {}; }
+      const candleName = (ai && typeof ai.candleName === 'string' && ai.candleName.trim()) ? ai.candleName.trim() : 'Your Magic Candle';
+      const paragraphs = Array.isArray(ai?.paragraphs) ? ai.paragraphs.map(s => String(s).trim()).filter(Boolean).slice(0, 2) : [];
+      let materials = Array.isArray(ai?.materials) ? ai.materials.map(s => String(s).trim()).filter(Boolean) : [];
+      materials = Array.from(new Set(materials));
+      let html = `
+<div id="candle-preview">
+  <style>
+    #candle-preview{font-family:Poppins,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#FEF9E7;color:#222;border-radius:12px;padding:20px;border:1px solid #eee}
+    #candle-preview h2{font-family:Nunito,sans-serif;margin:0 0 8px 0;font-size:22px;color:#111}
+    #candle-preview p{margin:8px 0 0 0;line-height:1.5}
+    #candle-preview ul{margin:8px 0 0 18px}
+    #candle-preview .accent{color:#F25287}
+    #candle-preview .meta{opacity:.8;font-size:12px;margin-top:10px}
+  </style>
+  <h2 class="accent">${candleName.replace(/</g,'&lt;')}</h2>
+  ${paragraphs.map(p => `<p>${p.replace(/</g,'&lt;')}</p>`).join('')}
+  ${materials.length ? `<ul>${materials.map(m => `<li>${m.replace(/</g,'&lt;')}</li>`).join('')}</ul>` : ''}
+</div>`;
       html = html
         .replace(/```[\s\S]*?```/g, '')
         .replace(/[\u2028\u2029]/g, ' ')
@@ -316,9 +360,116 @@ exports.previewWorkerHandler = async (event) => {
         .replace(/ on\w+="[^"]*"/gi, '')
         .replace(/ on\w+='[^']*'/gi, '')
         .trim();
-      await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :r, html = :h', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':r': 'READY', ':h': html } }).promise();
+
+      // Strict validation: if no HTML, treat as failure and stop early
+      if (!html) {
+        const msg = ai && ai.error ? String(ai.error) : 'AI returned no html';
+        await dynamodb.update({
+          TableName: table,
+          Key: { jobId },
+          UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+          ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+          ExpressionAttributeValues: {
+            ':e': 'ERROR',
+            ':m': `${msg}. raw=${String(raw || '').slice(0, 200)}`,
+            ':u': Date.now()
+          }
+        }).promise();
+        continue;
+      }
+
+      // Compute scent tier and options
+      const count = materials.length;
+      let scentTier = 'Standard (0-4 Scents)';
+      if (count === 5) scentTier = 'Complex I (5 Scents)';
+      else if (count === 6) scentTier = 'Complex II (6 Scents)';
+      else if (count >= 7) scentTier = 'Complex III (7 Scents)';
+      const variantOptions = { 'Wick': args.wick, 'Jar': args.jar, 'Scent Tier': scentTier };
+
+      // Shopify: resolve variant and add/create cart
+      let productHandle = '';
+      if (String(args.size).includes('8oz')) productHandle = 'custom-candle-spark-8oz';
+      else if (String(args.size).includes('12oz')) productHandle = 'custom-candle-flame-12oz';
+      else if (String(args.size).includes('16oz')) productHandle = 'custom-candle-glow-16oz';
+
+      let variantId = null;
+      let cartId = args.cartId || null;
+      try {
+        const getVariantQuery = `
+          query getProductVariant($handle: String!, $options: [SelectedOptionInput!]!) {
+            product(handle: $handle) {
+              variantBySelectedOptions(selectedOptions: $options) { id }
+            }
+          }
+        `;
+        const selectedOptions = [
+          { name: 'Wick', value: args.wick },
+          { name: 'Jar', value: args.jar },
+          { name: 'Scent Tier', value: scentTier },
+        ];
+        const variantData = await shopifyStorefront(getVariantQuery, { handle: productHandle, options: selectedOptions }, 15000);
+        variantId = variantData?.data?.product?.variantBySelectedOptions?.id || null;
+
+        if (variantId) {
+          const attributes = [
+            { key: 'Candle Name', value: ai?.candleName || 'Your Magic Candle' },
+            { key: 'Original Prompt', value: String(args.prompt || '').slice(0, 100) },
+          ];
+          if (cartId) {
+            const addToCartMutation = `
+              mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
+                cartLinesAdd(cartId: $cartId, lines: $lines) { cart { id lines(first: 1) { edges { node { id merchandise { ... on ProductVariant { id } } } } } } }
+              }
+            `;
+            const cartData = await shopifyStorefront(addToCartMutation, { cartId, lines: [{ merchandiseId: variantId, quantity: 1, attributes }] }, 15000);
+            cartId = cartData?.data?.cartLinesAdd?.cart?.id || cartId;
+          } else {
+            const createCartMutation = `
+              mutation cartCreate($input: CartInput!) {
+                cartCreate(input: $input) { cart { id lines(first: 1) { edges { node { id merchandise { ... on ProductVariant { id } } } } } } }
+              }
+            `;
+            const cartData = await shopifyStorefront(createCartMutation, { input: { lines: [{ merchandiseId: variantId, quantity: 1, attributes }] } }, 15000);
+            cartId = cartData?.data?.cartCreate?.cart?.id || cartId;
+          }
+        }
+      } catch (e) {
+        console.error('[worker] shopify error', e?.message);
+        await dynamodb.update({
+          TableName: table,
+          Key: { jobId },
+          UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+          ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+          ExpressionAttributeValues: { ':e': 'ERROR', ':m': e?.message || 'Shopify error', ':u': Date.now() }
+        }).promise();
+        continue;
+      }
+
+      await dynamodb.update({
+        TableName: table,
+        Key: { jobId },
+        UpdateExpression: 'SET #s = :r, html = :h, aiJson = :j, materials = :m, scentTier = :t, variantOptions = :vo, cartId = :c, variantId = :v, updatedAt = :u',
+        ExpressionAttributeNames: { '#s': 'status' },
+        ExpressionAttributeValues: {
+          ':r': 'READY',
+          ':h': html,
+          ':j': ai || {},
+          ':m': materials,
+          ':t': scentTier,
+          ':vo': variantOptions,
+          ':c': cartId,
+          ':v': variantId,
+          ':u': Date.now(),
+        }
+      }).promise();
     } catch (e) {
-      await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :e, error = :m', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':e': 'ERROR', ':m': e.message || 'unknown' } }).promise();
+      await dynamodb.update({
+        TableName: table,
+        Key: { jobId },
+        UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+        ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+        ExpressionAttributeValues: { ':e': 'ERROR', ':m': e?.message || 'unknown', ':u': Date.now() }
+      }).promise();
     }
   }
 };
@@ -334,22 +485,45 @@ const getScentTier = (scentCount) => {
 };
 
 // Minimal Shopify Storefront GraphQL helper
-const shopifyStorefront = async (query, variables) => {
-  const endpoint = `https://${process.env.SHOPIFY_STORE_DOMAIN}/api/2024-07/graphql.json`;
+const shopifyStorefront = async (query, variables, timeoutMs = 15000) => {
+  const domain = process.env.SHOPIFY_STORE_DOMAIN || '';
+  const token = process.env.SHOPIFY_STOREFRONT_API_TOKEN || '';
+  if (!domain || !token) {
+    throw new Error('Shopify env missing: SHOPIFY_STORE_DOMAIN or SHOPIFY_STOREFRONT_API_TOKEN');
+  }
+  const endpoint = `https://${domain}/api/2024-07/graphql.json`;
+  console.log('[shopify] endpoint', { endpoint, hasToken: token ? true : false });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
   const response = await fetch(endpoint, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': process.env.SHOPIFY_STOREFRONT_API_TOKEN,
+        'X-Shopify-Storefront-Access-Token': token,
     },
     body: JSON.stringify({ query, variables }),
-  });
-  const data = await response.json();
-  if (!response.ok || data.errors) {
-    const message = data.errors ? data.errors.map(e => e.message).join('; ') : `HTTP ${response.status}`;
-    throw new Error(`Shopify Storefront error: ${message}`);
+      signal: controller.signal,
+    });
+    const text = await response.text();
+    let data = undefined;
+    try { data = text ? JSON.parse(text) : undefined; } catch (_e) {}
+    if (!response.ok || (data && data.errors)) {
+      const errPayload = {
+        status: response.status,
+        endpoint,
+        hasToken: !!token,
+        errors: data && data.errors ? data.errors : null,
+        body: String(text).slice(0, 300)
+      };
+      throw new Error(`Shopify Storefront error: ${JSON.stringify(errPayload)}`);
   }
   return data;
+  } catch (e) {
+    throw new Error(`Shopify request failed: ${e?.message || 'unknown'}`);
+  } finally {
+    clearTimeout(timer);
+  }
 };
 
 // Main helper function to find the correct variant and add it to the cart
