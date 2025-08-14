@@ -254,7 +254,19 @@ exports.getMagicPreviewJobHandler = async (event) => {
   const jobId = event.arguments.jobId;
   const res = await dynamodb.get({ TableName: table, Key: { jobId } }).promise();
   const item = res.Item || { jobId, status: 'ERROR', jobError: 'NotFound' };
-  return item;
+  // Whitelist only public fields to avoid leaking internal data
+  const publicItem = {
+    jobId: item.jobId,
+    status: item.status,
+    html: item.html,
+    aiJson: item.aiJson,
+    jobError: item.jobError,
+    errorMessage: item.errorMessage,
+    cartId: item.cartId,
+    variantId: item.variantId,
+    isShared: item.isShared,
+  };
+  return publicItem;
 };
 
 // Mark a candle as shared
@@ -279,9 +291,59 @@ exports.getCommunityCreationsHandler = async (event) => {
   const dynamodb = new AWS.DynamoDB.DocumentClient();
   const table = process.env.PREVIEW_JOBS_TABLE;
   const limit = Math.max(1, Math.min(50, Number(event?.arguments?.limit) || 20));
-  const res = await dynamodb.scan({ TableName: table, FilterExpression: 'isShared = :t', ExpressionAttributeValues: { ':t': true }, Limit: limit }).promise();
+  const res = await dynamodb.scan({ TableName: table, FilterExpression: 'isShared = :t and attribute_not_exists(purchased) or purchased = :p', ExpressionAttributeValues: { ':t': true, ':p': true }, Limit: limit }).promise();
   const items = (res.Items || []).map(it => ({ jobId: it.jobId, candleName: it?.candle?.name, html: it.html, createdAt: it.createdAt }));
   return { items, nextToken: res.LastEvaluatedKey ? JSON.stringify(res.LastEvaluatedKey) : null };
+};
+
+// --- Shopify orders/create webhook saver ---
+exports.webhookSaverHandler = async (event) => {
+  const crypto = require('crypto');
+  const AWS = require('aws-sdk');
+  const dynamodb = new AWS.DynamoDB.DocumentClient();
+  const table = process.env.DYNAMODB_TABLE;
+  // Fetch secret from AWS Secrets Manager at runtime (name passed via env)
+  const sm = new AWS.SecretsManager();
+  const secretName = process.env.SHOPIFY_WEBHOOK_SECRET_NAME || '';
+  const secretValue = secretName ? (await sm.getSecretValue({ SecretId: secretName }).promise()).SecretString : '';
+  const secret = secretValue || '';
+  try {
+    if (!secret) return { statusCode: 500, body: 'Missing webhook secret' };
+    const hmacHeader = event.headers['x-shopify-hmac-sha256'] || event.headers['X-Shopify-Hmac-Sha256'];
+    const body = event.isBase64Encoded ? Buffer.from(event.body, 'base64') : Buffer.from(event.body || '', 'utf8');
+    const digest = crypto.createHmac('sha256', secret).update(body).digest('base64');
+    if (!hmacHeader || !crypto.timingSafeEqual(Buffer.from(digest), Buffer.from(hmacHeader))) {
+      return { statusCode: 401, body: 'Invalid HMAC' };
+    }
+    const order = JSON.parse(body.toString('utf8'));
+    const createdAt = Date.now();
+    // Extract our custom line with hidden recipe attributes
+    const lines = order?.line_items || [];
+    for (const line of lines) {
+      const props = line?.properties || [];
+      const byKey = Object.fromEntries(props.map(p => [p.name || p.key, p.value]));
+      if (byKey['_recipe_wax'] || byKey['_recipe_fragrance']) {
+        const jobId = byKey['_creation_job_id'] || `order_${order.id}_${line.id}`;
+        const item = {
+          id: jobId,
+          orderId: String(order.id),
+          purchased: true,
+          candle: { name: byKey['Candle Name'] || line?.title },
+          recipe: {
+            wax: byKey['_recipe_wax'] || '',
+            fragrance: byKey['_recipe_fragrance'] || '',
+            instructions: byKey['_recipe_instructions'] || '',
+            size: byKey['_recipe_size'] || '',
+          },
+          createdAt,
+        };
+        await dynamodb.put({ TableName: table, Item: item }).promise();
+      }
+    }
+    return { statusCode: 200, body: 'ok' };
+  } catch (e) {
+    return { statusCode: 500, body: String(e?.message || 'error') };
+  }
 };
 
 // SQS worker (same bundle)
@@ -298,7 +360,7 @@ exports.previewWorkerHandler = async (event) => {
     const args = job.Item.args;
     await dynamodb.update({ TableName: table, Key: { jobId }, UpdateExpression: 'SET #s = :p, updatedAt = :u', ExpressionAttributeNames: { '#s': 'status' }, ExpressionAttributeValues: { ':p': 'PROCESSING', ':u': Date.now() } }).promise();
     try {
-      const system = `You are a master candle poet for the brand 'Three Chicks and a Wick.' Your task is to interpret a user's idea and create a brief, evocative, and luxurious description for their custom candle.\n\nIMPORTANT: Respond with ONLY a single, raw, minified JSON object. Do not include markdown, comments, or conversational text.\n\nSchema (must match exactly): {\\"candleName\\": string (2-4 words), \\"paragraphs\\": string[2], \\"materials\\": string[3..7]}`;
+      const system = `You are both a master candle poet and a master chandler for the premium brand 'Three Chicks and a Wick.' Interpret the user's idea and produce: (1) a brief, evocative description, and (2) a precise, quantitative recipe a professional chandler can follow.\n\nRecipe rules:\n- Use a 9% fragrance load\n- Wax weight by size: 8oz Tin = 6.5 oz (184g); 12oz Jar = 8.5 oz (241g); 16oz Jar = 12 oz (340g)\n- Fragrance oil weight = wax weight * 0.09 (report oz and grams)\n- Pour temps: Soy & Coconut Soy 180°F (82°C); Beeswax 160°F (71°C)\n- Provide 1–2 concise professional instruction sentences.\n\nIMPORTANT: Respond with ONLY a single raw JSON object. No markdown, no code fences, no extra text.`;
       const textPrompt = `${system}\n\nUser input: prompt=${args.prompt}; size=${args.size}; wick=${args.wick}; jar=${args.jar}; wax=${args.wax}`;
       const withTimeout = async (promise, ms, label) => {
         let timer;
@@ -322,7 +384,17 @@ exports.previewWorkerHandler = async (event) => {
               properties: {
                 candleName: { type: 'string' },
                 paragraphs: { type: 'array', items: { type: 'string' } },
-                materials: { type: 'array', items: { type: 'string' } }
+                materials: { type: 'array', items: { type: 'string' } },
+                recipe: {
+                  type: 'object',
+                  properties: {
+                    size: { type: 'string' },
+                    waxType: { type: 'string' },
+                    waxAmount: { type: 'string' },
+                    fragranceAmount: { type: 'string' },
+                    instructions: { type: 'string' }
+                  }
+                }
               },
               required: ['candleName', 'paragraphs', 'materials']
             }
@@ -339,6 +411,7 @@ exports.previewWorkerHandler = async (event) => {
       const paragraphs = Array.isArray(ai?.paragraphs) ? ai.paragraphs.map(s => String(s).trim()).filter(Boolean).slice(0, 2) : [];
       let materials = Array.isArray(ai?.materials) ? ai.materials.map(s => String(s).trim()).filter(Boolean) : [];
       materials = Array.from(new Set(materials));
+      const recipe = ai && ai.recipe && typeof ai.recipe === 'object' ? ai.recipe : null;
       let html = `
 <div id="candle-preview">
   <style>
@@ -415,6 +488,18 @@ exports.previewWorkerHandler = async (event) => {
             { key: 'Candle Name', value: ai?.candleName || 'Your Magic Candle' },
             { key: 'Original Prompt', value: String(args.prompt || '').slice(0, 100) },
           ];
+          // Tag the line with the job id so the frontend can precisely spotlight and undo
+          if (jobId) attributes.push({ key: '_creation_job_id', value: String(jobId) });
+          // Add recipe details as line item properties for the merchant (hidden keys)
+          if (recipe) {
+            const waxLine = [recipe.waxType, recipe.waxAmount].filter(Boolean).join(': ');
+            const fragLine = recipe.fragranceAmount || '';
+            const instrLine = (recipe.instructions ? String(recipe.instructions) : '').slice(0, 200);
+            if (waxLine) attributes.push({ key: '_recipe_wax', value: waxLine });
+            if (fragLine) attributes.push({ key: '_recipe_fragrance', value: fragLine });
+            if (instrLine) attributes.push({ key: '_recipe_instructions', value: instrLine });
+            if (recipe.size) attributes.push({ key: '_recipe_size', value: String(recipe.size) });
+          }
           if (cartId) {
             const addToCartMutation = `
               mutation cartLinesAdd($cartId: ID!, $lines: [CartLineInput!]!) {
@@ -448,7 +533,7 @@ exports.previewWorkerHandler = async (event) => {
       await dynamodb.update({
         TableName: table,
         Key: { jobId },
-        UpdateExpression: 'SET #s = :r, html = :h, aiJson = :j, materials = :m, scentTier = :t, variantOptions = :vo, cartId = :c, variantId = :v, updatedAt = :u',
+        UpdateExpression: 'SET #s = :r, html = :h, aiJson = :j, materials = :m, scentTier = :t, variantOptions = :vo, cartId = :c, variantId = :v, updatedAt = :u, recipe = :rc, candle = :cd',
         ExpressionAttributeNames: { '#s': 'status' },
         ExpressionAttributeValues: {
           ':r': 'READY',
@@ -460,6 +545,8 @@ exports.previewWorkerHandler = async (event) => {
           ':c': cartId,
           ':v': variantId,
           ':u': Date.now(),
+          ':rc': recipe || {},
+          ':cd': { name: candleName, size: args.size, waxType: args.wax }
         }
       }).promise();
     } catch (e) {

@@ -1,7 +1,7 @@
 // src/components/HeaderClient.tsx
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
@@ -88,6 +88,24 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isCartOpen, setCartOpen] = useState(false); // State for cart visibility
   const { cartItems } = useCart();
+  const [glow, setGlow] = useState(false);
+
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('magic-job');
+      bc.onmessage = (ev) => {
+        if (ev?.data?.type === 'READY') {
+          setGlow(true);
+          setCartOpen(true);
+          setTimeout(() => setGlow(false), 8000);
+        } else if (ev?.data?.type === 'OPEN_CART') {
+          setCartOpen(true);
+        }
+      };
+    } catch { /* ignore */ }
+    return () => { try { if (bc) bc.close(); } catch {} };
+  }, []);
 
   // The old useEffect for scroll-locking is no longer needed here
 
@@ -140,7 +158,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               onClick={() => setCartOpen(true)} // Toggle cart state
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
-              <ShoppingCart className="h-6 w-6" />
+              <ShoppingCart className={`h-6 w-6 ${glow ? 'text-pink-500 drop-shadow-[0_0_6px_#f472b6]' : ''}`} />
               {totalItems > 0 && (
                 <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-pink-500 text-xs text-white">
                   {totalItems}

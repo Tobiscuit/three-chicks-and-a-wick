@@ -27,7 +27,42 @@ resource "aws_dynamodb_table" "preview_jobs" {
     name = "jobId"
     type = "S"
   }
+
+  tags = {
+    Schema = "jobId:S status:S args:M recipe:M html:S aiJson:M isShared:B createdAt:N updatedAt:N ttl:N userId:S candle:M cartId:S variantId:S jobError:S errorMessage:S"
+  }
+
+  ttl {
+    attribute_name = "ttl"
+    enabled        = true
+  }
 }
+
+## Webhook Saver Lambda (Shopify orders/create)
+resource "aws_lambda_function" "webhook_saver" {
+  filename         = "lambda/magic-request.zip"
+  source_code_hash = filebase64sha256("lambda/magic-request.zip")
+  function_name    = "${var.project_name}-webhook-saver"
+  role             = aws_iam_role.lambda_role.arn
+  handler          = "index.webhookSaverHandler"
+  runtime          = "nodejs20.x"
+  timeout          = 15
+
+  environment {
+    variables = {
+      DYNAMODB_TABLE                 = aws_dynamodb_table.magic_requests.name
+      SHOPIFY_WEBHOOK_SECRET_NAME    = var.shopify_webhook_secret_name
+    }
+  }
+
+  depends_on = [aws_iam_role_policy.lambda_policy]
+}
+
+resource "aws_lambda_function_url" "webhook_saver_url" {
+  function_name      = aws_lambda_function.webhook_saver.function_name
+  authorization_type = "NONE"
+}
+
 
 # Worker Lambda for processing preview jobs
 resource "aws_lambda_function" "preview_worker" {

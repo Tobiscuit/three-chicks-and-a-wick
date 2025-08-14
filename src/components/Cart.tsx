@@ -5,7 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 import { motion, AnimatePresence, useAnimation } from 'framer-motion';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { RemoveScroll } from 'react-remove-scroll';
 import Link from 'next/link';
@@ -36,6 +36,7 @@ const desktopCartVariants = {
 type CartItemType = {
   lineId: string;
   quantity: number;
+  attributes?: { key: string; value: string }[];
   product: {
     title: string;
     image: {
@@ -125,6 +126,29 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
 export default function Cart({ isOpen, onClose }: CartProps) {
   const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
   const isDesktop = useMediaQuery('(min-width: 768px)');
+  const listRef = useRef<HTMLDivElement | null>(null);
+  const [spotlight, setSpotlight] = useState(false);
+  const [spotlightLineId, setSpotlightLineId] = useState<string | null>(null);
+
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('magic-job');
+      bc.onmessage = (ev) => {
+        if (ev?.data?.type === 'READY') {
+          const jobId = ev?.data?.job?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null);
+          if (jobId) {
+            const match = cartItems.find(ci => (ci.attributes || []).some(a => a.key === '_creation_job_id' && a.value === jobId));
+            if (match) setSpotlightLineId(match.lineId);
+          }
+          setSpotlight(true);
+          try { listRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
+          setTimeout(() => { setSpotlight(false); setSpotlightLineId(null); }, 4000);
+        }
+      };
+    } catch {}
+    return () => { try { if (bc) bc.close(); } catch {} };
+  }, []);
 
   if (!isOpen) return null;
 
@@ -175,17 +199,19 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                 </div>
               ) : (
                 <>
-                  <div className="flex-grow py-4 px-3 overflow-y-auto">
+                  <div ref={listRef} className={`flex-grow py-4 px-3 overflow-y-auto ${spotlight ? 'ring-2 ring-pink-400 rounded-md' : ''}`}>
                     <ul>
                       <AnimatePresence>
-                        {cartItems.map((item, index) => (
-                          <CartItem 
+                         {cartItems.map((item, index) => (
+                           <div key={item.lineId} className={spotlightLineId === item.lineId ? 'ring-2 ring-pink-400 rounded-md' : ''}>
+                           <CartItem 
                             key={item.lineId} 
                             item={item as CartItemType}
                             onRemove={() => removeFromCart(item.lineId)}
                             onUpdateQuantity={updateQuantity}
                             isFirstItem={index === 0 && cartItems.length > 0}
                           />
+                           </div>
                         ))}
                       </AnimatePresence>
                     </ul>

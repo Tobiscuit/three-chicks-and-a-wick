@@ -5,6 +5,7 @@ import { ApolloProvider } from './ApolloProvider';
 import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import ClientProviders from "@/components/ClientProviders";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
       <body className={inter.className}>
           <ApolloProvider>
             <CartProvider>
+              <ClientProviders />
               <Header />
               <main className="flex-grow">{children}</main>
               <Footer />
@@ -32,3 +34,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+// client logic moved to components/MagicJobWatcher.tsx

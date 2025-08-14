@@ -1,193 +1,195 @@
-three-chicks-and-a-wick/
-├── .amplify
-│   ├── artifacts
-│   │   └── cdk.out
-│   │       ├── amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7.assets.json
-│   │       ├── amplify-threegirlsandawick-Jrami-sandbox-5427db1ab7.template.json
-│   │       ├── cdk.out
-│   │       ├── manifest.json
-│   │       └── tree.json
-│   └── tsconfig.tsbuildinfo
-├── .cursorignore
-├── .env.local
-├── .gitignore
-├── .npmrc
-├── amplify
-│   ├── backend.ts
-│   └── functions
-│       └── create-checkout.ts
-├── amplify_outputs.json
-├── amplify.yml
-├── architectural-diagram.mmd
-├── codegen.ts
-├── components.json
-├── current_project_structure.txt
-├── design-system.json
-├── directory_tree.txt
-├── eslint.config.mjs
-├── generate-tree.ps1
-├── initial-folder-structure.txt
-├── log.txt
-├── next-env.d.ts
-├── next.config.mjs
-├── next.config.ts
-├── package-lock.json
-├── package.json
-├── postcss.config.mjs
-├── public
-│   ├── file.svg
-│   ├── globe.svg
-│   ├── images
-│   │   ├── 3-chicks-and-a-wick.png
-│   │   ├── 3C&AW.png
-│   │   ├── 3C&AW.svg
-│   │   ├── Correct-Name-2.svg
-│   │   ├── Correct-Name.svg
-│   │   ├── Gemini_Generated_Image_5x7jqr5x7jqr5x7j.png
-│   │   ├── Gemini_Generated_Image_pnbqvpnbqvpnbqvp.png
-│   │   ├── Lavender-Bliss-Candle.png
-│   │   ├── Official-Logo.svg
-│   │   ├── placeholders
-│   │   │   ├── product-1.png
-│   │   │   ├── product-2.png
-│   │   │   └── product-3.png
-│   │   ├── products
-│   │   │   ├── Cashmere & Cocoa Butter Candle.png
-│   │   │   ├── Cashmere & Cocoa Butter Candle.webp
-│   │   │   ├── citrus-grove-soap-bar.webp
-│   │   │   ├── DIY Clay Earring Kit.png
-│   │   │   ├── DIY Clay Earring Kit.webp
-│   │   │   ├── diy-macrame-plant-hanger-kit.webp
-│   │   │   ├── enchanted-forest-wax-melts.webp
-│   │   │   ├── Golden Pear & Spice Candle.png
-│   │   │   ├── Golden Pear & Spice Candle.webp
-│   │   │   ├── lavender-bliss-candle.webp
-│   │   │   ├── Morning Mist Room Spray.png
-│   │   │   ├── Morning Mist Room Spray.webp
-│   │   │   ├── ocean-breeze-candle.webp
-│   │   │   ├── Spiced Apple Cider Wax Melts.png
-│   │   │   ├── Spiced Apple Cider Wax Melts.webp
-│   │   │   ├── vanilla-bean-dream-candle.webp
-│   │   │   ├── Wild Rose & Oud Candle.png
-│   │   │   └── Wild Rose & Oud Candle.webp
-│   │   ├── Vector-Horizontal-Logo-No-BG-Cropped.svg
-│   │   ├── Vector-Horizontal-Logo-No-BG.svg
-│   │   ├── Vector-Horizontal-Logo.svg
-│   │   ├── VectorLogoV2-Filled-NewFont.svg
-│   │   └── VectorLogoV2.svg
-│   ├── next.svg
-│   ├── vercel.svg
-│   └── window.svg
-├── README.md
-├── scripts
-│   ├── codegen.mjs
-│   ├── convert-images.mjs
-│   ├── create-product.mjs
-│   ├── delete-all-products.mjs
-│   ├── print-tree.mjs
-│   ├── seed-custom-products.mjs
-│   └── seed-products.mjs
-├── src
-│   ├── app
-│   │   ├── about-us
-│   │   │   └── page.tsx
-│   │   ├── api
-│   │   │   └── auth
-│   │   │       └── [...shopify]
-│   │   │           └── route.ts
-│   │   ├── ApolloProvider.tsx
-│   │   ├── contact-us
-│   │   │   └── page.tsx
-│   │   ├── favicon.ico
-│   │   ├── globals.css
-│   │   ├── layout.tsx
-│   │   ├── magic-request
-│   │   │   └── page.tsx
-│   │   ├── page.tsx
-│   │   ├── product-listings
-│   │   │   └── page.tsx
-│   │   └── products
-│   │       └── [handle]
-│   │           ├── loading.tsx
-│   │           └── page.tsx
-│   ├── components
-│   │   ├── Cart.tsx
-│   │   ├── CategoryCards.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── HeaderClient.tsx
-│   │   ├── NewsletterSignup.tsx
-│   │   └── ui
-│   │       ├── input.tsx
-│   │       ├── Modal.tsx
-│   │       ├── Pagination.tsx
-│   │       └── SlideOutPanel.tsx
-│   ├── context
-│   │   ├── cart-store.ts
-│   │   └── CartContext.tsx
-│   ├── features
-│   │   ├── home
-│   │   │   └── components
-│   │   │       └── EducationSection.tsx
-│   │   ├── magic-request
-│   │   │   └── components
-│   │   │       ├── MagicRequestForm.tsx
-│   │   │       └── ShadowHtmlPreview.tsx
-│   │   └── product
-│   │       └── components
-│   │           ├── ProductCard.tsx
-│   │           ├── ProductCardSkeleton.tsx
-│   │           ├── ProductCarousel.tsx
-│   │           ├── ProductGallery.tsx
-│   │           ├── ProductGrid.tsx
-│   │           ├── ProductView.tsx
-│   │           └── QuickViewModal.tsx
-│   ├── gql
-│   │   ├── fragment-masking.ts
-│   │   ├── gql.ts
-│   │   ├── graphql.ts
-│   │   └── index.ts
-│   ├── hooks
-│   │   └── useMediaQuery.ts
-│   ├── lib
-│   │   ├── client.ts
-│   │   ├── constants.ts
-│   │   ├── graphql-config.ts
-│   │   ├── shopify.ts
-│   │   └── utils.ts
-│   └── utils
-│       └── amplify-utils.ts
-├── stitch
-│   ├── about-us.html
-│   ├── checkout.html
-│   ├── contact-us.html
-│   ├── faq.html
-│   ├── home.html
-│   ├── order-confirmation.html
-│   ├── product-details.html
-│   ├── product-listings.html
-│   ├── search-results.html
-│   ├── shopping-cart.html
-│   ├── user-account-profile.html
-│   └── wishlist-favorites.html
-├── terraform
-│   ├── .gitignore
-│   ├── .terraform.lock.hcl
-│   ├── deploy.bat
-│   ├── lambda
-│   │   ├── index.js
-│   │   ├── index.test.js
-│   │   ├── magic-request.zip
-│   │   ├── package-lock.json
-│   │   └── package.json
-│   ├── magic-request.zip
-│   ├── main.tf
-│   ├── outputs.tf
-│   ├── README.md
-│   ├── schema.graphql
-│   ├── terraform.tfstate
-│   ├── terraform.tfstate.backup
-│   ├── terraform.tfvars
-│   ├── terraform.tfvars.example
-│   └── variables.tf
+📁 Project tree for: /home/juan/development/three-chicks-and-a-wick
+(excluding: .git node_modules .next out dist build .turbo .vercel .amplify .terraform .cache coverage .vscode .idea .pnpm-store .yarn .venv __pycache__ .pytest_cache .mypy_cache .DS_Store)
+--------------------------------------------------
+└── .
+└── directory_tree.json
+└── design-system.json
+└── current_project_structure.txt
+└── components.json
+└── architectural-diagram.mmd
+└── amplify.yml
+└── .cursorignore
+└── codegen.ts
+└── package.json
+└── next.config.mjs
+└── initial-folder-structure.txt
+└── generate-tree.ps1
+└── next-env.d.ts
+└── scripts
+└──    delete-all-products.mjs
+└──    seed-custom-products.mjs
+└──    seed-products.mjs
+└──    create-product.mjs
+└──    convert-images.mjs
+└──    print-project-tree.sh
+└──    codegen.mjs
+└──    print-tree.mjs
+└── gdiff.sh
+└── .npmrc
+└── log.txt
+└── amplify
+└──    functions
+└──       create-checkout.ts
+└──    backend.ts
+└── eslint.config.mjs
+└── next.config.ts
+└── .gitignore
+└── public
+└──    vercel.svg
+└──    window.svg
+└──    file.svg
+└──    globe.svg
+└──    images
+└──       placeholders
+└──          product-3.png
+└──          product-1.png
+└──          product-2.png
+└──       Vector-Horizontal-Logo.svg
+└──       products
+└──          DIY Clay Earring Kit.webp
+└──          enchanted-forest-wax-melts.webp
+└──          vanilla-bean-dream-candle.webp
+└──          Cashmere & Cocoa Butter Candle.webp
+└──          Wild Rose & Oud Candle.png
+└──          ocean-breeze-candle.webp
+└──          citrus-grove-soap-bar.webp
+└──          lavender-bliss-candle.webp
+└──          diy-macrame-plant-hanger-kit.webp
+└──          Golden Pear & Spice Candle.webp
+└──          Morning Mist Room Spray.png
+└──          Morning Mist Room Spray.webp
+└──          Cashmere & Cocoa Butter Candle.png
+└──          DIY Clay Earring Kit.png
+└──          Spiced Apple Cider Wax Melts.png
+└──          Golden Pear & Spice Candle.png
+└──          Wild Rose & Oud Candle.webp
+└──          Spiced Apple Cider Wax Melts.webp
+└──       VectorLogoV2-Filled-NewFont.svg
+└──       Official-Logo.svg
+└──       Gemini_Generated_Image_pnbqvpnbqvpnbqvp.png
+└──       Correct-Name.svg
+└──       Correct-Name-2.svg
+└──       Lavender-Bliss-Candle.png
+└──       3C&AW.svg
+└──       Vector-Horizontal-Logo-No-BG.svg
+└──       3-chicks-and-a-wick.png
+└──       3C&AW.png
+└──       VectorLogoV2.svg
+└──       Vector-Horizontal-Logo-No-BG-Cropped.svg
+└──       Gemini_Generated_Image_5x7jqr5x7jqr5x7j.png
+└──    next.svg
+└── .cursor
+└──    context
+└──       magic-request-2025-08-13.md
+└── .env.local
+└── terraform
+└──    magic-request.zip
+└──    terraform.tfstate
+└──    main.tf
+└──    terraform.tfvars
+└──    .terraform.lock.hcl
+└──    terraform.tfvars.example
+└──    terraform.tfstate.backup
+└──    variables.tf
+└──    .gitignore
+└──    README.md
+└──    lambda
+└──       magic-request.zip
+└──       index.js
+└──       package.json
+└──       package-lock.json
+└──       index.test.js
+└──    deploy.bat
+└──    outputs.tf
+└──    schema.graphql
+└── README.md
+└── amplify_outputs.json
+└── postcss.config.mjs
+└── package-lock.json
+└── src
+└──    hooks
+└──       useMediaQuery.ts
+└──    utils
+└──       amplify-utils.ts
+└──    gql
+└──       fragment-masking.ts
+└──       gql.ts
+└──       index.ts
+└──       graphql.ts
+└──    app
+└──       api
+└──          auth
+└──             [...shopify]
+└──                route.ts
+└──       ApolloProvider.tsx
+└──       products
+└──          [handle]
+└──             loading.tsx
+└──             page.tsx
+└──       favicon.ico
+└──       product-listings
+└──          page.tsx
+└──       contact-us
+└──          page.tsx
+└──       about-us
+└──          page.tsx
+└──       page.tsx
+└──       magic-request
+└──          page.tsx
+└──       globals.css
+└──       layout.tsx
+└──    features
+└──       product
+└──          components
+└──             ProductCarousel.tsx
+└──             ProductCard.tsx
+└──             ProductCardSkeleton.tsx
+└──             ProductGallery.tsx
+└──             ProductGrid.tsx
+└──             QuickViewModal.tsx
+└──             ProductView.tsx
+└──       home
+└──          components
+└──             EducationSection.tsx
+└──       magic-request
+└──          components
+└──             MagicRequestForm.tsx
+└──             ShadowHtmlPreview.tsx
+└──    context
+└──       CartContext.tsx
+└──       cart-store.ts
+└──    components
+└──       NewsletterSignup.tsx
+└──       Footer.tsx
+└──       HeaderClient.tsx
+└──       ui
+└──          Pagination.tsx
+└──          Modal.tsx
+└──          SlideOutPanel.tsx
+└──          input.tsx
+└──       CategoryCards.tsx
+└──       Header.tsx
+└──       Cart.tsx
+└──    lib
+└──       shopify.ts
+└──       client.ts
+└──       graphql-config.ts
+└──       constants.ts
+└──       utils.ts
+└── stitch
+└──    shopping-cart.html
+└──    wishlist-favorites.html
+└──    contact-us.html
+└──    home.html
+└──    about-us.html
+└──    faq.html
+└──    product-details.html
+└──    checkout.html
+└──    user-account-profile.html
+└──    search-results.html
+└──    product-listings.html
+└──    order-confirmation.html
 └── tsconfig.json
+└── directory_tree.txt
+--------------------------------------------------
+Done.

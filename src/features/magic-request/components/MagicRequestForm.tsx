@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { graphqlConfig } from '@/lib/graphql-config';
 // import { useCart } from '@/context/CartContext';
-import ShadowHtmlPreview from './ShadowHtmlPreview';
+// Legacy HTML preview removed; we render from JSON blocks only
 
 type PreviewBlock = {
   type: 'heading' | 'paragraph' | 'bulletList' | string;
@@ -83,22 +83,39 @@ export default function MagicRequestForm() {
   const [jobId, setJobId] = useState<string | null>(null);
 	const [cartId, setCartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
 
+  useEffect(() => {
+    // Listen for global READY event from MagicJobWatcher
+    let bc: BroadcastChannel | null = null;
+    try {
+      bc = new BroadcastChannel('magic-job');
+      bc.onmessage = (ev) => {
+        const data = ev?.data;
+        if (data?.type === 'READY' && data?.job) {
+          try {
+            if (data.job.aiJson) {
+              const parsed = JSON.parse(data.job.aiJson);
+              setPreviewData(parsed);
+            }
+          } catch { /* ignore */ }
+          setGenerating(false);
+        }
+      };
+    } catch { /* no-op */ }
+    return () => { try { if (bc) bc.close(); } catch {} };
+  }, []);
+
   const handleGenerate = async () => {
     setGenerating(true);
     setError(null);
 
-    // Start async preview job
+    // Start async preview job (hybrid async)
     const startMutation = `
-      mutation StartMagicPreview($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
-        startMagicPreview(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
+      mutation StartMagicRequest($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!, $cartId: ID) {
+        startMagicRequest(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax, cartId: $cartId) {
           jobId
           status
         }
       }`;
-		const getJobQuery = `
-		  query MagicPreviewJob($jobId: ID!) {
-			magicPreviewJob(jobId: $jobId) { jobId status html jobError errorMessage }
-		  }`;
 
     try {
       const response = await fetch(graphqlConfig.url, {
@@ -107,7 +124,7 @@ export default function MagicRequestForm() {
           'Content-Type': 'application/json',
           'x-api-key': graphqlConfig.apiKey,
         },
-        body: JSON.stringify({ query: startMutation, variables: { prompt, size, wick, jar, wax } }),
+        body: JSON.stringify({ query: startMutation, variables: { prompt, size, wick, jar, wax, cartId } }),
       });
 
       const responseData = await response.json();
@@ -115,39 +132,14 @@ export default function MagicRequestForm() {
         throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
       }
 
-      const started = responseData.data?.startMagicPreview;
+      const started = responseData.data?.startMagicRequest;
       if (!started?.jobId) throw new Error('Failed to start preview job.');
       setJobId(started.jobId);
-
-      // Poll until READY or ERROR
-      const startedAt = Date.now();
-      const poll = async () => {
-        const res = await fetch(graphqlConfig.url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'x-api-key': graphqlConfig.apiKey },
-          body: JSON.stringify({ query: getJobQuery, variables: { jobId: started.jobId } }),
-        });
-        const data = await res.json();
-        if (data.errors) throw new Error(data.errors.map((e: { message: string }) => e.message).join('\n'));
-        const job = data.data?.magicPreviewJob;
-        if (job?.status === 'READY' && job.html) {
-          setPreviewData({ version: '1.0', candle: { name: previewName ?? undefined, size }, html: job.html });
-          setGenerating(false);
-          return;
-        }
-			if (job?.status === 'ERROR') {
-				throw new Error(job?.jobError || job?.errorMessage || 'Preview generation failed');
-			}
-        // Keep polling fast to stay responsive; back off after ~10s
-        const elapsed = Date.now() - startedAt;
-        const delay = elapsed < 10000 ? 1000 : 2000;
-        setTimeout(poll, delay);
-      };
-      poll();
+      try { localStorage.setItem('magic_job_id', started.jobId); localStorage.setItem('last_magic_job_id', started.jobId); } catch {}
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message); else setError('An unknown error occurred.');
     } finally {
-      // leave generating true while polling; it will be turned off on READY or on error
+      // generating will be cleared when the watcher fires READY
     }
   };
 
@@ -304,13 +296,7 @@ export default function MagicRequestForm() {
       {/* Output below */}
       {previewData && (
         <div className="mt-8 md:mt-10 max-w-3xl mx-auto">
-          {previewData.html ? (
-            <div className="rounded-2xl border-2 border-cream p-3 sm:p-4">
-              <ShadowHtmlPreview html={previewData.html} />
-            </div>
-          ) : (
-            <PreviewBlocks preview={previewData} />
-          )}
+          <PreviewBlocks preview={previewData} />
         </div>
       )}
       {error && (

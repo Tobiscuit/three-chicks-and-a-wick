@@ -87,6 +87,7 @@ export const GET_CART_QUERY = gql`
           node {
             id
             quantity
+            attributes { key value }
             merchandise {
               ... on ProductVariant {
                 id

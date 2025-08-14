@@ -29,6 +29,7 @@ export type CartItem = {
   lineId: string;
   product: CartProduct;
   quantity: number;
+  attributes?: { key: string; value: string }[];
 };
 
 
@@ -74,6 +75,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
       type CartLineNode = {
         id: string;
         quantity: number;
+        attributes?: { key: string; value: string }[];
         merchandise: {
           id: string;
           product: {
@@ -110,6 +112,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             },
           },
           quantity: node.quantity,
+          attributes: node.attributes || [],
         };
       });
       setCartItems(items);

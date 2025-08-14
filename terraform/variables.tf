@@ -19,7 +19,7 @@ variable "gemini_api_key" {
 variable "gemini_model" {
   description = "Google Gemini model id (e.g., gemini-2.5-pro)"
   type        = string
-  default     = "gemini-2.5-flash"
+  default     = "gemini-2.5-pro"
 }
 
 variable "shopify_admin_api_token" {
@@ -41,3 +41,9 @@ variable "shopify_storefront_api_token" {
 }
 
 // preview_mode removed; AI is always on
+
+variable "shopify_webhook_secret_name" {
+  description = "AWS Secrets Manager name for Shopify webhook secret (e.g., shopify/webhookSecret)"
+  type        = string
+  default     = "shopify/webhookSecret"
+}
