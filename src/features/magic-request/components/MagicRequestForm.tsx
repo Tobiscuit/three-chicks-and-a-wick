@@ -75,6 +75,7 @@ export default function MagicRequestForm() {
   const [jar, setJar] = useState(jarOptions[0].value);
   const [wax, setWax] = useState(waxOptions[0].value);
   const [generating, setGenerating] = useState(false);
+  // Legacy synchronous add-to-cart state removed as we commit to async flow
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -84,6 +85,19 @@ export default function MagicRequestForm() {
 	const [cartId, setCartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
 
   useEffect(() => {
+    // TEMP DIAGNOSTIC: log all broadcast events for verification
+    let diag: BroadcastChannel | null = null;
+    try {
+      diag = new BroadcastChannel('magic-job');
+      const handle = (ev: MessageEvent) => {
+        try { console.log('[MagicRequestForm] Received broadcast event:', ev?.data); } catch {}
+      };
+      diag.addEventListener('message', handle as any);
+      return () => { try { diag && diag.removeEventListener('message', handle as any); diag?.close(); } catch {} };
+    } catch { /* ignore */ }
+  }, []);
+
+  useEffect(() => {
     // Listen for global READY event from MagicJobWatcher
     let bc: BroadcastChannel | null = null;
     try {
@@ -91,13 +105,14 @@ export default function MagicRequestForm() {
       bc.onmessage = (ev) => {
         const data = ev?.data;
         if (data?.type === 'READY' && data?.job) {
-          try {
-            if (data.job.aiJson) {
-              const parsed = JSON.parse(data.job.aiJson);
-              setPreviewData(parsed);
-            }
-          } catch { /* ignore */ }
+          // Always unstick generating
           setGenerating(false);
+          // Parse aiJson robustly: it may be a string or an object
+          try {
+            const raw = data.job.aiJson;
+            const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+            if (parsed) setPreviewData(parsed);
+          } catch { /* ignore */ }
         }
       };
     } catch { /* no-op */ }
@@ -135,7 +150,14 @@ export default function MagicRequestForm() {
       const started = responseData.data?.startMagicRequest;
       if (!started?.jobId) throw new Error('Failed to start preview job.');
       setJobId(started.jobId);
-      try { localStorage.setItem('magic_job_id', started.jobId); localStorage.setItem('last_magic_job_id', started.jobId); } catch {}
+      try {
+        localStorage.setItem('magic_job_id', started.jobId);
+        localStorage.setItem('last_magic_job_id', started.jobId);
+      } catch {}
+      try {
+        // Explicitly wake the watcher to begin polling immediately
+        window.dispatchEvent(new CustomEvent('start-magic-job', { detail: { jobId: started.jobId } }));
+      } catch {}
     } catch (err: unknown) {
       if (err instanceof Error) setError(err.message); else setError('An unknown error occurred.');
     } finally {
@@ -143,83 +165,12 @@ export default function MagicRequestForm() {
     }
   };
 
-  const handleAddToCart = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setAdding(true);
-    setError(null);
-
-    const isExistingCart = !!cartId;
-    const mutation = isExistingCart
-      ? `
-      mutation addToCart($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!, $cartId: ID!) {
-        addToCart(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax, cartId: $cartId) {
-          id
-          totalQuantity
-          cost { totalAmount { amount currencyCode } }
-          lines { id quantity attributes { key value } merchandise { id title price { amount currencyCode } } }
-        }
-      }`
-      : `
-      mutation createCartWithCustomItem($prompt: String!, $size: String!, $wick: String!, $jar: String!, $wax: String!) {
-        createCartWithCustomItem(prompt: $prompt, size: $size, wick: $wick, jar: $jar, wax: $wax) {
-          id
-          totalQuantity
-          cost { totalAmount { amount currencyCode } }
-          lines { id quantity attributes { key value } merchandise { id title price { amount currencyCode } } }
-        }
-      }`;
-
-    const variables = isExistingCart
-      ? { prompt, size, wick, jar, wax, cartId }
-      : { prompt, size, wick, jar, wax };
-
-    try {
-      const response = await fetch(graphqlConfig.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': graphqlConfig.apiKey,
-        },
-        body: JSON.stringify({
-          query: mutation,
-          variables,
-        }),
-      });
-
-      const responseData = await response.json();
-
-      if (responseData.errors) {
-        throw new Error(responseData.errors.map((e: { message: string }) => e.message).join('\n'));
-      }
-      
-      const dataKey = isExistingCart ? 'addToCart' : 'createCartWithCustomItem';
-			const newCart = responseData.data[dataKey];
-			if (newCart) {
-				try { localStorage.setItem('shopify_cart_id', newCart.id); } catch {}
-				setCartId(newCart.id);
-				setShowToast(true);
-				setTimeout(() => setShowToast(false), 3000);
-				setPrompt('');
-				// Keep preview so user still sees what was generated
-			} else {
-        throw new Error('Cart data was not returned from the server.');
-      }
-
-    } catch (err: unknown) {
-      if (err instanceof Error) {
-        setError(err.message);
-      } else {
-        setError('An unknown error occurred.');
-      }
-    } finally {
-      setAdding(false);
-    }
-  };
+  // Legacy synchronous add-to-cart handler removed
 
   return (
     <div className="w-full mx-auto font-body max-w-4xl">
       <Toast message="Your candle was added to the cart!" show={showToast} />
-      <form onSubmit={handleAddToCart} className="bg-white rounded-xl shadow-lg p-8">
+      <form className="bg-white rounded-xl shadow-lg p-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Left: options */}
           <div className="space-y-6">
@@ -283,11 +234,7 @@ export default function MagicRequestForm() {
               <button type="button" onClick={handleGenerate} disabled={generating || !prompt} className="w-full sm:w-auto btn-secondary disabled:opacity-50 disabled:scale-100">
                 {generating ? 'Conjuring...' : 'Reveal My Candle'}
               </button>
-              {previewName && previewData && (
-                <button type="submit" disabled={adding} className="w-full sm:w-auto btn-primary disabled:opacity-50 disabled:scale-100">
-                  {adding ? 'Adding to Cart...' : 'Add My Candle to Cart'}
-                </button>
-              )}
+              {/* Add-to-cart button removed; async flow auto-adds in backend */}
             </div>
           </div>
         </div>

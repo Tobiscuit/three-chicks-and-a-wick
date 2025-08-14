@@ -57,7 +57,59 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const [getCart, { data: cartData, refetch: refetchCart }] = useLazyQuery(GET_CART_QUERY, {
     fetchPolicy: 'network-only',
+    notifyOnNetworkStatusChange: true,
   });
+
+  const applyCartData = (cart: any) => {
+    if (!cart) return;
+    setCheckoutUrl(cart.checkoutUrl || null);
+    type CartLineNode = {
+      id: string;
+      quantity: number;
+      attributes?: { key: string; value: string }[];
+      merchandise: {
+        id: string;
+        product: {
+          id: string;
+          handle: string;
+          title: string;
+        };
+        price: {
+          amount: string;
+          currencyCode: string;
+        };
+        image: {
+          url: string;
+          altText: string;
+        };
+      };
+    };
+    const items = (cart.lines?.edges || []).map((edge: { node: CartLineNode }) => {
+      const { node } = edge;
+      return {
+        lineId: node.id,
+        product: {
+          id: node.merchandise.product.id,
+          variantId: node.merchandise.id,
+          handle: node.merchandise.product.handle,
+          title: node.merchandise.product.title,
+          price: {
+            amount: node.merchandise.price.amount,
+            currencyCode: node.merchandise.price.currencyCode,
+          },
+          image: {
+            url: node.merchandise.image?.url || '/images/placeholders/product-1.png',
+            altText: (node.merchandise.image?.altText || node.merchandise.product.title),
+          },
+        },
+        quantity: node.quantity,
+        attributes: node.attributes || [],
+      } as CartItem;
+    });
+    try { console.log('[CartContext] Final items being set to state:', JSON.stringify(items, null, 2)); } catch {}
+    setCartItems(items);
+    setIsCartLoading(false);
+  };
 
   useEffect(() => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
@@ -69,56 +121,61 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [getCart]);
 
+  // React to READY broadcasts and localStorage refetch nudges (imperative refetch + direct state update)
+  useEffect(() => {
+    let bc: BroadcastChannel | null = null;
+    let storageListener: ((this: Window, ev: StorageEvent) => any) | null = null;
+    try {
+      bc = new BroadcastChannel('magic-job');
+      bc.onmessage = async (ev) => {
+        if (ev?.data?.type === 'READY') {
+          const nextCartId = (ev?.data?.job?.cartId as string) || localStorage.getItem('shopify_cart_id');
+          if (nextCartId) {
+            setCartId(nextCartId);
+            try {
+              if (refetchCart) {
+                const { data: refetchedData } = await refetchCart({ cartId: nextCartId });
+                try { console.log('[CartContext] Data returned from refetch:', JSON.stringify(refetchedData, null, 2)); } catch {}
+                if (refetchedData?.cart) applyCartData(refetchedData.cart);
+              }
+            } catch (error) {
+              console.error('Failed to refetch cart on READY:', error);
+            }
+          }
+        }
+      };
+    } catch { /* ignore */ }
+    try {
+      storageListener = async (e: StorageEvent) => {
+        if (e.key === 'shopify_cart_refetch') {
+          const current = localStorage.getItem('shopify_cart_id');
+          if (current) {
+            setCartId(current);
+            try {
+              if (refetchCart) {
+                const { data: refetchedData } = await refetchCart({ cartId: current });
+                try { console.log('[CartContext] Data returned from refetch:', JSON.stringify(refetchedData, null, 2)); } catch {}
+                if (refetchedData?.cart) applyCartData(refetchedData.cart);
+              }
+            } catch (error) {
+              console.error('Failed to refetch cart on storage nudge:', error);
+            }
+          }
+        }
+      };
+      window.addEventListener('storage', storageListener);
+    } catch { /* ignore */ }
+    return () => {
+      try { if (bc) bc.close(); } catch {}
+      try { if (storageListener) window.removeEventListener('storage', storageListener); } catch {}
+    };
+  }, [refetchCart]);
+
   useEffect(() => {
     if (cartData && cartData.cart) {
-      setCheckoutUrl(cartData.cart.checkoutUrl);
-      type CartLineNode = {
-        id: string;
-        quantity: number;
-        attributes?: { key: string; value: string }[];
-        merchandise: {
-          id: string;
-          product: {
-            id: string;
-            handle: string;
-            title: string;
-          };
-          price: {
-            amount: string;
-            currencyCode: string;
-          };
-          image: {
-            url: string;
-            altText: string;
-          };
-        };
-      };
-      const items = cartData.cart.lines.edges.map((edge: { node: CartLineNode }) => {
-        const { node } = edge;
-        return {
-          lineId: node.id,
-          product: {
-            id: node.merchandise.product.id,
-            variantId: node.merchandise.id,
-            handle: node.merchandise.product.handle,
-            title: node.merchandise.product.title,
-            price: {
-              amount: node.merchandise.price.amount,
-              currencyCode: node.merchandise.price.currencyCode,
-            },
-            image: {
-              url: node.merchandise.image.url,
-              altText: node.merchandise.image.altText || node.merchandise.product.title,
-            },
-          },
-          quantity: node.quantity,
-          attributes: node.attributes || [],
-        };
-      });
-      setCartItems(items);
-      setIsCartLoading(false);
+      applyCartData(cartData.cart);
     } else if (cartData === null) {
-        setIsCartLoading(false);
+      setIsCartLoading(false);
     }
   }, [cartData]);
 

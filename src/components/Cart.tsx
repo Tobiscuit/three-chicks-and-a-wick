@@ -62,15 +62,27 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: Car
   const controls = useAnimation();
 
   useEffect(() => {
+    let mounted = true;
+    const timeouts: number[] = [];
     if (isMobile && isFirstItem) {
       const hintAnimation = async () => {
-        await new Promise(resolve => setTimeout(resolve, 500));
-        await controls.start({ x: -60, transition: { type: 'spring', stiffness: 300, damping: 25 } });
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
+        await new Promise<number>(resolve => {
+          const t = window.setTimeout(() => resolve(t), 500);
+          timeouts.push(t);
+        });
+        if (mounted) await controls.start({ x: -60, transition: { type: 'spring', stiffness: 300, damping: 25 } });
+        await new Promise<number>(resolve => {
+          const t = window.setTimeout(() => resolve(t), 1500);
+          timeouts.push(t);
+        });
+        if (mounted) controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
       };
       hintAnimation();
     }
+    return () => {
+      mounted = false;
+      timeouts.forEach(t => window.clearTimeout(t));
+    };
   }, [isMobile, isFirstItem, controls]);
 
   return (
@@ -130,25 +142,33 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   const [spotlight, setSpotlight] = useState(false);
   const [spotlightLineId, setSpotlightLineId] = useState<string | null>(null);
 
+  // React to READY broadcast and then spotlight when cartItems refreshes
   useEffect(() => {
     let bc: BroadcastChannel | null = null;
+    let pendingJobId: string | null = null;
     try {
       bc = new BroadcastChannel('magic-job');
       bc.onmessage = (ev) => {
         if (ev?.data?.type === 'READY') {
-          const jobId = ev?.data?.job?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null);
-          if (jobId) {
-            const match = cartItems.find(ci => (ci.attributes || []).some(a => a.key === '_creation_job_id' && a.value === jobId));
-            if (match) setSpotlightLineId(match.lineId);
-          }
-          setSpotlight(true);
-          try { listRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
-          setTimeout(() => { setSpotlight(false); setSpotlightLineId(null); }, 4000);
+          pendingJobId = ev?.data?.job?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null);
         }
       };
     } catch {}
     return () => { try { if (bc) bc.close(); } catch {} };
   }, []);
+
+  useEffect(() => {
+    // Whenever cartItems change, try to spotlight the line for the last job
+    const jobId = typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null;
+    if (!jobId || !cartItems?.length) return;
+    const match = cartItems.find(ci => (ci.attributes || []).some(a => a.key === '_creation_job_id' && a.value === jobId));
+    if (!match) return;
+    setSpotlightLineId(match.lineId);
+    setSpotlight(true);
+    try { listRef.current?.scrollTo({ top: 0, behavior: 'smooth' }); } catch {}
+    const t = setTimeout(() => { setSpotlight(false); setSpotlightLineId(null); }, 4000);
+    return () => clearTimeout(t);
+  }, [cartItems]);
 
   if (!isOpen) return null;
 

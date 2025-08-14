@@ -507,7 +507,18 @@ exports.previewWorkerHandler = async (event) => {
               }
             `;
             const cartData = await shopifyStorefront(addToCartMutation, { cartId, lines: [{ merchandiseId: variantId, quantity: 1, attributes }] }, 15000);
-            cartId = cartData?.data?.cartLinesAdd?.cart?.id || cartId;
+            const nextId = cartData?.data?.cartLinesAdd?.cart?.id || null;
+            if (!nextId) {
+              await dynamodb.update({
+                TableName: table,
+                Key: { jobId },
+                UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+                ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+                ExpressionAttributeValues: { ':e': 'ERROR', ':m': 'Shopify cartLinesAdd returned no cart', ':u': Date.now() }
+              }).promise();
+              continue;
+            }
+            cartId = nextId;
           } else {
             const createCartMutation = `
               mutation cartCreate($input: CartInput!) {
@@ -515,8 +526,28 @@ exports.previewWorkerHandler = async (event) => {
               }
             `;
             const cartData = await shopifyStorefront(createCartMutation, { input: { lines: [{ merchandiseId: variantId, quantity: 1, attributes }] } }, 15000);
-            cartId = cartData?.data?.cartCreate?.cart?.id || cartId;
+            const nextId = cartData?.data?.cartCreate?.cart?.id || null;
+            if (!nextId) {
+              await dynamodb.update({
+                TableName: table,
+                Key: { jobId },
+                UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+                ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+                ExpressionAttributeValues: { ':e': 'ERROR', ':m': 'Failed to create Shopify cart', ':u': Date.now() }
+              }).promise();
+              continue;
+            }
+            cartId = nextId;
           }
+        } else {
+          await dynamodb.update({
+            TableName: table,
+            Key: { jobId },
+            UpdateExpression: 'SET #s = :e, #je = :m, errorMessage = :m, updatedAt = :u',
+            ExpressionAttributeNames: { '#s': 'status', '#je': 'jobError' },
+            ExpressionAttributeValues: { ':e': 'ERROR', ':m': 'No matching Shopify variant found', ':u': Date.now() }
+          }).promise();
+          continue;
         }
       } catch (e) {
         console.error('[worker] shopify error', e?.message);

@@ -96,8 +96,9 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
       bc = new BroadcastChannel('magic-job');
       bc.onmessage = (ev) => {
         if (ev?.data?.type === 'READY') {
+          // Trigger a cart refetch by nudging CartContext via a synthetic update signal
+          try { localStorage.setItem('shopify_cart_refetch', String(Date.now())); } catch {}
           setGlow(true);
-          setCartOpen(true);
           setTimeout(() => setGlow(false), 8000);
         } else if (ev?.data?.type === 'OPEN_CART') {
           setCartOpen(true);
