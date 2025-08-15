@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import dynamic from 'next/dynamic';
 import ProductCard from '@/features/product/components/ProductCard';
 import QuickViewModal from '@/features/product/components/QuickViewModal';
 import Link from 'next/link';
@@ -36,6 +37,8 @@ export default function ProductGrid({ products }: ProductGridProps) {
   return (
     <>
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {/* Insert Magic Request Card at the first slot */}
+        <MagicRequestCardWrapper />
         {products.map((product) => (
           // WRAP the ProductCard with a Link component
           <Link key={product.id} href={product.href}>
@@ -62,3 +65,5 @@ export default function ProductGrid({ products }: ProductGridProps) {
     </>
   );
 } 
+
+const MagicRequestCardWrapper = dynamic(() => import('@/components/MagicRequestCard'), { ssr: false });
