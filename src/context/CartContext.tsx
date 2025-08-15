@@ -104,7 +104,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   // React to READY broadcasts and localStorage refetch nudges (imperative refetch + direct state update)
   useEffect(() => {
     let bc: BroadcastChannel | null = null;
-    let storageListener: ((this: Window, ev: StorageEvent) => any) | null = null;
+    let storageListener: ((this: Window, ev: StorageEvent) => void) | null = null;
     try {
       bc = new BroadcastChannel('magic-job');
       bc.onmessage = async (ev: MessageEvent) => {

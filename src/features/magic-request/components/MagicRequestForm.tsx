@@ -80,7 +80,7 @@ export default function MagicRequestForm() {
   const [error, setError] = useState<string | null>(null);
   const [showToast] = useState(false);
   const [previewData, setPreviewData] = useState<MagicPreview | null>(null);
-  const [jobId, setJobId] = useState<string | null>(null);
+  const [, setJobId] = useState<string | null>(null);
 	const [cartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
 
   useEffect(() => {

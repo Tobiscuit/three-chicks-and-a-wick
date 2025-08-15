@@ -5,12 +5,12 @@ import { graphqlConfig } from '@/lib/graphql-config';
 
 export default function MagicJobWatcher() {
   useEffect(() => {
-    let timer: any;
+    let timer: number | null = null;
     const query = `query Q($id:ID!){ getMagicRequestStatus(jobId:$id){ status aiJson cartId variantId jobError errorMessage } }`;
 
     const startPolling = (jid: string | null) => {
       if (!jid) return;
-      if (timer) { try { clearTimeout(timer); } catch {} }
+      if (timer) { try { window.clearTimeout(timer); } catch {} }
       const poll = async () => {
         try { console.log(`[MagicJobWatcher] Polling for jobId: ${jid}...`); } catch {}
         try {
@@ -36,7 +36,7 @@ export default function MagicJobWatcher() {
             return;
           }
         } catch {}
-        timer = setTimeout(poll, 2000);
+        timer = window.setTimeout(poll, 2000);
       };
       poll();
     };
@@ -56,7 +56,7 @@ export default function MagicJobWatcher() {
       };
       window.addEventListener('start-magic-job', onStart as EventListener);
       return () => {
-        try { if (timer) clearTimeout(timer); } catch {}
+        try { if (timer) window.clearTimeout(timer); } catch {}
         try { window.removeEventListener('start-magic-job', onStart as EventListener); } catch {}
       };
     } catch {}
