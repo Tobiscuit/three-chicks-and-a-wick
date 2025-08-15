@@ -18,7 +18,7 @@ export default function MagicRequestCard() {
 					Create Your Own Magic
 				</h3>
 				<p className="text-sm" style={{ fontFamily: 'Poppins, system-ui, sans-serif', color: '#343A40' }}>
-					Tell us your idea, and we'll craft a unique candle just for you.
+					Tell us your idea, and we&apos;ll craft a unique candle just for you.
 				</p>
 				<span className="mt-1 inline-flex items-center gap-1 text-primary font-semibold">
 					Start now
