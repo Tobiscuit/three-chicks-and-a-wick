@@ -47,17 +47,17 @@ export default function MagicJobWatcher() {
       if (initial) startPolling(initial);
 
       // Listen for explicit start events to wake the watcher
-      const onStart = (e: any) => {
+      const onStart = (e: CustomEvent<{ jobId?: string }>) => {
         try {
-          const jid = e?.detail?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('magic_job_id') : null);
+          const jid = (e && e.detail && e.detail.jobId) || (typeof window !== 'undefined' ? localStorage.getItem('magic_job_id') : null);
           console.log('[MagicJobWatcher] Received start-magic-job event', { jobId: jid });
           startPolling(jid);
         } catch {}
       };
-      window.addEventListener('start-magic-job', onStart as any);
+      window.addEventListener('start-magic-job', onStart as EventListener);
       return () => {
         try { if (timer) clearTimeout(timer); } catch {}
-        try { window.removeEventListener('start-magic-job', onStart as any); } catch {}
+        try { window.removeEventListener('start-magic-job', onStart as EventListener); } catch {}
       };
     } catch {}
   }, []);

@@ -76,13 +76,12 @@ export default function MagicRequestForm() {
   const [wax, setWax] = useState(waxOptions[0].value);
   const [generating, setGenerating] = useState(false);
   // Legacy synchronous add-to-cart state removed as we commit to async flow
-  const [adding, setAdding] = useState(false);
+  // Removed legacy adding state; keep minimal locals only
   const [error, setError] = useState<string | null>(null);
-  const [showToast, setShowToast] = useState(false);
-  const [previewName, setPreviewName] = useState<string | null>(null);
+  const [showToast] = useState(false);
   const [previewData, setPreviewData] = useState<MagicPreview | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
-	const [cartId, setCartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
+	const [cartId] = useState<string | null>(typeof window !== 'undefined' ? localStorage.getItem('shopify_cart_id') : null);
 
   useEffect(() => {
     // TEMP DIAGNOSTIC: log all broadcast events for verification
@@ -92,8 +91,8 @@ export default function MagicRequestForm() {
       const handle = (ev: MessageEvent) => {
         try { console.log('[MagicRequestForm] Received broadcast event:', ev?.data); } catch {}
       };
-      diag.addEventListener('message', handle as any);
-      return () => { try { diag && diag.removeEventListener('message', handle as any); diag?.close(); } catch {} };
+      diag.addEventListener('message', handle as EventListener);
+      return () => { try { diag && diag.removeEventListener('message', handle as EventListener); diag?.close(); } catch {} };
     } catch { /* ignore */ }
   }, []);
 

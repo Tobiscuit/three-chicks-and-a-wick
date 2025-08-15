@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import type { ShopifyCart, CartLineNode } from '@/lib/types';
 import { useMutation, useLazyQuery } from '@apollo/client';
 import {
   CREATE_CART_MUTATION,
@@ -60,30 +61,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     notifyOnNetworkStatusChange: true,
   });
 
-  const applyCartData = (cart: any) => {
+  const applyCartData = (cart: ShopifyCart | null | undefined) => {
     if (!cart) return;
     setCheckoutUrl(cart.checkoutUrl || null);
-    type CartLineNode = {
-      id: string;
-      quantity: number;
-      attributes?: { key: string; value: string }[];
-      merchandise: {
-        id: string;
-        product: {
-          id: string;
-          handle: string;
-          title: string;
-        };
-        price: {
-          amount: string;
-          currencyCode: string;
-        };
-        image: {
-          url: string;
-          altText: string;
-        };
-      };
-    };
     const items = (cart.lines?.edges || []).map((edge: { node: CartLineNode }) => {
       const { node } = edge;
       return {
@@ -127,7 +107,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     let storageListener: ((this: Window, ev: StorageEvent) => any) | null = null;
     try {
       bc = new BroadcastChannel('magic-job');
-      bc.onmessage = async (ev) => {
+      bc.onmessage = async (ev: MessageEvent) => {
         if (ev?.data?.type === 'READY') {
           const nextCartId = (ev?.data?.job?.cartId as string) || localStorage.getItem('shopify_cart_id');
           if (nextCartId) {

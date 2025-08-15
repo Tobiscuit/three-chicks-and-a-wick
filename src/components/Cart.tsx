@@ -145,12 +145,15 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   // React to READY broadcast and then spotlight when cartItems refreshes
   useEffect(() => {
     let bc: BroadcastChannel | null = null;
-    let pendingJobId: string | null = null;
     try {
       bc = new BroadcastChannel('magic-job');
-      bc.onmessage = (ev) => {
+      bc.onmessage = (ev: MessageEvent) => {
         if (ev?.data?.type === 'READY') {
-          pendingJobId = ev?.data?.job?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null);
+          const jobId = ev?.data?.job?.jobId || (typeof window !== 'undefined' ? localStorage.getItem('last_magic_job_id') : null);
+          if (jobId) {
+            // Store last job id to use in the cartItems effect
+            try { localStorage.setItem('last_magic_job_id', jobId); } catch {}
+          }
         }
       };
     } catch {}
