@@ -5,10 +5,12 @@ import { useEffect, useRef } from 'react';
 export default function Modal({
   isOpen,
   onClose,
+  title,
   children,
 }: {
   isOpen: boolean;
   onClose: () => void;
+  title?: string;
   children: React.ReactNode;
 }) {
   const modalRef = useRef<HTMLDivElement>(null);
@@ -55,6 +57,9 @@ export default function Modal({
           isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'
         }`}
       >
+        {title ? (
+          <h3 className="text-lg font-bold mb-4 text-neutral-dark">{title}</h3>
+        ) : null}
         {children}
       </div>
     </div>
