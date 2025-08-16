@@ -3,8 +3,11 @@ import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
 
+// Support both our current env names and alternative names as fallbacks
 const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
-const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID;
+const SHOPIFY_CUSTOMER_CLIENT_ID =
+  process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID ||
+  process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
 // The secret will be accessed only at runtime inside the exchangeCodeForToken function
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
@@ -14,7 +17,9 @@ const SHOPIFY_TOKEN_URL = `${SHOPIFY_STORE_URL}/auth/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 async function exchangeCodeForToken(code: string) {
-  const clientSecret = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET;
+  const clientSecret =
+    process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET ||
+    process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
   
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
     throw new Error('Missing Shopify Customer API credentials or base URL on the server.');
@@ -54,7 +59,8 @@ export async function GET(
     try {
       console.error('Missing public Shopify credentials or base URL', {
         NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: SHOPIFY_STORE_DOMAIN || '(undefined)',
-        NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID: SHOPIFY_CUSTOMER_CLIENT_ID || '(undefined)',
+        NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID: process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID || '(undefined)',
+        ALT_CUSTOMER_ACCOUNT_CLIENT_ID: process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID || '(undefined)',
         NEXT_PUBLIC_BASE_URL: NEXT_PUBLIC_BASE_URL || '(undefined)',
       });
     } catch {}
