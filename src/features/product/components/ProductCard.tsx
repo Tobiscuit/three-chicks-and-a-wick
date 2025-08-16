@@ -42,7 +42,7 @@ export default function ProductCard({
           )}
         </div>
         <div className="p-3 text-center flex flex-col flex-grow">
-          <h3 className="text-lg font-bold text-[var(--neutral-dark)] h-14 flex items-center justify-center line-clamp-2 sm:line-clamp-none flex-grow">
+          <h3 className="text-lg font-bold text-[var(--neutral-dark)] h-14 flex items-center justify-center line-clamp-2 flex-grow overflow-hidden text-ellipsis">
             {name}
           </h3>
           <p className="mt-1 text-base font-medium text-[var(--neutral-dark)]/70">

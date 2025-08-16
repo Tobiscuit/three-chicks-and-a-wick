@@ -60,7 +60,7 @@ function formatCurrency(amount: number, currencyCode: string = 'USD') {
   }).format(amount);
 }
 
-function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem, isSpotlight }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number) => void, isFirstItem: boolean, isSpotlight?: boolean }) {
+function CartItem({ item, onRemove, onUpdateQuantity, isSpotlight }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number | ((q: number) => number)) => void, isSpotlight?: boolean }) {
   // Swipe/drag removed; keep simple tap interactions
   const [customName, setCustomName] = useState<string | null>(null);
   const [customPrompt, setCustomPrompt] = useState<string | null>(null);
@@ -76,7 +76,13 @@ function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem, isSpotlight }
       if (!raw) return;
       const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
       const name = parsed?.candleName || parsed?.candle?.name || null;
-      const paragraphs = parsed?.paragraphs || parsed?.preview?.blocks?.filter((b: any) => b.type === 'paragraph').map((b: any) => b.text) || [];
+      type PreviewListBlock = { type: string; text?: string };
+      const paragraphs: string[] = parsed?.paragraphs 
+        || (Array.isArray(parsed?.preview?.blocks) 
+            ? (parsed.preview.blocks as PreviewListBlock[])
+                .filter((b: PreviewListBlock) => b.type === 'paragraph')
+                .map((b: PreviewListBlock) => b.text || '')
+            : []);
       if (name) setCustomName(name);
       if (Array.isArray(paragraphs) && paragraphs.length > 0 && typeof paragraphs[0] === 'string') setCustomPrompt(paragraphs[0]);
     } catch { /* ignore */ }
@@ -238,13 +244,12 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <div ref={listRef} className={`flex-grow py-4 px-3 overflow-y-auto ${spotlight ? 'ring-2 ring-pink-400 rounded-md' : ''}`}>
                     <ul>
                       <AnimatePresence>
-                        {cartItems.map((item, index) => (
+                        {cartItems.map((item) => (
                           <CartItem 
                             key={item.lineId}
                             item={item as CartItemType}
                             onRemove={() => removeFromCart(item.lineId)}
                             onUpdateQuantity={updateQuantity}
-                            isFirstItem={index === 0 && cartItems.length > 0}
                             isSpotlight={spotlightLineId === item.lineId}
                           />
                         ))}
