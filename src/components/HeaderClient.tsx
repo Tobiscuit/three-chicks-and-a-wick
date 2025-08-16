@@ -102,6 +102,8 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
           setTimeout(() => setGlow(false), 8000);
         } else if (ev?.data?.type === 'OPEN_CART') {
           setCartOpen(true);
+        } else if (ev?.data?.type === 'CLOSE_CART') {
+          setCartOpen(false);
         }
       };
     } catch { /* ignore */ }
@@ -156,7 +158,7 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
               <span className="sr-only">{isLoggedIn ? "Account" : "Login"}</span>
             </Link>
             <button
-              onClick={() => setCartOpen(true)} // Toggle cart state
+              onClick={() => { setCartOpen(true); try { new BroadcastChannel('magic-job').postMessage({ type: 'OPEN_CART' }); } catch {} }} // Toggle cart state and notify toast
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"
             >
               <ShoppingCart className={`h-6 w-6 ${glow ? 'text-pink-500 drop-shadow-[0_0_6px_#f472b6]' : ''}`} />

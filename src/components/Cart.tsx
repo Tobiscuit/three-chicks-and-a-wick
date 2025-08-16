@@ -4,7 +4,7 @@
 import { useCart } from '@/context/CartContext';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 import Image from 'next/image';
-import { motion, AnimatePresence, useAnimation } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef, useState } from 'react';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { RemoveScroll } from 'react-remove-scroll';
@@ -32,6 +32,8 @@ const desktopCartVariants = {
   exit: { scale: 0.95, opacity: 0, transition: { duration: 0.2 } },
 }
 
+// Swipe-to-delete removed; keep constants minimal
+
 // Re-simplified CartItemType
 type CartItemType = {
   lineId: string;
@@ -39,6 +41,7 @@ type CartItemType = {
   attributes?: { key: string; value: string }[];
   product: {
     title: string;
+    handle?: string;
     image: {
       url: string;
       altText: string;
@@ -57,86 +60,96 @@ function formatCurrency(amount: number, currencyCode: string = 'USD') {
   }).format(amount);
 }
 
-function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number) => void, isFirstItem: boolean }) {
-  const isMobile = useMediaQuery('(max-width: 767px)');
-  const controls = useAnimation();
+function CartItem({ item, onRemove, onUpdateQuantity, isFirstItem, isSpotlight }: { item: CartItemType, onRemove: () => void, onUpdateQuantity: (lineId: string, newQuantity: number) => void, isFirstItem: boolean, isSpotlight?: boolean }) {
+  // Swipe/drag removed; keep simple tap interactions
+  const [customName, setCustomName] = useState<string | null>(null);
+  const [customPrompt, setCustomPrompt] = useState<string | null>(null);
+  const creationJobId = (item.attributes || []).find(a => a.key === '_creation_job_id')?.value || null;
+  const isCustom = Boolean(creationJobId);
+
+  // Removed hint animation to avoid race conditions and unwanted movement
 
   useEffect(() => {
-    let mounted = true;
-    const timeouts: number[] = [];
-    if (isMobile && isFirstItem) {
-      const hintAnimation = async () => {
-        await new Promise<number>(resolve => {
-          const t = window.setTimeout(() => resolve(t), 500);
-          timeouts.push(t);
-        });
-        if (mounted) await controls.start({ x: -60, transition: { type: 'spring', stiffness: 300, damping: 25 } });
-        await new Promise<number>(resolve => {
-          const t = window.setTimeout(() => resolve(t), 1500);
-          timeouts.push(t);
-        });
-        if (mounted) controls.start({ x: 0, transition: { type: 'spring', stiffness: 300, damping: 25 } });
-      };
-      hintAnimation();
-    }
-    return () => {
-      mounted = false;
-      timeouts.forEach(t => window.clearTimeout(t));
-    };
-  }, [isMobile, isFirstItem, controls]);
+    if (!creationJobId) return;
+    try {
+      const raw = localStorage.getItem(`creation_preview_${creationJobId}`);
+      if (!raw) return;
+      const parsed = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      const name = parsed?.candleName || parsed?.candle?.name || null;
+      const paragraphs = parsed?.paragraphs || parsed?.preview?.blocks?.filter((b: any) => b.type === 'paragraph').map((b: any) => b.text) || [];
+      if (name) setCustomName(name);
+      if (Array.isArray(paragraphs) && paragraphs.length > 0 && typeof paragraphs[0] === 'string') setCustomPrompt(paragraphs[0]);
+    } catch { /* ignore */ }
+  }, [creationJobId]);
 
   return (
-    <li className="relative mb-4 overflow-hidden">
-        <div className="absolute inset-y-0 right-0 flex items-center justify-center bg-destructive text-white w-20">
-            <button onClick={onRemove} className="w-full h-full flex items-center justify-center">
-                <Trash2 size={24} />
-            </button>
-        </div>
-        <motion.div
-            className="relative flex items-center gap-4 bg-cream"
-            drag={isMobile ? "x" : false}
-            dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={{ left: 0.2, right: 0 }}
-            onDragEnd={(event, info) => {
-                if (info.offset.x < -80) {
-                    onRemove();
-                }
-            }}
-            animate={controls}
-        >
+    <li className={`relative mb-4 overflow-hidden bg-cream ${isSpotlight ? 'ring-2 ring-pink-400 rounded-md' : ''}`}>
+        <div className="relative z-10 flex w-full items-center gap-4 bg-cream">
             <div className="relative h-24 w-24 flex-shrink-0 rounded-lg overflow-hidden border border-neutral-dark/10 aspect-square">
-                <Image
-                    src={item.product.image.url}
-                    alt={item.product.image.altText}
-                    layout="fill"
-                    objectFit="cover"
-                />
+                {(!isCustom && item.product.handle) ? (
+                  <Link href={`/products/${item.product.handle}`} onClick={(e) => e.stopPropagation()}>
+                    <Image src={item.product.image.url} alt={item.product.image.altText} layout="fill" objectFit="cover" />
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={(e) => { e.stopPropagation(); try { new BroadcastChannel('magic-job').postMessage({ type: 'OPEN_PREVIEW', jobId: creationJobId }); } catch {} }}
+                    className="block h-full w-full"
+                    aria-label="View custom candle preview"
+                  >
+                    <Image src={item.product.image.url} alt={item.product.image.altText} layout="fill" objectFit="cover" />
+                  </button>
+                )}
             </div>
             <div className="flex-grow">
-                <h3 className="font-bold text-neutral-dark leading-tight">{item.product.title}</h3>
+                {isCustom && customName ? (
+                  <div className="text-sm font-extrabold text-neutral-dark leading-tight">{customName}</div>
+                ) : null}
+                <h3 className="font-bold text-neutral-dark leading-tight">
+                  {(!isCustom && item.product.handle) ? (
+                    <Link href={`/products/${item.product.handle}`}>{item.product.title}</Link>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => { try { new BroadcastChannel('magic-job').postMessage({ type: 'OPEN_PREVIEW', jobId: creationJobId }); } catch {} }}
+                      className="text-left hover:underline"
+                    >
+                      {item.product.title}
+                    </button>
+                  )}
+                </h3>
+                {isCustom && customPrompt ? (
+                  <p className="text-xs text-neutral-dark/70 line-clamp-1 mt-0.5">{customPrompt}</p>
+                ) : null}
                 <p className="text-sm text-neutral-dark/80 mt-1">{formatCurrency(parseFloat(item.product.price.amount), item.product.price.currencyCode)}</p>
             </div>
-            <div className="flex flex-col items-center gap-2 pr-4">
-                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
+            <div className="flex flex-col items-center gap-2">
+                <button onClick={() => onUpdateQuantity(item.lineId, (q) => q + 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
                     <Plus size={18} />
                 </button>
                 <span className="font-bold w-8 text-center">{item.quantity}</span>
-                <button onClick={() => onUpdateQuantity(item.lineId, item.quantity - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors disabled:opacity-50" disabled={item.quantity <= 1}>
+                {item.quantity <= 1 ? (
+                  <button onClick={onRemove} className="p-2 rounded-full bg-destructive/10 text-destructive hover:bg-destructive/20 transition-colors">
+                    <Trash2 size={18} />
+                  </button>
+                ) : (
+                  <button onClick={() => onUpdateQuantity(item.lineId, (q) => q - 1)} className="p-2 rounded-full bg-neutral-dark/10 hover:bg-neutral-dark/20 transition-colors">
                     <Minus size={18} />
-                </button>
+                  </button>
+                )}
             </div>
-            <div className="hidden md:block pr-2">
+            <div className="hidden md:block">
                 <button onClick={onRemove} className="text-neutral-dark/50 hover:text-destructive transition-colors">
                     <X size={20} />
                 </button>
             </div>
-        </motion.div>
+        </div>
     </li>
   );
 }
 
 export default function Cart({ isOpen, onClose }: CartProps) {
-  const { cartItems, removeFromCart, updateQuantity, checkoutUrl } = useCart();
+  const { cartItems, removeFromCart, updateQuantity, checkoutUrl, isCartMutating } = useCart();
   const isDesktop = useMediaQuery('(min-width: 768px)');
   const listRef = useRef<HTMLDivElement | null>(null);
   const [spotlight, setSpotlight] = useState(false);
@@ -225,16 +238,15 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <div ref={listRef} className={`flex-grow py-4 px-3 overflow-y-auto ${spotlight ? 'ring-2 ring-pink-400 rounded-md' : ''}`}>
                     <ul>
                       <AnimatePresence>
-                         {cartItems.map((item, index) => (
-                           <div key={item.lineId} className={spotlightLineId === item.lineId ? 'ring-2 ring-pink-400 rounded-md' : ''}>
-                           <CartItem 
-                            key={item.lineId} 
+                        {cartItems.map((item, index) => (
+                          <CartItem 
+                            key={item.lineId}
                             item={item as CartItemType}
                             onRemove={() => removeFromCart(item.lineId)}
                             onUpdateQuantity={updateQuantity}
                             isFirstItem={index === 0 && cartItems.length > 0}
+                            isSpotlight={spotlightLineId === item.lineId}
                           />
-                           </div>
                         ))}
                       </AnimatePresence>
                     </ul>
@@ -243,14 +255,14 @@ export default function Cart({ isOpen, onClose }: CartProps) {
                   <div className="py-4 px-3 border-t border-neutral-dark/10">
                       <div className="flex justify-between items-center mb-4">
                           <p className="text-lg font-semibold text-neutral-dark">Subtotal</p>
-                          <p className="text-xl font-bold text-neutral-dark">{formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
+                          <p className="text-xl font-bold text-neutral-dark">{isCartMutating ? 'Calculating…' : formatCurrency(subtotal, cartItems[0]?.product.price.currencyCode)}</p>
                       </div>
                       <button 
-                        className="w-full btn-primary"
+                        className={`w-full btn-primary ${isCartMutating ? 'opacity-70 cursor-not-allowed' : ''}`}
                         onClick={handleCheckout}
-                        disabled={!checkoutUrl}
+                        disabled={!checkoutUrl || isCartMutating}
                       >
-                        Proceed to Checkout
+                        {isCartMutating ? 'Updating Cart…' : 'Proceed to Checkout'}
                       </button>
                        <button onClick={onClose} className="w-full text-center mt-4 text-sm text-neutral-dark hover:text-primary transition-colors">
                           or Continue Shopping

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useRef } from 'react';
 import type { ShopifyCart, CartLineNode } from '@/lib/types';
 import { useMutation, useLazyQuery } from '@apollo/client';
 import {
@@ -38,9 +38,10 @@ type CartContextType = {
   cartItems: CartItem[];
   addToCart: (product: CartProduct, quantity?: number) => void;
   removeFromCart: (lineId: string) => Promise<void>;
-  updateQuantity: (lineId: string, quantity: number) => Promise<void>;
+  updateQuantity: (lineId: string, quantityOrUpdater: number | ((current: number) => number)) => Promise<void>;
   checkoutUrl: string | null;
   isCartLoading: boolean;
+  isCartMutating: boolean;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -50,6 +51,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cartId, setCartId] = useState<string | null>(null);
   const [checkoutUrl, setCheckoutUrl] = useState<string | null>(null);
   const [isCartLoading, setIsCartLoading] = useState(true);
+  const [isCartMutating, setIsCartMutating] = useState(false);
+  // Debounced quantity update per line
+  const pendingTimersRef = useRef<Record<string, number | null>>({});
+  const pendingQuantityRef = useRef<Record<string, number>>({});
 
   const [createCart] = useMutation(CREATE_CART_MUTATION);
   const [addToCartMutation] = useMutation(ADD_TO_CART_MUTATION);
@@ -61,11 +66,40 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     notifyOnNetworkStatusChange: true,
   });
 
+  // Track optimistic quantities to avoid snap-back during refetches
+  const optimisticQuantitiesRef = useRef<Record<string, number>>({});
+  const inflightMutationRef = useRef<Record<string, boolean>>({});
+  const expectedQuantityRef = useRef<Record<string, number>>({});
+
+  const recomputeIsMutating = () => {
+    const hasPending = Object.values(pendingTimersRef.current).some(Boolean);
+    const hasInflight = Object.values(inflightMutationRef.current).some(Boolean);
+    setIsCartMutating(hasPending || hasInflight);
+  };
+
   const applyCartData = (cart: ShopifyCart | null | undefined) => {
     if (!cart) return;
     setCheckoutUrl(cart.checkoutUrl || null);
     const items = (cart.lines?.edges || []).map((edge: { node: CartLineNode }) => {
       const { node } = edge;
+      const lineId = node.id;
+      const optimisticQty = optimisticQuantitiesRef.current[lineId];
+      const hasPending = Boolean(pendingTimersRef.current[lineId]) || Boolean(inflightMutationRef.current[lineId]);
+      const expected = expectedQuantityRef.current[lineId];
+      let finalQty = node.quantity;
+      // If we expect a specific quantity and server hasn't matched yet, keep showing expected/optimistic
+      if (typeof expected === 'number') {
+        if (node.quantity === expected) {
+          // Confirmation arrived; clear optimistic/expected now
+          delete expectedQuantityRef.current[lineId];
+          delete optimisticQuantitiesRef.current[lineId];
+          finalQty = node.quantity;
+        } else {
+          finalQty = typeof optimisticQty === 'number' ? optimisticQty : expected;
+        }
+      } else if (hasPending && typeof optimisticQty === 'number') {
+        finalQty = optimisticQty;
+      }
       return {
         lineId: node.id,
         product: {
@@ -82,7 +116,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
             altText: (node.merchandise.image?.altText || node.merchandise.product.title),
           },
         },
-        quantity: node.quantity,
+        quantity: finalQty,
         attributes: node.attributes || [],
       } as CartItem;
     });
@@ -218,25 +252,55 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setIsCartLoading(false);
   };
 
-  const updateQuantity = async (lineId: string, quantity: number) => {
-    if (!cartId || quantity < 1) return;
-    setIsCartLoading(true);
-    try {
-      await updateCartLineMutation({
-        variables: {
-          cartId,
-          lines: [{ id: lineId, quantity: quantity }],
-        }
-      });
-      if (refetchCart) await refetchCart({ cartId });
-    } catch (error) {
-      console.error("Failed to update quantity:", error);
+  const updateQuantity = async (lineId: string, quantityOrUpdater: number | ((current: number) => number)) => {
+    if (!cartId) return;
+    // Resolve target quantity from most up-to-date known value (optimistic first, then state)
+    const currentQtyFromState = cartItems.find(ci => ci.lineId === lineId)?.quantity ?? 1;
+    const base = typeof optimisticQuantitiesRef.current[lineId] === 'number' ? optimisticQuantitiesRef.current[lineId]! : currentQtyFromState;
+    const target = typeof quantityOrUpdater === 'function' ? (quantityOrUpdater as (n: number) => number)(base) : quantityOrUpdater;
+    if (target < 1) return;
+    // Optimistic local update
+    setCartItems(prev => prev.map(ci => ci.lineId === lineId ? { ...ci, quantity: target } : ci));
+    optimisticQuantitiesRef.current[lineId] = target;
+    expectedQuantityRef.current[lineId] = target;
+    // Coalesce requests per line with debounce
+    pendingQuantityRef.current[lineId] = target;
+    if (pendingTimersRef.current[lineId]) {
+      try { window.clearTimeout(pendingTimersRef.current[lineId] as number); } catch {}
     }
-    setIsCartLoading(false);
+    setIsCartMutating(true);
+    pendingTimersRef.current[lineId] = window.setTimeout(async () => {
+      const latest = pendingQuantityRef.current[lineId];
+      // Cleanup timer reference first to avoid double fires
+      try { if (pendingTimersRef.current[lineId]) window.clearTimeout(pendingTimersRef.current[lineId] as number); } catch {}
+      pendingTimersRef.current[lineId] = null;
+      if (latest == null) return;
+      try {
+        inflightMutationRef.current[lineId] = true;
+        await updateCartLineMutation({ variables: { cartId, lines: [{ id: lineId, quantity: latest }] } });
+        if (refetchCart) await refetchCart({ cartId });
+      } catch (error) {
+        console.error('Failed to update quantity (debounced):', error);
+        // On error, force a refetch to revert any incorrect optimistic state
+        try { if (refetchCart) await refetchCart({ cartId }); } catch {}
+      } finally {
+        delete inflightMutationRef.current[lineId];
+        // If no more pending or inflight, clear optimistic override
+        if (!pendingTimersRef.current[lineId]) {
+          // Do not clear expected here; wait for applyCartData to confirm server match
+          // Clear optimistic if no more pending to avoid stale overrides
+          delete optimisticQuantitiesRef.current[lineId];
+        }
+        recomputeIsMutating();
+      }
+      delete pendingQuantityRef.current[lineId];
+      recomputeIsMutating();
+    }, 300);
+    recomputeIsMutating();
   };
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, checkoutUrl, isCartLoading }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, checkoutUrl, isCartLoading, isCartMutating }}>
       {children}
     </CartContext.Provider>
   );
