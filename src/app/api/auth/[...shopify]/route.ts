@@ -50,7 +50,14 @@ export async function GET(
 ) {
   // Runtime check for variables that should be public
   if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
-    console.error('Missing public Shopify credentials or base URL');
+    // TEMP DIAGNOSTIC: log which vars are missing (remove after configuration is verified)
+    try {
+      console.error('Missing public Shopify credentials or base URL', {
+        NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: SHOPIFY_STORE_DOMAIN || '(undefined)',
+        NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID: SHOPIFY_CUSTOMER_CLIENT_ID || '(undefined)',
+        NEXT_PUBLIC_BASE_URL: NEXT_PUBLIC_BASE_URL || '(undefined)',
+      });
+    } catch {}
     return new NextResponse('Server configuration error.', { status: 500 });
   }
 
