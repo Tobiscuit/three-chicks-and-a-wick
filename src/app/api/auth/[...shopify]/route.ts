@@ -4,16 +4,16 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
 
 // Support both our current env names and alternative names as fallbacks
-const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN;
+const SHOPIFY_HEADLESS_APP_ID = process.env.NEXT_PUBLIC_SHOPIFY_HEADLESS_APP_ID;
 const SHOPIFY_CUSTOMER_CLIENT_ID =
   process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID ||
   process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
 // The secret will be accessed only at runtime inside the exchangeCodeForToken function
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
-const SHOPIFY_STORE_URL = `https://${SHOPIFY_STORE_DOMAIN}`;
-const SHOPIFY_AUTH_BASE_URL = `${SHOPIFY_STORE_URL}/auth/oauth/authorize`;
-const SHOPIFY_TOKEN_URL = `${SHOPIFY_STORE_URL}/auth/oauth/token`;
+// Use Headless Customer Accounts endpoints
+const SHOPIFY_AUTH_BASE_URL = `https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/oauth/authorize`;
+const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 async function exchangeCodeForToken(code: string) {
@@ -21,8 +21,8 @@ async function exchangeCodeForToken(code: string) {
     process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET ||
     process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
   
-  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
-    throw new Error('Missing Shopify Customer API credentials or base URL on the server.');
+  if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
+    throw new Error('Missing Shopify Headless Customer API credentials or base URL on the server.');
   }
 
   const response = await fetch(SHOPIFY_TOKEN_URL, {
@@ -54,11 +54,11 @@ export async function GET(
   { params }: { params: Promise<{ shopify: string[] }> }
 ) {
   // Runtime check for variables that should be public
-  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
+  if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
     // TEMP DIAGNOSTIC: log which vars are missing (remove after configuration is verified)
     try {
-      console.error('Missing public Shopify credentials or base URL', {
-        NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN: SHOPIFY_STORE_DOMAIN || '(undefined)',
+      console.error('Missing Shopify Headless credentials or base URL', {
+        NEXT_PUBLIC_SHOPIFY_HEADLESS_APP_ID: SHOPIFY_HEADLESS_APP_ID || '(undefined)',
         NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID: process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID || '(undefined)',
         ALT_CUSTOMER_ACCOUNT_CLIENT_ID: process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID || '(undefined)',
         NEXT_PUBLIC_BASE_URL: NEXT_PUBLIC_BASE_URL || '(undefined)',

@@ -199,6 +199,7 @@ export default function Cart({ isOpen, onClose }: CartProps) {
   }, 0);
 
   const handleCheckout = () => {
+    console.log('Attempting to checkout with URL:', checkoutUrl);
     if (checkoutUrl) {
       window.location.href = checkoutUrl;
     }
