@@ -20,20 +20,25 @@ async function exchangeCodeForToken(code: string) {
   const clientSecret =
     process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET ||
     process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
+  const clientId =
+    process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID ||
+    process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
   
   if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
     throw new Error('Missing Shopify Headless Customer API credentials or base URL on the server.');
   }
 
+  const basicAuth = Buffer.from(`${clientId}:${clientSecret}`).toString('base64');
+
   const response = await fetch(SHOPIFY_TOKEN_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Basic ${basicAuth}`,
     },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
       client_id: SHOPIFY_CUSTOMER_CLIENT_ID,
-      client_secret: clientSecret,
       redirect_uri: REDIRECT_URI,
       code,
     }),
@@ -74,7 +79,7 @@ export async function GET(
   switch (action) {
     case 'login': {
       const state = crypto.randomUUID();
-      const scopes = 'openid email https://api.shopify.com/auth/shop.customers.read';
+      const scopes = 'openid email customer-account-api:full';
       
       const authUrl = new URL(SHOPIFY_AUTH_BASE_URL);
       authUrl.searchParams.set('client_id', SHOPIFY_CUSTOMER_CLIENT_ID!);
