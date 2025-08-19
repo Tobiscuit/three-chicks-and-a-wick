@@ -4,7 +4,6 @@
 import {
   SHOPIFY_PUBLIC_TOKEN,
   SHOPIFY_STORE_DOMAIN,
-  SHOPIFY_HEADLESS_APP_ID,
 } from './constants';
 import { gql } from '@apollo/client';
 

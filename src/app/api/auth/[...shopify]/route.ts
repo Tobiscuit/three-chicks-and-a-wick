@@ -36,8 +36,8 @@ type JwtPayload = {
  * @param status - The HTTP status code.
  * @returns A NextResponse object.
  */
-function handleError(error: unknown, message: string, status: number): NextResponse {
-  console.error(message, error);
+function handleError(_error: unknown, message: string, status: number): NextResponse {
+  console.error(message, _error);
   return new NextResponse(message, { status });
 }
 
@@ -277,13 +277,13 @@ async function handleRefresh(): Promise<NextResponse> {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { shopify: string[] } }
+  context: { params: { shopify: string[] } }
 ) {
   if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
     return handleError(null, 'Server configuration error: Missing Shopify credentials.', 500);
   }
 
-  const action = params.shopify[0];
+  const action = context.params.shopify[0];
 
   switch (action) {
     case 'login':
