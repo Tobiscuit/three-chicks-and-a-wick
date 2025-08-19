@@ -54,7 +54,6 @@ async function exchangeCodeForToken(code: string) {
     },
     body: new URLSearchParams({
       grant_type: 'authorization_code',
-      client_id: SHOPIFY_CUSTOMER_CLIENT_ID,
       redirect_uri: REDIRECT_URI,
       code,
     }),
