@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 
-export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
+export const dynamic = 'force-dynamic';
 
 // --- Environment Variables ---
 const SHOPIFY_HEADLESS_APP_ID = process.env.NEXT_PUBLIC_SHOPIFY_HEADLESS_APP_ID;
@@ -29,23 +29,6 @@ type JwtPayload = {
 
 // --- Utility Functions ---
 
-/**
- * Handles errors by logging them and returning a standardized response.
- * @param error - The error object.
- * @param message - A user-friendly message.
- * @param status - The HTTP status code.
- * @returns A NextResponse object.
- */
-function handleError(error: unknown, message: string, status: number): NextResponse {
-  console.error(message, error);
-  return new NextResponse(message, { status });
-}
-
-/**
- * Decodes a JWT token without verifying the signature.
- * @param token - The JWT token.
- * @returns The decoded JWT payload.
- */
 function decodeJwt(token: string): { payload: JwtPayload } {
   try {
     const parts = token.split('.');
@@ -53,246 +36,214 @@ function decodeJwt(token: string): { payload: JwtPayload } {
     const payload = JSON.parse(atob(parts[1]));
     return { payload };
   } catch (error) {
+    console.error("Failed to decode JWT", error);
     throw new Error('Failed to decode JWT payload.');
   }
 }
 
-/**
- * Exchanges an authorization code for an access token.
- * @param code - The authorization code.
- * @returns The token data from Shopify.
- */
 async function exchangeCodeForToken(code: string): Promise<TokenData> {
-  const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
-  const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
+    const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
+    const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
 
-  if (!clientId || !clientSecret) {
-    throw new Error('Missing Shopify client credentials for token exchange.');
-  }
+    if (!clientId || !clientSecret) {
+        throw new Error('Missing Shopify client credentials for token exchange.');
+    }
 
-  const basicAuth = btoa(`${clientId}:${clientSecret}`);
-  const response = await fetch(SHOPIFY_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${basicAuth}`,
-    },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
-      client_id: clientId,
-      redirect_uri: REDIRECT_URI,
-      code,
-    }),
-  });
+    const basicAuth = btoa(`${clientId}:${clientSecret}`);
+    const response = await fetch(SHOPIFY_TOKEN_URL, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${basicAuth}`,
+        },
+        body: new URLSearchParams({
+        grant_type: 'authorization_code',
+        client_id: clientId,
+        redirect_uri: REDIRECT_URI,
+        code,
+        }),
+    });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Shopify token exchange failed: ${JSON.stringify(errorData)}`);
-  }
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Shopify token exchange failed: ${JSON.stringify(errorData)}`);
+    }
 
-  return response.json();
+    return response.json();
 }
 
-/**
- * Refreshes an access token using a refresh token.
- * @param token - The refresh token.
- * @returns The new token data from Shopify.
- */
 async function refreshToken(token: string): Promise<TokenData> {
-  const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
-  const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
+    const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
+    const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
 
-  if (!clientId || !clientSecret) {
-    throw new Error('Missing Shopify client credentials for refresh token.');
-  }
-
-  const basicAuth = btoa(`${clientId}:${clientSecret}`);
-  const response = await fetch(SHOPIFY_TOKEN_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Basic ${basicAuth}`,
-    },
-    body: new URLSearchParams({
-      grant_type: 'refresh_token',
-      client_id: clientId,
-      refresh_token: token,
-    }),
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(`Shopify token refresh failed: ${JSON.stringify(errorData)}`);
-  }
-
-  return response.json();
-}
-
-// --- Route Handlers ---
-
-/**
- * Handles the redirect to Shopify's login page.
- */
-function handleLogin(): NextResponse {
-  const state = crypto.randomUUID();
-  const nonce = crypto.randomUUID();
-  const scopes = 'openid email customer-account-api:full';
-
-  const authUrl = new URL(SHOPIFY_AUTH_BASE_URL);
-  authUrl.searchParams.set('client_id', SHOPIFY_CUSTOMER_CLIENT_ID!);
-  authUrl.searchParams.set('response_type', 'code');
-  authUrl.searchParams.set('redirect_uri', REDIRECT_URI);
-  authUrl.searchParams.set('scope', scopes);
-  authUrl.searchParams.set('state', state);
-  authUrl.searchParams.set('nonce', nonce);
-
-  const response = NextResponse.redirect(authUrl);
-  const cookieOptions = {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    maxAge: 60 * 5, // 5 minutes
-  };
-  response.cookies.set('shopify_auth_state', state, cookieOptions);
-  response.cookies.set('shopify_auth_nonce', nonce, cookieOptions);
-  return response;
-}
-
-/**
- * Handles the callback from Shopify after authentication.
- * @param request - The NextRequest object.
- * @returns A NextResponse object.
- */
-async function handleCallback(request: NextRequest): Promise<NextResponse> {
-  const searchParams = request.nextUrl.searchParams;
-  const code = searchParams.get('code');
-  const state = searchParams.get('state');
-  const cookieStore = cookies();
-  const storedState = cookieStore.get('shopify_auth_state')?.value;
-  const storedNonce = cookieStore.get('shopify_auth_nonce')?.value;
-
-  cookieStore.delete('shopify_auth_state');
-  cookieStore.delete('shopify_auth_nonce');
-
-  if (!code || !state || state !== storedState) {
-    return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_state`);
-  }
-
-  try {
-    const tokenData = await exchangeCodeForToken(code);
-    const { payload: idTokenPayload } = decodeJwt(tokenData.id_token);
-
-    if (idTokenPayload.nonce !== storedNonce) {
-      console.error('Nonce validation failed');
-      return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_nonce`);
+    if (!clientId || !clientSecret) {
+        throw new Error('Missing Shopify client credentials for refresh token.');
     }
 
-    const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/account`);
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: tokenData.expires_in,
-    };
+    const basicAuth = btoa(`${clientId}:${clientSecret}`);
+    const response = await fetch(SHOPIFY_TOKEN_URL, {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Authorization': `Basic ${basicAuth}`,
+        },
+        body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        client_id: clientId,
+        refresh_token: token,
+        }),
+    });
 
-    response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
-    response.cookies.set('shopify_id_token', tokenData.id_token, cookieOptions);
-
-    if (tokenData.refresh_token) {
-      response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
-        ...cookieOptions,
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-      });
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Shopify token refresh failed: ${JSON.stringify(errorData)}`);
     }
 
-    return response;
-  } catch (error) {
-    return handleError(error, 'Authentication failed.', 500);
-  }
+    return response.json();
 }
 
-/**
- * Handles the logout process.
- */
-function handleLogout(): NextResponse {
-  const cookieStore = cookies();
-  const idToken = cookieStore.get('shopify_id_token')?.value;
 
-  // Clear local authentication cookies
-  cookieStore.delete('shopify_access_token');
-  cookieStore.delete('shopify_id_token');
-  cookieStore.delete('shopify_refresh_token');
-
-  if (!idToken) {
-    // If there's no ID token, we can't log out from Shopify, but we can redirect to home.
-    return NextResponse.redirect(NEXT_PUBLIC_BASE_URL!);
-  }
-
-  // Redirect to Shopify's logout endpoint
-  const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/logout`);
-  logoutUrl.searchParams.set('id_token_hint', idToken);
-  logoutUrl.searchParams.set('post_logout_redirect_uri', NEXT_PUBLIC_BASE_URL!);
-
-  return NextResponse.redirect(logoutUrl);
-}
-
-/**
- * Handles refreshing the access token.
- * @returns A NextResponse object.
- */
-async function handleRefresh(): Promise<NextResponse> {
-  const cookieStore = cookies();
-  const refreshTokenValue = cookieStore.get('shopify_refresh_token')?.value;
-
-  if (!refreshTokenValue) {
-    return new NextResponse('No refresh token found.', { status: 401 });
-  }
-
-  try {
-    const tokenData = await refreshToken(refreshTokenValue);
-    const response = new NextResponse('Token refreshed.', { status: 200 });
-    const cookieOptions = {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax' as const,
-      maxAge: tokenData.expires_in,
-    };
-
-    response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
-    if (tokenData.refresh_token) {
-      response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
-        ...cookieOptions,
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-      });
-    }
-
-    return response;
-  } catch (error) {
-    return handleError(error, 'Failed to refresh token.', 500);
-  }
-}
-
-/**
- * Main GET handler for all /api/auth/shopify/* routes.
- */
+// Corrected the function signature below
 export async function GET(
   request: NextRequest,
-  { params }: { params: any }
+  { params }: { params: Promise<{ shopify: string[] }> }
 ) {
   if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
-    return handleError(null, 'Server configuration error: Missing Shopify credentials.', 500);
+    return new NextResponse('Server configuration error.', { status: 500 });
   }
 
-  const action = params.shopify[0];
+  const shopifyParams = await params;
+  const action = shopifyParams.shopify[0];
+  const searchParams = request.nextUrl.searchParams;
 
   switch (action) {
-    case 'login':
-      return handleLogin();
-    case 'callback':
-      return handleCallback(request);
-    case 'logout':
-      return handleLogout();
-    case 'refresh':
-      return handleRefresh();
+    case 'login': {
+      const state = crypto.randomUUID();
+      const nonce = crypto.randomUUID();
+      const scopes = 'openid email customer-account-api:full';
+
+      const authUrl = new URL(SHOPIFY_AUTH_BASE_URL);
+      authUrl.searchParams.set('client_id', SHOPIFY_CUSTOMER_CLIENT_ID!);
+      authUrl.searchParams.set('response_type', 'code');
+      authUrl.searchParams.set('redirect_uri', REDIRECT_URI);
+      authUrl.searchParams.set('scope', scopes);
+      authUrl.searchParams.set('state', state);
+      authUrl.searchParams.set('nonce', nonce);
+
+      const response = NextResponse.redirect(authUrl);
+      const cookieOptions = {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          maxAge: 60 * 5, // 5 minutes
+      };
+      response.cookies.set('shopify_auth_state', state, cookieOptions);
+      response.cookies.set('shopify_auth_nonce', nonce, cookieOptions);
+      return response;
+    }
+
+    case 'callback': {
+      const code = searchParams.get('code');
+      const state = searchParams.get('state');
+      const cookieStore = cookies();
+      const storedState = cookieStore.get('shopify_auth_state')?.value;
+      const storedNonce = cookieStore.get('shopify_auth_nonce')?.value;
+
+      cookieStore.delete('shopify_auth_state');
+      cookieStore.delete('shopify_auth_nonce');
+
+      if (!code || !state || state !== storedState) {
+        return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_state`);
+      }
+
+      try {
+        const tokenData = await exchangeCodeForToken(code);
+        const { payload: idTokenPayload } = decodeJwt(tokenData.id_token);
+
+        if (idTokenPayload.nonce !== storedNonce) {
+          console.error('Nonce validation failed');
+          return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_nonce`);
+        }
+
+        const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/account`);
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax' as const,
+            maxAge: tokenData.expires_in,
+        };
+
+        response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
+        response.cookies.set('shopify_id_token', tokenData.id_token, cookieOptions);
+
+        if (tokenData.refresh_token) {
+            response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
+                ...cookieOptions,
+                maxAge: 60 * 60 * 24 * 30, // 30 days
+            });
+        }
+
+        return response;
+
+      } catch (error) {
+        console.error(error);
+        return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=auth_failed`);
+      }
+    }
+
+    case 'logout': {
+      const cookieStore = cookies();
+      const idToken = cookieStore.get('shopify_id_token')?.value;
+
+      cookieStore.delete('shopify_access_token');
+      cookieStore.delete('shopify_id_token');
+      cookieStore.delete('shopify_refresh_token');
+
+      if (!idToken) {
+        return NextResponse.redirect(NEXT_PUBLIC_BASE_URL!);
+      }
+
+      const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/logout`);
+      logoutUrl.searchParams.set('id_token_hint', idToken);
+      logoutUrl.searchParams.set('post_logout_redirect_uri', NEXT_PUBLIC_BASE_URL!);
+
+      return NextResponse.redirect(logoutUrl);
+    }
+
+    case 'refresh': {
+      const cookieStore = cookies();
+      const refreshTokenValue = cookieStore.get('shopify_refresh_token')?.value;
+
+      if (!refreshTokenValue) {
+        return new NextResponse('No refresh token found.', { status: 401 });
+      }
+
+      try {
+        const tokenData = await refreshToken(refreshTokenValue);
+
+        const response = new NextResponse('Token refreshed.', { status: 200 });
+
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax' as const,
+            maxAge: tokenData.expires_in,
+        };
+
+        response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
+        if (tokenData.refresh_token) {
+           response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
+            ...cookieOptions,
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+          });
+        }
+
+        return response;
+      } catch (error) {
+        console.error(error);
+        return new NextResponse('Failed to refresh token.', { status: 500 });
+      }
+    }
+
     default:
       return new NextResponse('Not Found', { status: 404 });
   }
