@@ -100,15 +100,15 @@ export async function GET(
       const storedState = cookieStore.get('shopify_auth_state')?.value;
 
       if (!code || !state || state !== storedState) {
-        const response = NextResponse.redirect(new URL('/?error=invalid_state', request.url));
+        const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_state`);
         response.cookies.delete('shopify_auth_state');
         return response;
       }
       
       try {
         const tokenData = await exchangeCodeForToken(code);
-        
-        const response = NextResponse.redirect(new URL('/account', request.url));
+
+        const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/account`);
         response.cookies.delete('shopify_auth_state');
         response.cookies.set('shopify_customer_token', tokenData.access_token, {
           httpOnly: true,
@@ -121,14 +121,14 @@ export async function GET(
 
       } catch (error) {
         console.error(error);
-        const response = NextResponse.redirect(new URL('/?error=auth_failed', request.url));
+        const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=auth_failed`);
         response.cookies.delete('shopify_auth_state');
         return response;
       }
     }
 
     case 'logout': {
-      const response = NextResponse.redirect(new URL('/', request.url));
+      const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/`);
       response.cookies.delete('shopify_customer_token');
       return response;
     }
