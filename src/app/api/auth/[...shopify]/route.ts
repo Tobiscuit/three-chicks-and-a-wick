@@ -3,12 +3,10 @@ import { cookies } from 'next/headers';
 
 export const dynamic = 'force-dynamic'; // Prevent static analysis at build time
 
-// Support both our current env names and alternative names as fallbacks
+// Environment (server-side for confidential client)
 const SHOPIFY_HEADLESS_APP_ID = process.env.NEXT_PUBLIC_SHOPIFY_HEADLESS_APP_ID;
-const SHOPIFY_CUSTOMER_CLIENT_ID =
-  process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID ||
-  process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
-// The secret will be accessed only at runtime inside the exchangeCodeForToken function
+const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
+const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // Use Headless Customer Accounts endpoints
@@ -17,21 +15,13 @@ const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_HEADLESS
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 async function exchangeCodeForToken(code: string) {
-  const clientSecret =
-    process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET ||
-    process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
-  const clientId =
-    process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID ||
-    process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
+  const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
+  const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
   
   if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
     try {
-      const clientIdSource = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID
-        ? 'NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID'
-        : (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID' : '(none)');
-      const clientSecretSource = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET
-        ? 'SHOPIFY_CUSTOMER_CLIENT_SECRET'
-        : (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET' : '(none)');
+      const clientIdSource = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID' : '(none)';
+      const clientSecretSource = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET' : '(none)';
       console.error('[auth] Missing required env(s) for token exchange', {
         HAS_SHOPIFY_HEADLESS_APP_ID: Boolean(SHOPIFY_HEADLESS_APP_ID),
         HAS_SHOPIFY_CUSTOMER_CLIENT_ID: Boolean(SHOPIFY_CUSTOMER_CLIENT_ID),
