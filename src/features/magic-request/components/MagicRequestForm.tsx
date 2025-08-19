@@ -92,14 +92,7 @@ export default function MagicRequestForm() {
         try { console.log('[MagicRequestForm] Received broadcast event:', ev?.data); } catch {}
       };
       diag.addEventListener('message', handle as EventListener);
-      return () => {
-        try {
-          if (diag) {
-            diag.removeEventListener('message', handle as EventListener);
-            diag.close();
-          }
-        } catch { /* ignore */ }
-      };
+      return () => { try { diag && diag.removeEventListener('message', handle as EventListener); diag?.close(); } catch {} };
     } catch { /* ignore */ }
   }, []);
 
