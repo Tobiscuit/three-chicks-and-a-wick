@@ -1,7 +1,10 @@
 // src/lib/shopify.ts
 
 // Changed to import SHOPIFY_PUBLIC_TOKEN
-import { SHOPIFY_PUBLIC_TOKEN, SHOPIFY_STORE_DOMAIN } from './constants';
+import {
+  SHOPIFY_PUBLIC_TOKEN,
+  SHOPIFY_STORE_DOMAIN,
+} from './constants';
 import { gql } from '@apollo/client';
 
 export const CREATE_CART_MUTATION = gql`
@@ -171,4 +174,4 @@ export async function shopifyFetch<T>({
     console.error('Error fetching from Shopify:', error);
     throw error;
   }
-} 
+}
