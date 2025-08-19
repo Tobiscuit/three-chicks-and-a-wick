@@ -25,6 +25,22 @@ async function exchangeCodeForToken(code: string) {
     process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
   
   if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !clientSecret || !NEXT_PUBLIC_BASE_URL) {
+    try {
+      const clientIdSource = process.env.NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID
+        ? 'NEXT_PUBLIC_SHOPIFY_CUSTOMER_CLIENT_ID'
+        : (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID' : '(none)');
+      const clientSecretSource = process.env.SHOPIFY_CUSTOMER_CLIENT_SECRET
+        ? 'SHOPIFY_CUSTOMER_CLIENT_SECRET'
+        : (process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET ? 'SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET' : '(none)');
+      console.error('[auth] Missing required env(s) for token exchange', {
+        HAS_SHOPIFY_HEADLESS_APP_ID: Boolean(SHOPIFY_HEADLESS_APP_ID),
+        HAS_SHOPIFY_CUSTOMER_CLIENT_ID: Boolean(SHOPIFY_CUSTOMER_CLIENT_ID),
+        HAS_CLIENT_SECRET: Boolean(clientSecret),
+        HAS_BASE_URL: Boolean(NEXT_PUBLIC_BASE_URL),
+        clientIdSource,
+        clientSecretSource,
+      });
+    } catch {}
     throw new Error('Missing Shopify Headless Customer API credentials or base URL on the server.');
   }
 
