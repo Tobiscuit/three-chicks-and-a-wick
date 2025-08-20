@@ -1,10 +1,11 @@
 // src/lib/shopify.ts
 
-// Changed to import SHOPIFY_PUBLIC_TOKEN
+// Import both public and private tokens
 import {
   SHOPIFY_PUBLIC_TOKEN,
+  SHOPIFY_PRIVATE_TOKEN,
   SHOPIFY_STORE_DOMAIN,
-  SHOPIFY_HEADLESS_APP_ID,
+  SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID,
 } from './constants';
 import { gql } from '@apollo/client';
 import { cookies } from 'next/headers';
@@ -147,7 +148,7 @@ export async function shopifyFetch<T>({
     );
   }
 
-  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2024-07/graphql.json`;
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2025-07/graphql.json`;
 
   try {
     const response = await fetch(endpoint, {
@@ -187,20 +188,21 @@ export async function customerAccountFetch<T>({
   variables?: Record<string, unknown>;
   cache?: RequestCache;
 }): Promise<GraphQLResponse<T>> {
-  const cookieStore = cookies();
-  const accessToken = cookieStore.get('shopify_access_token')?.value;
+  const apiVersion = '2025-07';
+  const endpoint = `https://shopify.com/${process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/account/customer/api/${apiVersion}/graphql`;
+
+  const accessToken = (await cookies()).get('shopify_access_token')?.value;
+  console.log('Using access token:', accessToken);
 
   if (!accessToken) {
     throw new Error('Missing access token for Shopify Customer Account API.');
   }
 
-  if (!SHOPIFY_HEADLESS_APP_ID) {
+  if (!SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID) {
     throw new Error(
-      'Missing Shopify Headless App ID. Please check your .env.local file.'
+      'Missing Shopify Customer Account API App ID. Please check your .env.local file.'
     );
   }
-
-  const endpoint = `https://shopify.com/${SHOPIFY_HEADLESS_APP_ID}/account/customer/api/2024-07/graphql`;
 
   try {
     const response = await fetch(endpoint, {
@@ -208,12 +210,23 @@ export async function customerAccountFetch<T>({
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${accessToken}`,
+        'Origin': process.env.NEXT_PUBLIC_BASE_URL || '',
       },
       body: JSON.stringify({ query, variables }),
       cache,
     });
 
     if (!response.ok) {
+      const responseBody = await response.text();
+      const requestId = response.headers.get('x-request-id');
+      console.error('--- Shopify API Call Failed ---');
+      console.error(`Request ID (x-request-id): ${requestId || 'Not found'}`);
+      console.error('Full Shopify Customer Account API response:', {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+        body: responseBody,
+      });
       throw new Error(
         `Shopify Customer Account API response was not ok: ${response.statusText}`
       );
@@ -228,6 +241,52 @@ export async function customerAccountFetch<T>({
     return result;
   } catch (error) {
     console.error('Error fetching from Shopify Customer Account API:', error);
+    throw error;
+  }
+}
+
+// Server-side Storefront API fetch using PRIVATE token
+export async function shopifyServerFetch<T>({
+  query,
+  variables,
+  cache = 'force-cache',
+}: {
+  query: string;
+  variables?: Record<string, unknown>;
+  cache?: RequestCache;
+}): Promise<GraphQLResponse<T>> {
+  if (!SHOPIFY_STORE_DOMAIN || !SHOPIFY_PRIVATE_TOKEN) {
+    throw new Error(
+      'Missing Shopify environment variables. Please check your .env.local file.'
+    );
+  }
+
+  const endpoint = `https://${SHOPIFY_STORE_DOMAIN}/api/2025-07/graphql.json`;
+
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'X-Shopify-Storefront-Access-Token': SHOPIFY_PRIVATE_TOKEN,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, variables }),
+      cache,
+    });
+
+    if (!response.ok) {
+      throw new Error(`Shopify API response was not ok: ${response.statusText}`);
+    }
+
+    const result = (await response.json()) as GraphQLResponse<T>;
+
+    if (result.errors) {
+      console.error('Shopify GraphQL Errors:', result.errors);
+    }
+
+    return result;
+  } catch (error) {
+    console.error('Error fetching from Shopify:', error);
     throw error;
   }
 }

@@ -9,7 +9,7 @@ import {
   GET_CART_QUERY,
   REMOVE_FROM_CART_MUTATION,
   UPDATE_CART_LINE_MUTATION
-} from '@/lib/shopify';
+} from '@/lib/shopify-client';
 
 export type CartProduct = {
   id: string;
@@ -129,7 +129,16 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     const storedCartId = localStorage.getItem('shopify_cart_id');
     if (storedCartId) {
       setCartId(storedCartId);
-      getCart({ variables: { cartId: storedCartId } });
+      // Add error handling for invalid tokens
+      getCart({ variables: { cartId: storedCartId } }).catch((error) => {
+        console.error('Failed to load cart:', error);
+        // Clear invalid cart ID if token is bad
+        if (error.message?.includes('401') || error.message?.includes('Unauthorized')) {
+          localStorage.removeItem('shopify_cart_id');
+          setCartId(null);
+        }
+        setIsCartLoading(false);
+      });
     } else {
       setIsCartLoading(false);
     }

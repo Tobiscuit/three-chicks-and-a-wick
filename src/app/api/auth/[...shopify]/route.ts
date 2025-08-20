@@ -4,14 +4,14 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 
 // --- Environment Variables ---
-const SHOPIFY_HEADLESS_APP_ID = process.env.NEXT_PUBLIC_SHOPIFY_HEADLESS_APP_ID;
+const SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID;
 const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
 const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // --- Shopify API Endpoints ---
-const SHOPIFY_AUTH_BASE_URL = `https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/oauth/authorize`;
-const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/oauth/token`;
+const SHOPIFY_AUTH_BASE_URL = `https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/oauth/authorize`;
+const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 // --- Type Definitions ---
@@ -87,6 +87,7 @@ async function exchangeCodeForToken(code: string): Promise<TokenData> {
 
   if (!response.ok) {
     const errorData = await response.json();
+    console.error('Shopify token exchange failed:', errorData);
     throw new Error(`Shopify token exchange failed: ${JSON.stringify(errorData)}`);
   }
 
@@ -147,9 +148,10 @@ function handleLogin(): NextResponse {
   authUrl.searchParams.set('nonce', nonce);
 
   const response = NextResponse.redirect(authUrl);
+  const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
   const cookieOptions = {
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
+    secure: isSecure,
     maxAge: 60 * 5, // 5 minutes
   };
   response.cookies.set('shopify_auth_state', state, cookieOptions);
@@ -166,7 +168,7 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
   const searchParams = request.nextUrl.searchParams;
   const code = searchParams.get('code');
   const state = searchParams.get('state');
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const storedState = cookieStore.get('shopify_auth_state')?.value;
   const storedNonce = cookieStore.get('shopify_auth_nonce')?.value;
 
@@ -186,10 +188,13 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
       return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_nonce`);
     }
 
+    console.log('Token data from Shopify:', tokenData);
+
     const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/account`);
+    const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax' as const,
       maxAge: tokenData.expires_in,
     };
@@ -214,8 +219,8 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
 /**
  * Handles the logout process.
  */
-function handleLogout(): NextResponse {
-  const cookieStore = cookies();
+async function handleLogout(): Promise<NextResponse> {
+  const cookieStore = await cookies();
   const idToken = cookieStore.get('shopify_id_token')?.value;
 
   // Clear local authentication cookies
@@ -229,7 +234,7 @@ function handleLogout(): NextResponse {
   }
 
   // Redirect to Shopify's logout endpoint
-  const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_HEADLESS_APP_ID}/logout`);
+  const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/logout`);
   logoutUrl.searchParams.set('id_token_hint', idToken);
   logoutUrl.searchParams.set('post_logout_redirect_uri', NEXT_PUBLIC_BASE_URL!);
 
@@ -241,7 +246,7 @@ function handleLogout(): NextResponse {
  * @returns A NextResponse object.
  */
 async function handleRefresh(): Promise<NextResponse> {
-  const cookieStore = cookies();
+  const cookieStore = await cookies();
   const refreshTokenValue = cookieStore.get('shopify_refresh_token')?.value;
 
   if (!refreshTokenValue) {
@@ -251,9 +256,10 @@ async function handleRefresh(): Promise<NextResponse> {
   try {
     const tokenData = await refreshToken(refreshTokenValue);
     const response = new NextResponse('Token refreshed.', { status: 200 });
+    const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https') ?? false);
     const cookieOptions = {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+      secure: isSecure,
       sameSite: 'lax' as const,
       maxAge: tokenData.expires_in,
     };
@@ -277,13 +283,14 @@ async function handleRefresh(): Promise<NextResponse> {
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { shopify: string[] } }
+  { params }: { params: Promise<{ shopify: string[] }> }
 ) {
-  if (!SHOPIFY_HEADLESS_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
+  if (!SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
     return handleError(null, 'Server configuration error: Missing Shopify credentials.', 500);
   }
 
-  const action = params.shopify[0];
+  const resolvedParams = await params;
+  const action = resolvedParams.shopify[0];
 
   switch (action) {
     case 'login':
