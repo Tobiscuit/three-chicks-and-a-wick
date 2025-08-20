@@ -29,23 +29,6 @@ type JwtPayload = {
 
 // --- Utility Functions ---
 
-/**
- * Handles errors by logging them and returning a standardized response.
- * @param error - The error object.
- * @param message - A user-friendly message.
- * @param status - The HTTP status code.
- * @returns A NextResponse object.
- */
-function handleError(error: unknown, message: string, status: number): NextResponse {
-  console.error(message, error);
-  return new NextResponse(message, { status });
-}
-
-/**
- * Decodes a JWT token without verifying the signature.
- * @param token - The JWT token.
- * @returns The decoded JWT payload.
- */
 function decodeJwt(token: string): { payload: JwtPayload } {
   try {
     const parts = token.split('.');
@@ -53,15 +36,11 @@ function decodeJwt(token: string): { payload: JwtPayload } {
     const payload = JSON.parse(atob(parts[1]));
     return { payload };
   } catch (error) {
+    console.error("Failed to decode JWT", error);
     throw new Error('Failed to decode JWT payload.');
   }
 }
 
-/**
- * Exchanges an authorization code for an access token.
- * @param code - The authorization code.
- * @returns The token data from Shopify.
- */
 async function exchangeCodeForToken(code: string): Promise<TokenData> {
   const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
   const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
@@ -94,11 +73,6 @@ async function exchangeCodeForToken(code: string): Promise<TokenData> {
   return response.json();
 }
 
-/**
- * Refreshes an access token using a refresh token.
- * @param token - The refresh token.
- * @returns The new token data from Shopify.
- */
 async function refreshToken(token: string): Promise<TokenData> {
   const clientSecret = SHOPIFY_CUSTOMER_CLIENT_SECRET;
   const clientId = SHOPIFY_CUSTOMER_CLIENT_ID;
@@ -198,18 +172,18 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
       sameSite: 'lax' as const,
       maxAge: tokenData.expires_in,
     };
-
     response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
     response.cookies.set('shopify_id_token', tokenData.id_token, cookieOptions);
 
     if (tokenData.refresh_token) {
-      response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
-        ...cookieOptions,
-        maxAge: 60 * 60 * 24 * 30, // 30 days
-      });
+        response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
+            ...cookieOptions,
+            maxAge: 60 * 60 * 24 * 30, // 30 days
+        });
     }
 
     return response;
+
   } catch (error) {
     console.error(error);
     return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=auth_failed`);
@@ -255,18 +229,20 @@ async function handleRefresh(): Promise<NextResponse> {
 
   try {
     const tokenData = await refreshToken(refreshTokenValue);
+
     const response = new NextResponse('Token refreshed.', { status: 200 });
-    const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https') ?? false);
+
+    const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
     const cookieOptions = {
-      httpOnly: true,
-      secure: isSecure,
-      sameSite: 'lax' as const,
-      maxAge: tokenData.expires_in,
+        httpOnly: true,
+        secure: isSecure,
+        sameSite: 'lax' as const,
+        maxAge: tokenData.expires_in,
     };
 
     response.cookies.set('shopify_access_token', tokenData.access_token, cookieOptions);
     if (tokenData.refresh_token) {
-      response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
+       response.cookies.set('shopify_refresh_token', tokenData.refresh_token, {
         ...cookieOptions,
         maxAge: 60 * 60 * 24 * 30, // 30 days
       });
@@ -274,7 +250,8 @@ async function handleRefresh(): Promise<NextResponse> {
 
     return response;
   } catch (error) {
-    return handleError(error, 'Failed to refresh token.', 500);
+    console.error(error);
+    return new NextResponse('Failed to refresh token.', { status: 500 });
   }
 }
 
@@ -286,7 +263,7 @@ export async function GET(
   { params }: { params: Promise<{ shopify: string[] }> }
 ) {
   if (!SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
-    return handleError(null, 'Server configuration error: Missing Shopify credentials.', 500);
+    return new NextResponse('Server configuration error.', { status: 500 });
   }
 
   const resolvedParams = await params;
