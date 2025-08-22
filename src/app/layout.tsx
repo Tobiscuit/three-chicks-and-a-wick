@@ -6,6 +6,8 @@ import { CartProvider } from "@/context/CartContext";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ClientProviders from "@/components/ClientProviders";
+import { ToastProvider } from '@/context/ToastContext';
+
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,10 +26,12 @@ export default function RootLayout({
       <body className={inter.className}>
           <ApolloProvider>
             <CartProvider>
-              <ClientProviders />
-              <Header />
-              <main className="flex-grow">{children}</main>
-              <Footer />
+              <ToastProvider>
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+                <ClientProviders />
+              </ToastProvider>
             </CartProvider>
           </ApolloProvider>
       </body>

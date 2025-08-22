@@ -4,14 +4,15 @@ import { cookies } from 'next/headers';
 export const dynamic = 'force-dynamic';
 
 // --- Environment Variables ---
-const SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID;
 const SHOPIFY_CUSTOMER_CLIENT_ID = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_CLIENT_ID;
 const SHOPIFY_CUSTOMER_CLIENT_SECRET = process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_SECRET;
 const NEXT_PUBLIC_BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
+const SHOPIFY_SHOP_ID = process.env.SHOPIFY_SHOP_ID;
+
 
 // --- Shopify API Endpoints ---
-const SHOPIFY_AUTH_BASE_URL = `https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/oauth/authorize`;
-const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/oauth/token`;
+const SHOPIFY_AUTH_BASE_URL = `https://shopify.com/authentication/${SHOPIFY_SHOP_ID}/oauth/authorize`;
+const SHOPIFY_TOKEN_URL = `https://shopify.com/authentication/${SHOPIFY_SHOP_ID}/oauth/token`;
 const REDIRECT_URI = `${NEXT_PUBLIC_BASE_URL}/api/auth/callback`;
 
 // --- Type Definitions ---
@@ -120,6 +121,7 @@ function handleLogin(): NextResponse {
   authUrl.searchParams.set('scope', scopes);
   authUrl.searchParams.set('state', state);
   authUrl.searchParams.set('nonce', nonce);
+  authUrl.searchParams.set('prompt', 'login');
 
   const response = NextResponse.redirect(authUrl);
   const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
@@ -164,7 +166,7 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
 
     console.log('Token data from Shopify:', tokenData);
 
-    const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/account`);
+    const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?login=success`);
     const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
     const cookieOptions = {
       httpOnly: true,
@@ -208,7 +210,7 @@ async function handleLogout(): Promise<NextResponse> {
   }
 
   // Redirect to Shopify's logout endpoint
-  const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID}/logout`);
+  const logoutUrl = new URL(`https://shopify.com/authentication/${SHOPIFY_SHOP_ID}/logout`);
   logoutUrl.searchParams.set('id_token_hint', idToken);
   logoutUrl.searchParams.set('post_logout_redirect_uri', NEXT_PUBLIC_BASE_URL!);
 
@@ -262,7 +264,7 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ shopify: string[] }> }
 ) {
-  if (!SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID || !SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL) {
+  if (!SHOPIFY_CUSTOMER_CLIENT_ID || !NEXT_PUBLIC_BASE_URL || !SHOPIFY_SHOP_ID) {
     return new NextResponse('Server configuration error.', { status: 500 });
   }
 

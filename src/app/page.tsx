@@ -6,6 +6,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import heroImage from '../../public/images/products/diy-macrame-plant-hanger-kit.webp';
 import EducationSection from '@/features/home/components/EducationSection';
+import LoginSuccessToast from '@/components/LoginSuccessToast';
+import { Suspense } from 'react';
 
 const GetFeaturedProducts = gql(`
   query GetFeaturedProducts {
@@ -72,6 +74,9 @@ export default async function HomePage() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <LoginSuccessToast />
+      </Suspense>
       <main className="flex-grow">
         <section className="relative pb-1 sm:pb-2">
           <div className="container mx-auto grid grid-cols-1 items-center gap-4 lg:gap-16 lg:grid-cols-5">

@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ShoppingCart, Menu as MenuIcon, X, User } from 'lucide-react';
+import { ShoppingCart, Menu as MenuIcon, X, User, LogOut } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import Cart from './Cart';
@@ -153,10 +153,23 @@ export default function HeaderClient({ isLoggedIn }: { isLoggedIn: boolean }) {
           </nav>
 
           <div className="flex-1 flex justify-end items-center gap-2.5">
-             <Link href={isLoggedIn ? "/account" : "/api/auth/login"} className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100 lg:block">
-              <User className="h-5 w-5" />
-              <span className="sr-only">{isLoggedIn ? "Account" : "Login"}</span>
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link href="/account" className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100 lg:block">
+                  <User className="h-5 w-5" />
+                  <span className="sr-only">Account</span>
+                </Link>
+                <Link href="/api/auth/logout" className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100 lg:block">
+                  <LogOut className="h-5 w-5" />
+                  <span className="sr-only">Logout</span>
+                </Link>
+              </>
+            ) : (
+              <Link href="/api/auth/login" className="hidden rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100 lg:block">
+                <User className="h-5 w-5" />
+                <span className="sr-only">Login</span>
+              </Link>
+            )}
             <button
               onClick={() => { setCartOpen(true); try { new BroadcastChannel('magic-job').postMessage({ type: 'OPEN_CART' }); } catch {} }} // Toggle cart state and notify toast
               className="relative rounded-full bg-white p-2.5 text-neutral-dark shadow-md transition-colors hover:bg-gray-100"

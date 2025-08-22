@@ -182,7 +182,7 @@ export async function shopifyFetch<T>({
 export async function customerAccountFetch<T>({
   query,
   variables,
-  cache = 'force-cache',
+  cache = 'no-store', // Changed from 'force-cache' to 'no-store'
 }: {
   query: string;
   variables?: Record<string, unknown>;
@@ -198,7 +198,7 @@ export async function customerAccountFetch<T>({
     throw new Error('Missing access token for Shopify Customer Account API.');
   }
 
-  if (!SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID) {
+  if (!process.env.SHOPIFY_CUSTOMER_ACCOUNT_API_APP_ID) {
     throw new Error(
       'Missing Shopify Customer Account API App ID. Please check your .env.local file.'
     );
