@@ -5,16 +5,13 @@ import path from 'path';
 dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 
 const SHOPIFY_SHOP_ID = process.env.SHOPIFY_SHOP_ID;
-const CUSTOMER_API_ENDPOINT = `https://shopify.com/authentication/${SHOPIFY_SHOP_ID}/api/2025-07/graphql.json`;
+const CUSTOMER_API_ENDPOINT = `https://shopify.com/${SHOPIFY_SHOP_ID}/account/customer/api/2025-07/graphql.json`;
+const CUSTOMER_ACCESS_TOKEN = process.env.TEST_CUSTOMER_ACCESS_TOKEN;
 
 console.log("--- Configuration Values ---");
 console.log("Shop ID:", SHOPIFY_SHOP_ID);
 console.log("API Endpoint:", CUSTOMER_API_ENDPOINT);
 console.log("--------------------------");
-
-// The rest of the script is commented out to prevent the API call.
-/*
-const CUSTOMER_ACCESS_TOKEN = process.env.TEST_CUSTOMER_ACCESS_TOKEN; // We will add this to .env.local
 
 const getCustomerEmailQuery = `
   query getCustomerEmail {
@@ -27,8 +24,8 @@ const getCustomerEmailQuery = `
 `;
 
 async function testCustomerApi() {
-  if (!CUSTOMER_ACCESS_TOKEN) {
-    console.error('Error: Please add a TEST_CUSTOMER_ACCESS_TOKEN to your .env.local file.');
+  if (!CUSTOMER_ACCESS_TOKEN || CUSTOMER_ACCESS_TOKEN === "PASTE_YOUR_TOKEN_HERE") {
+    console.error('Error: Please add a valid TEST_CUSTOMER_ACCESS_TOKEN to your .env.local file.');
     console.log('You can obtain this by logging in and copying the value of the "shopify_access_token" cookie.');
     return;
   }
@@ -76,7 +73,7 @@ async function testCustomerApi() {
       } else {
         console.log('Success! Fetched data:', data);
       }
-    } catch (error) {
+    } catch {
       console.error('Failed to parse JSON. The response was likely HTML.');
     }
 
@@ -86,4 +83,3 @@ async function testCustomerApi() {
 }
 
 testCustomerApi();
-*/

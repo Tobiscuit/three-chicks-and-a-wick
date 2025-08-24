@@ -35,14 +35,17 @@ const GET_CUSTOMER_QUERY = gql`
 
 export async function GET() {
   try {
-    const query = GET_CUSTOMER_QUERY.loc?.source.body || '';
-    console.log('GraphQL Query:', query);
-    const result = await customerAccountFetch({
+    const query = GET_CUSTOMER_QUERY.loc?.source.body;
+    if (!query) {
+      throw new Error('GraphQL query source not found');
+    }
+
+    const { data, errors } = await customerAccountFetch<{ customer: any }>({
       query,
     });
 
-    if (result.errors) {
-      return new Response(JSON.stringify({ errors: result.errors }), {
+    if (errors) {
+      return new Response(JSON.stringify({ errors }), {
         status: 400,
         headers: {
           'Content-Type': 'application/json',
@@ -50,16 +53,28 @@ export async function GET() {
       });
     }
 
-    return new Response(JSON.stringify(result.data), {
+    if (!data?.customer) {
+      return new Response(
+        JSON.stringify({ error: 'Customer data not found in response' }),
+        {
+          status: 404,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+    }
+
+    return new Response(JSON.stringify(data), {
       status: 200,
       headers: {
         'Content-Type': 'application/json',
       },
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching customer profile:', error);
-    
-    if (error instanceof Error && error.message.includes('Missing access token')) {
+
+    if (error.message.includes('401') || error.message.includes('Missing access token')) {
       return new Response(JSON.stringify({ message: 'Not authenticated' }), {
         status: 401,
         headers: {
@@ -67,7 +82,7 @@ export async function GET() {
         },
       });
     }
-    
+
     return new Response(JSON.stringify({ message: 'Internal server error' }), {
       status: 500,
       headers: {

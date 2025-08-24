@@ -1,9 +1,6 @@
 // src/app/api/customer/orders/route.ts
 import { NextResponse } from 'next/server';
-import { cookies } from 'next/headers';
-
-const SHOPIFY_SHOP_ID = process.env.SHOPIFY_SHOP_ID;
-const CUSTOMER_API_ENDPOINT = `https://shopify.com/authentication/${SHOPIFY_SHOP_ID}/api/2025-07/graphql.json`;
+import { customerAccountFetch } from '@/lib/shopify'; // Import the centralized fetch function
 
 const getCustomerOrdersQuery = `
   query getCustomerOrders($first: Int!) {
@@ -36,51 +33,41 @@ const getCustomerOrdersQuery = `
 `;
 
 export async function GET() {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('shopify_access_token')?.value;
-
-  if (!accessToken) {
-    return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
-  }
-
   try {
-    const response = await fetch(CUSTOMER_API_ENDPOINT, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify({
-        query: getCustomerOrdersQuery,
-        variables: { first: 25 },
-      }),
+    const { data, errors } = await customerAccountFetch<{ customer: any }>({
+      query: getCustomerOrdersQuery,
+      variables: { first: 10 },
     });
 
-    const responseText = await response.text();
-    console.log("Shopify Customer API Raw Response:", responseText);
-
-    if (!response.ok) {
-      console.error('Shopify Customer API Error Response:', responseText);
-      return NextResponse.json({ error: 'Failed to fetch orders', details: responseText }, { status: response.status });
-    }
-    
-    let data;
-    try {
-      data = JSON.parse(responseText);
-    } catch {
-      console.error('Failed to parse JSON response:', responseText);
-      return NextResponse.json({ error: 'Invalid JSON response from Shopify', details: responseText }, { status: 500 });
+    if (errors) {
+      // The customerAccountFetch function already logs errors, but we can add more context here if needed
+      return NextResponse.json(
+        { error: 'Failed to fetch orders', details: errors },
+        { status: 400 }
+      );
     }
 
-    if (data.errors) {
-      console.error('Shopify Customer API GraphQL Errors:', data.errors);
-      return NextResponse.json({ error: 'Failed to fetch orders', details: data.errors }, { status: 400 });
+    if (!data?.customer) {
+      return NextResponse.json(
+        { error: 'Customer data not found in response' },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json(data.data.customer);
-    
-  } catch (error) {
-    console.error('Error fetching customer orders:', error);
-    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+    return NextResponse.json(data.customer);
+  } catch (error: any) {
+    // The customerAccountFetch function also logs the error, but we catch here to provide a proper API response
+    console.error('Error in GET /api/customer/orders:', error);
+    // Check if the error is due to an unauthorized (401) response
+    if (error.message.includes('401')) {
+      return NextResponse.json(
+        { error: 'Not authenticated' },
+        { status: 401 }
+      );
+    }
+    return NextResponse.json(
+      { error: 'Internal Server Error' },
+      { status: 500 }
+    );
   }
 }

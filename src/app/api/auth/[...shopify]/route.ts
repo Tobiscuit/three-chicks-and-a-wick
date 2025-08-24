@@ -66,9 +66,12 @@ async function exchangeCodeForToken(code: string): Promise<TokenData> {
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error('Shopify token exchange failed:', errorData);
-    throw new Error(`Shopify token exchange failed: ${JSON.stringify(errorData)}`);
+    const errorText = await response.text();
+    console.error('--- SHOPIFY TOKEN EXCHANGE FAILED ---');
+    console.error('Status:', response.status, response.statusText);
+    console.error('Response Body:', errorText);
+    console.error('------------------------------------');
+    throw new Error(`Shopify token exchange failed: ${errorText}`);
   }
 
   return response.json();
@@ -123,6 +126,13 @@ function handleLogin(): NextResponse {
   authUrl.searchParams.set('nonce', nonce);
   authUrl.searchParams.set('prompt', 'login');
 
+  // --- NEW DEBUG LOG ---
+  console.log('--- REDIRECTING TO SHOPIFY AUTH ---');
+  console.log('Redirect URI Sent:', REDIRECT_URI);
+  console.log('Full Authorization URL:', authUrl.toString());
+  console.log('------------------------------------');
+  // --- END NEW DEBUG LOG ---
+
   const response = NextResponse.redirect(authUrl);
   const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
   const cookieOptions = {
@@ -164,7 +174,13 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
       return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=invalid_nonce`);
     }
 
-    console.log('Token data from Shopify:', tokenData);
+    // --- NEW DEBUG LOGS ---
+    console.log('--- OAUTH CALLBACK TOKEN DATA ---');
+    console.log('Full token data from Shopify:', tokenData);
+    console.log('Access Token:', tokenData.access_token);
+    console.log('ID Token:', tokenData.id_token);
+    console.log('---------------------------------');
+    // --- END NEW DEBUG LOGS ---
 
     const response = NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?login=success`);
     const isSecure = process.env.NODE_ENV === 'production' || (NEXT_PUBLIC_BASE_URL?.startsWith('https://') ?? false);
@@ -187,7 +203,9 @@ async function handleCallback(request: NextRequest): Promise<NextResponse> {
     return response;
 
   } catch (error) {
+    console.error('--- OAUTH CALLBACK HANDLER FAILED ---');
     console.error(error);
+    console.error('------------------------------------');
     return NextResponse.redirect(`${NEXT_PUBLIC_BASE_URL}/?error=auth_failed`);
   }
 }

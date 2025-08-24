@@ -14,6 +14,6 @@ export const SHOPIFY_PRIVATE_TOKEN = process.env.SHOPIFY_STOREFRONT_PRIVATE_TOKE
 // Your Shopify store domain (without https://)
 export const SHOPIFY_STORE_DOMAIN = process.env.NEXT_PUBLIC_SHOPIFY_STORE_DOMAIN!;
 
-// Shopify Headless App ID for Storefront API (f3e6eb8b-6d77-4b30-a920-d0ad79c0ddff)
-export const SHOPIFY_HEADLESS_APP_ID = process.env.SHOPIFY_HEADLESS_APP_ID!;
+// Shopify Headless App ID for Storefront API (f3e6eb8b-6d77-4b30-a920-d0ad79c0ddff) - DEPRECATED
+// export const SHOPIFY_HEADLESS_APP_ID = process.env.SHOPIFY_HEADLESS_APP_ID!;
 
